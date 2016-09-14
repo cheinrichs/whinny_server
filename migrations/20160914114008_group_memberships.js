@@ -1,4 +1,4 @@
-
+//Group Memberships
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('group_memberships', function (table) {
     table.increments('group_membership_id');

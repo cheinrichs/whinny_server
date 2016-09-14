@@ -1,4 +1,4 @@
-
+//Broadcast Messages
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('broadcast_messages', function (table) {
     table.increments('broadcast_message_id');

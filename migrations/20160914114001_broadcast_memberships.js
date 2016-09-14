@@ -1,4 +1,4 @@
-
+//Broadcast Memberships
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('broadcast_memberships', function (table) {
     table.increments('broadcast_membership_id');
@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
          .references('user_id')
          .inTable('users')
          .onDelete('cascade');
-         
+
     table.integer('broadcast_id')
          .unsigned()
          .notNullable()

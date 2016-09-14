@@ -28,6 +28,30 @@ exports.seed = function(knex, Promise) {
           group_zip: null,
           group_state: null,
           group_discipline: 'All'
+        }),
+        knex('groups').insert({
+          group_name: 'Horse Application Developers',
+          group_photo: 'photo link',
+          is_private: false,
+          users_can_respond: true,
+          geographically_limited: false,
+          group_latitude: '40.167207',
+          group_longitude: '-105.101927',
+          group_zip: null,
+          group_state: null,
+          group_discipline: 'All'
+        }),
+        knex('groups').insert({
+          group_name: 'Whinny Staff',
+          group_photo: 'photo link',
+          is_private: true,
+          users_can_respond: true,
+          geographically_limited: false,
+          group_latitude: '40.167207',
+          group_longitude: '-105.101927',
+          group_zip: null,
+          group_state: null,
+          group_discipline: 'All'
         })
       ]);
     });

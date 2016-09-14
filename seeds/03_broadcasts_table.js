@@ -23,7 +23,27 @@ exports.seed = function(knex, Promise) {
           broadcast_longitude: '-105.101927',
           broadcast_zip: 40201,
           broadcast_state: 'KY',
-          broadcast_discipline: 'All'
+          broadcast_discipline: 'Racing'
+        }),
+        knex('broadcasts').insert({
+          broadcast_name: 'Palm Beach Drassage Derby',
+          broadcast_photo: 'Photo link',
+          geographically_limited: false,
+          broadcast_latitude: '40.167207',
+          broadcast_longitude: '-105.101927',
+          broadcast_zip: 33480,
+          broadcast_state: 'FL',
+          broadcast_discipline: 'Drassage'
+        }),
+        knex('broadcasts').insert({
+          broadcast_name: 'Del Mar National',
+          broadcast_photo: 'Photo link',
+          geographically_limited: false,
+          broadcast_latitude: '40.167207',
+          broadcast_longitude: '-105.101927',
+          broadcast_zip: 92014,
+          broadcast_state: 'CA',
+          broadcast_discipline: 'Drassage'
         })
       ]);
     });

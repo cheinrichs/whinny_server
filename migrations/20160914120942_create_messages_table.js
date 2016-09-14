@@ -1,4 +1,4 @@
-
+//Messages
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('messages', function (table) {
     table.increments('message_id');
