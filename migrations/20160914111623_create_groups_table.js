@@ -10,6 +10,7 @@ exports.up = function(knex, Promise) {
     table.string('group_photo');
 
     table.boolean('is_private');
+    table.boolean('is_hidden');
     table.boolean('users_can_respond');
     table.boolean('geographically_limited');
 
