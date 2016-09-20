@@ -21,7 +21,9 @@ router.get('/messages/:user_id', function (req, res, next) {
     result.messages = messages;
     //look through those messages for each unique user id, then get that specific
     //user object and stick it into users
-    let user_ids = [], group_ids = [], broadcast_ids = [];
+    let user_ids = [];
+    let group_ids = [];
+    let broadcast_ids = [];
     for (var i = 0; i < messages.length; i++) {
       user_ids.push(messages[i].to_user);
       user_ids.push(messages[i].from_user);
