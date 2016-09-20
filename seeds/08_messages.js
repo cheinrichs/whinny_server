@@ -17,8 +17,7 @@ exports.seed = function(knex, Promise) {
       createMessage('Cooper', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Woozles. I repeat. Woozles', 'broadcast'),
       createMessage('Cooper', 'Cooper', 'Whinny Staff', 'Kentucky Derby Race Results', 'This horse was faster than that horse. If you lost money please don\'t blame us', 'broadcast'),
       createMessage('Morgan', 'Cooper', 'Whinny Staff', 'Palm Beach Drassage Derby', 'Please note: Puting a tutu on your horse will not help it\'s pirouettes', 'broadcast'),
-      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'Del Mar National', 'We have a lost long hair dachshund. He is demanding roast chicken at the front office.', 'broadcast'),
-      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Woozles. I repeat. Woozles', 'broadcast')
+      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'Del Mar National', 'We have a lost long hair dachshund. He is demanding roast chicken at the front office.', 'broadcast')
     )
   });
 
@@ -48,7 +47,7 @@ exports.seed = function(knex, Promise) {
       } else {
         result.group_id = null;
       }
-      return knex('broadcasts').where('broadcast_name', broadcast_name)
+      return knex('broadcasts').where('broadcast_name', broadcast_name).first();
     }).then(function (broadcast_obj) {
       if(message_type === 'broadcast'){
         result.broadcast_id = broadcast_obj.broadcast_id;
