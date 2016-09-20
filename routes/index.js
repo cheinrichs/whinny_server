@@ -10,9 +10,9 @@ router.get('/', function(req, res, next) {
 router.get('/messages/:user_id', function (req, res, next) {
   var result = {
     messages: [],
-    users: [],
-    groups: [],
-    broadcasts: []
+    users: {},
+    groups: {},
+    broadcasts: {}
   };
   knex('messages').where('to_user', req.params.user_id)
   .orWhere('from_user', req.params.user_id)
@@ -39,13 +39,13 @@ router.get('/messages/:user_id', function (req, res, next) {
     //look through users and find each corresponding user object and add it to
     //the final result object
     knex('users').whereIn('user_id', user_ids).then(function (users) {
-      result.users = users;
+      for (var i = 0; i < users.length; i++) result.users[users[i].user_id] = users[i];
     }).then(function () {
       knex('groups').whereIn('group_id', group_ids).then(function (groups) {
-        result.groups = groups;
+        for (var i = 0; i < groups.length; i++) result.groups[groups[i].group_id] = groups[i];
       }).then(function () {
         knex('broadcasts').whereIn('broadcast_id', broadcast_ids).then(function (broadcasts) {
-          result.broadcasts = broadcasts;
+          for (var i = 0; i < broadcasts.length; i++) result.broadcasts[broadcasts[i].broadcast_id] = broadcasts[i];
         }).then(function () {
           res.json(result);
         })
