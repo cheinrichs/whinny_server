@@ -38,17 +38,14 @@ router.get('/messages/:user_id', function (req, res, next) {
 
     //look through users and find each corresponding user object and add it to
     //the final result object
-    knex('users').whereIn('user_id', user_ids).then(function (user) {
-      console.log(user);
-      result.users.push(user);
+    knex('users').whereIn('user_id', user_ids).then(function (users) {
+      result.users = users;
     }).then(function () {
-      knex('groups').whereIn('group_id', group_ids).then(function (group) {
-        console.log(group);
-        result.groups.push(group);
+      knex('groups').whereIn('group_id', group_ids).then(function (groups) {
+        result.groups = groups;
       }).then(function () {
-        knex('broadcasts').whereIn('broadcast_id', broadcast_ids).then(function (broadcast) {
-          console.log(broadcast);
-          result.broadcasts.push(broadcast);
+        knex('broadcasts').whereIn('broadcast_id', broadcast_ids).then(function (broadcasts) {
+          result.broadcasts = broadcasts;
         }).then(function () {
           res.json(result);
         })
