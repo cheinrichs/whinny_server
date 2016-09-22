@@ -55,10 +55,10 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
         tutorial_5: true,
         EULA: true,
         EULA_date_agreed: knex.fn.now()
-      }).returning(['user_id', 'phone']).then(function (arr) {
+      }).returning('*').then(function (user) {
         //send a text with twilio
         confirmationCodeText('+13035892321', confirmationCode);
-        res.json(arr)
+        res.json(user)
       });
     }
   })
