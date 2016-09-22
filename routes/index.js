@@ -62,7 +62,17 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
       });
     }
   })
+})
 
+router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next) {
+  knex('users').where('user_id', req.params.user_id).first().then(function (user) {
+    //TODO set a flag in the database that user has been confirmed
+    if(user.confirmation_code === req.params.confirmation_code){
+      res.json({confirmed: 'true'});
+    } else {
+      res.json({confirmed: 'false'});
+    }
+  })
 })
 
 router.get('/messages/:user_id', function (req, res, next) {
@@ -99,9 +109,13 @@ router.get('/messages/:user_id', function (req, res, next) {
     knex('users').whereIn('user_id', user_ids).then(function (users) {
       for (var i = 0; i < users.length; i++) result.users[users[i].user_id] = users[i];
     }).then(function () {
+      //look through groups and find each corresponding group object and add it to
+      //the final result object
       knex('groups').whereIn('group_id', group_ids).then(function (groups) {
         for (var i = 0; i < groups.length; i++) result.groups[groups[i].group_id] = groups[i];
       }).then(function () {
+        //look through messages for each broadcast id, then get that specific broadcast
+        //object and stick it in broadcasts
         knex('broadcasts').whereIn('broadcast_id', broadcast_ids).then(function (broadcasts) {
           for (var i = 0; i < broadcasts.length; i++) result.broadcasts[broadcasts[i].broadcast_id] = broadcasts[i];
         }).then(function () {
@@ -109,12 +123,6 @@ router.get('/messages/:user_id', function (req, res, next) {
         })
       })
     })
-    //look through groups and find each corresponding group object and add it to
-    //the final result object
-
-    //look through messages for each broadcast id, then get that specific broadcast
-    //object and stick it in broadcasts
-
   })
 });
 
