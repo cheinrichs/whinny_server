@@ -19,12 +19,14 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
   if (req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
 
   knex('users').where('phone', req.params.phone).then(function (user) {
-    console.log("initial user search ", user);
+    
+    var confirmationCode = generateConfirmationCode();
+
     if(user.length > 0){
+      confirmationCodeText(req.params.phone, confirmationCode);
       res.json(user);
     } else {
 
-      var confirmationCode = generateConfirmationCode();
 
       knex('users').insert({
         email: null,
@@ -57,7 +59,7 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
         EULA_date_agreed: knex.fn.now()
       }).returning('*').then(function (user) {
         //send a text with twilio
-        confirmationCodeText('+13035892321', confirmationCode);
+        confirmationCodeText(req.params.phone, confirmationCode);
         res.json(user)
       });
     }
