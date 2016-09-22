@@ -2,10 +2,68 @@ var express = require('express');
 var router = express.Router();
 var knex = require('../lib/knex.js');
 
+var twilio = require('twilio');
+
+var accountSid = process.env.TWILIO_ACCOUNT_SID;
+var authToken = process.env.TWILIO_AUTH_TOKEN;
+
+var textClient = new twilio.RestClient(accountSid, authToken);
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
 });
+
+router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', function (req, res, next) {
+  if(req.params.licenseAgreement === 'false' || req.params.licenseAgreement === false) res.json({error: 'invalid license agreement 1'});
+  if (req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
+
+  knex('users').where('phone', req.params.phone).then(function (user) {
+    console.log("initial user search ", user);
+    if(user.length > 0){
+      res.json(user);
+    } else {
+
+      var confirmationCode = generateConfirmationCode();
+
+      knex('users').insert({
+        email: null,
+        phone: req.params.phone,
+        first_name: req.params.first_name,
+        last_name: req.params.last_name,
+        password: null,
+        portrait_link: 'http://www.boostinspiration.com/wp-content/uploads/2010/09/11_victory_bw_photography.jpg',
+        message_notifications: true,
+        group_notifications: false,
+        broadcast_notifications: true,
+        country_code: 1,
+        account_created: knex.fn.now(),
+        user_latitude: '40.167207',
+        user_longitude: '-105.101927',
+        verified: false,
+        last_login: knex.fn.now(),
+        banned: false,
+        ban_timestamp: null,
+        discipline: null,
+        confirmation_code: confirmationCode,
+        user_type: 'App',
+        ip_address: null,
+        tutorial_1: true,
+        tutorial_2: true,
+        tutorial_3: true,
+        tutorial_4: true,
+        tutorial_5: true,
+        EULA: true,
+        EULA_date_agreed: knex.fn.now()
+      }).returning(['user_id', 'phone']).then(function (arr) {
+        //send a text with twilio
+        confirmationCodeText('+13035892321', confirmationCode);
+        res.json(arr)
+      });
+    }
+  })
+
+})
 
 router.get('/messages/:user_id', function (req, res, next) {
   var result = {
@@ -81,5 +139,28 @@ Array.prototype.unique = function() {
     return r;
 };
 
+function generateConfirmationCode(){
+  var charset = '0123456789abcdefghijklmnopqrstuvwxyz';
+  var confirmationCode = "";
+  for( var i=0; i < 4; i++ ){
+    confirmationCode += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+
+  return confirmationCode;
+}
+
+function confirmationCodeText(to_phone, confirmationCode) {
+  textClient.sms.messages.create({
+    to: to_phone,
+    from: '+17204087635',
+    body: 'Hello! Thank you for registering with Whinny! CONFIRMTATION CODE: ' + confirmationCode,
+  }, function (error, message) {
+    if(!error){
+      console.log("Success! The SID for this SMS message is: ", message.sid);
+    } else {
+      console.log("There was an error with twilio confirmation code");
+    }
+  })
+}
 
 module.exports = router;
