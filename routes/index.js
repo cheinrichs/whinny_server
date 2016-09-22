@@ -19,12 +19,14 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
   if (req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
 
   knex('users').where('phone', req.params.phone).then(function (user) {
-    
+
     var confirmationCode = generateConfirmationCode();
 
     if(user.length > 0){
-      confirmationCodeText(req.params.phone, confirmationCode);
-      res.json(user);
+      knex('users').where('phone', req.params.phone).update({confirmation_code: confirmationCode}).then(function () {
+        confirmationCodeText(req.params.phone, confirmationCode);
+        res.json(user);
+      })
     } else {
 
 
