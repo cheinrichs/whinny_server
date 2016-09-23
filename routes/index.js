@@ -72,7 +72,7 @@ router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next)
   knex('users').where('user_id', req.params.user_id).first().then(function (user) {
     //TODO set a flag in the database that user has been confirmed
     //TODO if the user is null handle it
-    if(user.confirmation_code === req.params.confirmation_code.toLower()){
+    if(user.confirmation_code === req.params.confirmation_code.toLowerCase()){
       res.json({confirmed: 'true'});
     } else {
       res.json({confirmed: 'false'});
