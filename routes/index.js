@@ -164,7 +164,7 @@ function generateConfirmationCode(){
 
 function confirmationCodeText(to_phone, confirmationCode) {
   textClient.sms.messages.create({
-    to: '3035892321', //TODO change to to_phone after initial testing
+    to: to_phone,
     from: '+17204087635',
     body: 'Hello! Thank you for registering with Whinny! CONFIRMTATION CODE: ' + confirmationCode,
   }, function (error, message) {
