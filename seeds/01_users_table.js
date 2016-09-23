@@ -37,7 +37,7 @@ exports.seed = function(knex, Promise) {
         }),
         knex('users').insert({
           email: 'morgan.heinrichs@gmail.com',
-          phone: '3035892428',
+          phone: '3035892486',
           first_name: 'Morgan',
           last_name: 'Heinrichs',
           password: 'password',
