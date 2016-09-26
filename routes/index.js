@@ -137,6 +137,25 @@ router.get('/user/:user_phone', function (req, res, next) {
   });
 })
 
+router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, next){
+  knex('messages').insert({
+    to_user: req.params.to_user,
+    from_user: req.params.from_user,
+    message_type: 'chat',
+    content: req.params.content,
+    read: false,
+    sent_in_app: true,
+    sent_as_mms: false,
+    geographically_limited: false,
+    state: null,
+    zip: null,
+    latitude: null,
+    longitude: null
+  }).then(function () {
+    res.json({created: true});
+  })
+})
+
 Array.prototype.unique = function() {
     var o = {};
     var i;

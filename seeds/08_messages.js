@@ -35,7 +35,7 @@ exports.seed = function(knex, Promise) {
       longitude: null
     };
     return knex('users').where('first_name', from_first_name).first().then(function (user_obj) {
-      if(message_type === 'chat'){
+      if(message_type === 'chat' || message_type === 'group'){
         result.from_user = user_obj.user_id;
       } else {
         result.from_user = null;
