@@ -68,6 +68,13 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
   })
 })
 
+router.get('/log_in/:phone', function (req, res, next) {
+  if(!req.params.phone) res.json({status: 'denied'});
+  knex('users').where('phone', req.params.phone).first().then(function (user) {
+    res.json(user);
+  })
+})
+
 router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next) {
   knex('users').where('user_id', req.params.user_id).first().then(function (user) {
     //TODO set a flag in the database that user has been confirmed
