@@ -22,7 +22,6 @@ exports.seed = function(knex, Promise) {
       return knex('groups').where('group_name', group_name).first();
     }).then(function (group_obj) {
       result.to_group = group_obj.group_id;
-      console.log(result);
       return knex('group_messages').insert(result);
     });
   }
