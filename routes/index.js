@@ -163,6 +163,39 @@ router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, n
   })
 })
 
+router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
+  knex('group_messages').insert({
+    to_group: req.params.to_group,
+    from_user: req.params.from_user,
+    group_message_content: req.params.content
+  }).then(function () {
+    knex('group_memberships').where('group_id', req.params.to_group).then(function (members) {
+      var result = [];
+      for (var i = 0; i < members.length; i++) {
+        result.push({
+          to_user: members[i].user_id,
+          from_user: req.params.from_user,
+          message_type: 'group',
+          content: req.params.content,
+          group_id: req.params.to_group,
+
+          read: false,
+          sent_in_app: true,
+          sent_as_mms: false,
+          geographically_limited: false,
+          state: null,
+          zip: null,
+          latitude: null,
+          longitude: null
+        })
+      }
+      knex('messages').insert(result).then(function () {
+        res.json({confirmed: true})
+      })
+    })
+  })
+})
+
 Array.prototype.unique = function() {
     var o = {};
     var i;
