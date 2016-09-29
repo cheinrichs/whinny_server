@@ -7,7 +7,8 @@ exports.seed = function(knex, Promise) {
       createGroupMembership('Cooper', 'Whinny Staff', false, false),
       createGroupMembership('Morgan', 'Whinny Staff', true, false),
       createGroupMembership('Morgan', 'Paragon', true, false),
-      createGroupMembership('Morgan', 'Horse Fans', false, true)
+      createGroupMembership('Morgan', 'Horse Fans', false, true),
+      createGroupMembership('George', 'Whinny Staff', false, true)
     )
   });
 

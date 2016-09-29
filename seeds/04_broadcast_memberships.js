@@ -8,7 +8,8 @@ exports.seed = function(knex, Promise) {
       createBroadcastMembership('Cooper', 'Kentucky Derby Race Results', false, false),
       createBroadcastMembership('Morgan', 'Palm Beach Drassage Derby', true, false),
       createBroadcastMembership('Morgan', 'EDCC Contagious Disease Alerts', false, false),
-      createBroadcastMembership('Morgan', 'Del Mar National', false, true)
+      createBroadcastMembership('Morgan', 'Del Mar National', false, true),
+      createBroadcastMembership('George', 'EDCC Contagious Disease Alerts', false, true)
     )
   });
 

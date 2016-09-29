@@ -1,14 +1,17 @@
 
 exports.seed = function(knex, Promise) {
   return Promise.join(
-    knex('group_messages').del()
+    knex('messages').del()
   ).then(function () {
     return Promise.join(
       createMessage('Morgan', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'message to Morgan from Cooper', 'chat'),
       createMessage('Cooper', 'Morgan', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat'),
 
+      createMessage('George', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat'),
+      createMessage('George', 'Morgan', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat'),
+
       createMessage('Cooper', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'get back to work. all of yas', 'group'),
-      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'get back to work. all of yas', 'group'),
+      createMessage('Morgan', 'George', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Are there any more gluten free cookies...?', 'group'),
       createMessage('Cooper', 'Cooper', 'Horse Application Developers', 'EDCC Contagious Disease Alerts', 'Oh hey! Looks like I\'m the only one', 'group'),
       createMessage('Morgan', 'Morgan', 'Paragon', 'EDCC Contagious Disease Alerts', 'We need more allergy medicine again or something', 'group'),
       createMessage('Morgan', 'Morgan', 'Horse Fans', 'EDCC Contagious Disease Alerts', 'Check out this HILAROOUSDOS foto -', 'group'),
