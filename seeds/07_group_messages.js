@@ -6,9 +6,12 @@ exports.seed = function(knex, Promise) {
     return Promise.join(
       createGroupMessage('Cooper', 'Whinny Staff', 'get back to work. all of yas'),
       createGroupMessage('Cooper', 'Horse Application Developers', 'Oh hey! Looks like I\'m the only one'),
+
       createGroupMessage('Morgan', 'Paragon', 'We need more allergy medicine again or something'),
       createGroupMessage('Morgan', 'Horse Fans', 'Check out this HILAROOUSDOS foto -'),
-      createGroupMessage('Morgan', 'Whinny Staff', 'Sry bbl I\'m riding!')
+      createGroupMessage('Morgan', 'Whinny Staff', 'Sry bbl I\'m riding!'),
+
+      createGroupMessage('George', 'Whinny Staff', 'Are there any more gluten free cookies...?')
     )
   });
 
