@@ -87,6 +87,7 @@ router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next)
   })
 })
 
+//TODO remove this route
 router.get('/messages/:user_id', function (req, res, next) {
   var result = {
     messages: [],
@@ -138,6 +139,57 @@ router.get('/messages/:user_id', function (req, res, next) {
   })
 });
 
+
+router.get('/chatMessages/:user_id', function (req, res, next) {
+  var result = {};
+  knex('messages').where('to_user', req.params.user_id)
+  .orWhere('from_user', req.params.user_id).then(function (messages) {
+    result.messages = messages;
+    var user_ids = [];
+    for (var i = 0; i < messages.length; i++) {
+      if(messages[i].from_user) user_ids.push(messages[i].from_user);
+      if(messages[i].to_user) user_ids.push(messages[i].to_user);
+    }
+    user_ids = user_ids.unique();
+    knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
+      result.userObjects = userObjects;
+      res.json(result);
+    })
+  })
+})
+
+router.get('/groupMessages/:user_id', function (req, res, next) {
+  var result = {};
+  knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (memberships) {
+    knex('group_memberships').whereIn('group_id', memberships).pluck('user_id').then(function (user_ids) {
+      knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
+        result.userObjects = userObjects;
+        knex('group_messages').whereIn('to_group', memberships).then(function (messages) {
+          result.groupMessages = messages;
+          knex('groups').whereIn('group_id', memberships).then(function (groupObjects) {
+            result.groupObjects = groupObjects;
+            res.json(result);
+          })
+        })
+      })
+    })
+  })
+})
+
+router.get('/broadcastMessages/:user_id', function (req, res, next) {
+  var result = {};
+  knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcasts) {
+    knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
+      result.broadcastMessages = messages;
+      knex('broadcasts').whereIn('broadcast_id', broadcasts).then(function (broadcastObjects) {
+        result.broadcastObjects = broadcastObjects;
+        res.json(result);
+      })
+    })
+  })
+})
+
+
 router.get('/user/:user_phone', function (req, res, next) {
   knex('users').where('phone', req.params.user_phone).then(function (result) {
     res.json(result);
@@ -169,30 +221,7 @@ router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res
     from_user: req.params.from_user,
     group_message_content: req.params.content
   }).then(function () {
-    knex('group_memberships').where('group_id', req.params.to_group).then(function (members) {
-      var result = [];
-      for (var i = 0; i < members.length; i++) {
-        result.push({
-          to_user: members[i].user_id,
-          from_user: req.params.from_user,
-          message_type: 'group',
-          content: req.params.content,
-          group_id: req.params.to_group,
-
-          read: false,
-          sent_in_app: true,
-          sent_as_mms: false,
-          geographically_limited: false,
-          state: null,
-          zip: null,
-          latitude: null,
-          longitude: null
-        })
-      }
-      knex('messages').insert(result).then(function () {
-        res.json({confirmed: true})
-      })
-    })
+    res.json({confirmed: true})
   })
 })
 
