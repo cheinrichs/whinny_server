@@ -167,7 +167,10 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
         knex('group_messages').whereIn('to_group', memberships).then(function (messages) {
           result.groupMessages = messages;
           knex('groups').whereIn('group_id', memberships).then(function (groupObjects) {
-            result.groupObjects = groupObjects;
+            result.groupObjects = {};
+            for (var i = 0; i < groupObjects.length; i++) {
+              result.groupObjects[groupObjects[i].group_id] = groupObjects[i];
+            }
             res.json(result);
           })
         })
