@@ -225,6 +225,25 @@ router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res
   })
 })
 
+router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (req, res, next) {
+  knex('broadcast_memberships').where({
+    broadcast_id: req.params.to_broadcast,
+    user_id: req.params.from_user
+  }).first().then(function (membership) {
+    if(!membership.admin){
+      res.json({confirmed: false});
+    } else {
+      knex('broadcast_messages').insert({
+        to_broadcast: req.params.to_broadcast,
+        from_user: req.params.from_user,
+        broadcast_message_content: req.params.content
+      }).then(function () {
+        res.json({confirmed: true})
+      })
+    }
+  })
+})
+
 Array.prototype.unique = function() {
     var o = {};
     var i;
