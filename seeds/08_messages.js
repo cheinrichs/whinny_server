@@ -9,26 +9,7 @@ exports.seed = function(knex, Promise) {
       createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat'),
 
       createMessage('George', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat'),
-      createMessage('George', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat'),
-
-      //to_first_name, from_first_name, group_name, broadcast_name, content, message_type
-      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'get back to work. all of yas', 'group'),
-      createMessage('George', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'get back to work. all of yas', 'group'),
-
-      createMessage('Cooper', 'George', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Are there any more gluten free cookies...?', 'group'),
-      createMessage('Morgan', 'George', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Are there any more gluten free cookies...?', 'group'),
-
-      createMessage('Cooper', 'Morgan', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Sry bbl I\'m riding!', 'group'),
-      createMessage('George', 'Morgan', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Sry bbl I\'m riding!', 'group'),
-
-      createMessage('Cooper', 'Cooper', 'Horse Application Developers', 'EDCC Contagious Disease Alerts', 'Oh hey! Looks like I\'m the only one', 'group'),
-      createMessage('Morgan', 'Morgan', 'Paragon', 'EDCC Contagious Disease Alerts', 'We need more allergy medicine again or something', 'group'),
-      createMessage('Morgan', 'Morgan', 'Horse Fans', 'EDCC Contagious Disease Alerts', 'Check out this HILAROOUSDOS foto -', 'group'),
-
-      createMessage('Cooper', 'Cooper', 'Whinny Staff', 'EDCC Contagious Disease Alerts', 'Woozles. I repeat. Woozles', 'broadcast'),
-      createMessage('Cooper', 'Cooper', 'Whinny Staff', 'Kentucky Derby Race Results', 'This horse was faster than that horse. If you lost money please don\'t blame us', 'broadcast'),
-      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'Palm Beach Drassage Derby', 'Please note: Puting a tutu on your horse will not help it\'s pirouettes', 'broadcast'),
-      createMessage('Morgan', 'Cooper', 'Whinny Staff', 'Del Mar National', 'We have a lost long hair dachshund. He is demanding roast chicken at the front office.', 'broadcast')
+      createMessage('George', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat')
 
     )
   });
