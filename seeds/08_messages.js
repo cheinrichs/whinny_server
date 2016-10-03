@@ -8,8 +8,8 @@ exports.seed = function(knex, Promise) {
 
       createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat'),
 
-      createMessage('George', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat'),
-      createMessage('George', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat')
+      createMessage('Cooper', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat'),
+      createMessage('Morgan', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat')
 
     )
   });
