@@ -183,15 +183,19 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
   var result = {};
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcasts) {
     knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
+
       result.broadcastMessages = messages;
-      knex('broadcasts').whereIn('broadcast_id', broadcasts).then(function (broadcastObjects) {
+
+      knex('broadcast_memberships')
+      .join('broadcasts', 'broadcast_memberships.broadcast_id', "=", 'broadcasts.broadcast_id')
+      .where('user_id', req.params.user_id)
+      .then(function (broadcastObjects) {
         result.broadcastObjects = broadcastObjects;
         res.json(result);
       })
     })
   })
 })
-
 
 router.get('/user/:user_phone', function (req, res, next) {
   knex('users').where('phone', req.params.user_phone).then(function (result) {
