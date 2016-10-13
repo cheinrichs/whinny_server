@@ -87,58 +87,6 @@ router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next)
   })
 })
 
-//TODO remove this route
-router.get('/messages/:user_id', function (req, res, next) {
-  var result = {
-    messages: [],
-    users: {},
-    groups: {},
-    broadcasts: {}
-  };
-  knex('messages').where('to_user', req.params.user_id)
-  .orWhere('from_user', req.params.user_id)
-  .then(function (messages){
-    //get all of a users messages
-    result.messages = messages;
-    //look through those messages for each unique user id, then get that specific
-    //user object and stick it into users
-    var user_ids = [];
-    var group_ids = [];
-    var broadcast_ids = [];
-    for (var i = 0; i < messages.length; i++) {
-      user_ids.push(messages[i].to_user);
-      user_ids.push(messages[i].from_user);
-      group_ids.push(messages[i].group_id);
-      broadcast_ids.push(messages[i].broadcast_id);
-    }
-
-    //run through the collected users, groups, and broadcasts and make sure they're unique
-    user_ids = user_ids.unique();
-    group_ids = group_ids.unique();
-    broadcast_ids = broadcast_ids.unique();
-
-    //look through users and find each corresponding user object and add it to
-    //the final result object
-    knex('users').whereIn('user_id', user_ids).then(function (users) {
-      for (var i = 0; i < users.length; i++) result.users[users[i].user_id] = users[i];
-    }).then(function () {
-      //look through groups and find each corresponding group object and add it to
-      //the final result object
-      knex('groups').whereIn('group_id', group_ids).then(function (groups) {
-        for (var i = 0; i < groups.length; i++) result.groups[groups[i].group_id] = groups[i];
-      }).then(function () {
-        //look through messages for each broadcast id, then get that specific broadcast
-        //object and stick it in broadcasts
-        knex('broadcasts').whereIn('broadcast_id', broadcast_ids).then(function (broadcasts) {
-          for (var i = 0; i < broadcasts.length; i++) result.broadcasts[broadcasts[i].broadcast_id] = broadcasts[i];
-        }).then(function () {
-          res.json(result);
-        })
-      })
-    })
-  })
-});
-
 
 router.get('/chatMessages/:user_id', function (req, res, next) {
   var result = {};
@@ -197,6 +145,7 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
   })
 })
 
+
 router.get('/user/:user_phone', function (req, res, next) {
   knex('users').where('phone', req.params.user_phone).then(function (result) {
     res.json(result);
@@ -251,6 +200,101 @@ router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (
   })
 })
 
+//TODO: change to post
+router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, next) {
+  knex('users').where('phone', req.params.to_phone).first().then(function (user) {
+    if(user){
+      //create a message with user.user_id as a the to user
+      console.log("user in the system");
+      console.log(user);
+      console.log("creating message");
+      knex('messages').insert({
+        to_user: user.user_id,
+        from_user: req.params.from_user,
+        message_type: 'chat',
+        content: req.params.content,
+        read: false,
+        sent_in_app: true,
+        sent_as_mms: false,
+        geographically_limited: false,
+        state: null,
+        zip: null,
+        latitude: null,
+        longitude: null
+      }).then(function () {
+        res.json({created: true});
+      })
+
+    } else {
+      console.log("user not in the system");
+      //create a new user
+      console.log("creating user");
+
+      knex('users').insert({
+        email: null,
+        phone: req.params.to_phone,
+        first_name: null,
+        last_name: null,
+        password: null,
+        //TODO: standard portrait link
+        portrait_link: 'https://s-media-cache-ak0.pinimg.com/564x/a5/38/e3/a538e3c4163496bfec2a6782b8290a33.jpg',
+        message_notifications: true,
+        group_notifications: false,
+        broadcast_notifications: true,
+        country_code: 1,
+        account_created: knex.fn.now(),
+        user_latitude: '40.167207',
+        user_longitude: '-105.101927',
+        verified: false,
+        last_login: null,
+        banned: false,
+        ban_timestamp: null,
+        discipline: null,
+        confirmation_code: generateConfirmationCode(),
+        user_type: 'text',
+        ip_address: null,
+        tutorial_1: true,
+        tutorial_2: true,
+        tutorial_3: true,
+        tutorial_4: true,
+        tutorial_5: true,
+        EULA: false,
+        EULA_date_agreed: null
+      }).returning('*').first().then(function (new_user) {
+        //Create a message to the new user
+        console.log('new user', new_user);
+        console.log(new_user.user_id);
+        console.log("creating message");
+        knex('messages').insert({
+          to_user: new_user.user_id,
+          from_user: req.params.from_user,
+          message_type: 'chat',
+          content: req.params.content,
+          read: false,
+          sent_in_app: true,
+          sent_as_mms: false,
+          geographically_limited: false,
+          state: null,
+          zip: null,
+          latitude: null,
+          longitude: null
+        }).then(function () {
+          //send a text message to the given phone number
+          knex('users').where('user_id', req.params.from_user).first().then(function (from_user) {
+            if(from_user){
+              console.log('sending text message');
+              sendMms(req.params.to_phone, req.params.content, from_user.first_name, from_user.last_name);
+              res.json({created: true, textSent: true});
+            } else {
+              console.log("couldnt send text message");
+              res.json({created:true, textSent: false});
+            }
+          })
+        })
+      });
+    }
+  });
+});
 Array.prototype.unique = function() {
     var o = {};
     var i;
@@ -291,4 +335,18 @@ function confirmationCodeText(to_phone, confirmationCode) {
   })
 }
 
+function sendMms(to_phone, content, from_first_name, from_last_name) {
+  textClient.sms.messages.create({
+    // to: to_phone,
+    to: '+13035892321',
+    from: '+17204087635',
+    body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo download the Whinny App click here! http://www.whinny.com/',
+  }, function (error, message) {
+    if(!error){
+      console.log("Success! The SID for this SMS message is: ", message.sid);
+    } else {
+      console.log("There was an error with twilio mms message");
+    }
+  })
+}
 module.exports = router;
