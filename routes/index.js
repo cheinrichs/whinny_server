@@ -228,7 +228,7 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
     } else {
       console.log("user not in the system");
       //create a new user
-      console.log("creating user");
+      console.log("creating user", req.params.to_phone);
 
       knex('users').insert({
         email: null,
@@ -260,13 +260,13 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         tutorial_5: true,
         EULA: false,
         EULA_date_agreed: null
-      }).returning('*').first().then(function (new_user) {
+      }).returning('*').then(function (new_users) {
         //Create a message to the new user
-        console.log('new user', new_user);
-        console.log(new_user.user_id);
+        console.log('new user', new_users);
+        console.log(new_users[0].user_id);
         console.log("creating message");
         knex('messages').insert({
-          to_user: new_user.user_id,
+          to_user: new_users[0].user_id,
           from_user: req.params.from_user,
           message_type: 'chat',
           content: req.params.content,
@@ -284,12 +284,12 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
             if(from_user){
               console.log('sending text message');
               sendMms(req.params.to_phone, req.params.content, from_user.first_name, from_user.last_name);
-              new_user.textSent = true;
-              res.json(new_user);
+              new_users[0].textSent = true;
+              res.json(new_users[0]);
             } else {
               console.log("couldnt send text message");
-              new_user.textSent = false;
-              res.json(new_user);
+              new_users[0].textSent = false;
+              res.json(new_users[0]);
             }
           })
         })
