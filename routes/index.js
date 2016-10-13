@@ -222,7 +222,7 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         latitude: null,
         longitude: null
       }).then(function () {
-        res.json({created: true});
+        res.json(user);
       })
 
     } else {
@@ -284,10 +284,12 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
             if(from_user){
               console.log('sending text message');
               sendMms(req.params.to_phone, req.params.content, from_user.first_name, from_user.last_name);
-              res.json({created: true, textSent: true});
+              new_user.textSent = true;
+              res.json(new_user);
             } else {
               console.log("couldnt send text message");
-              res.json({created:true, textSent: false});
+              new_user.textSent = false;
+              res.json(new_user);
             }
           })
         })
