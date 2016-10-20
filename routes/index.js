@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var knex = require('../lib/knex.js');
+var request = require('request');
 
 var twilio = require('twilio');
 
@@ -38,7 +39,7 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
         password: null,
         portrait_link: 'http://www.boostinspiration.com/wp-content/uploads/2010/09/11_victory_bw_photography.jpg',
         message_notifications: true,
-        group_notifications: false,
+        group_notifications: true,
         broadcast_notifications: true,
         country_code: 1,
         account_created: knex.fn.now(),
@@ -145,7 +146,6 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
   })
 })
 
-
 router.get('/user/:user_phone', function (req, res, next) {
   knex('users').where('phone', req.params.user_phone).then(function (result) {
     res.json(result);
@@ -239,7 +239,7 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         //TODO: standard portrait link
         portrait_link: 'https://s-media-cache-ak0.pinimg.com/564x/a5/38/e3/a538e3c4163496bfec2a6782b8290a33.jpg',
         message_notifications: true,
-        group_notifications: false,
+        group_notifications: true,
         broadcast_notifications: true,
         country_code: 1,
         account_created: knex.fn.now(),
@@ -297,6 +297,46 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
     }
   });
 });
+
+router.post('/createNewGroup', function (req, res, next) {
+  console.log('req body', req.body);
+  if(!req.body) res.json({ success: 'false' });
+
+  var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.groupState+ '&sensor=true';
+  request(url, function (error, response, body) {
+    var data = JSON.parse(body);
+    for (var i = 0; i < data.results[0].address_components.length; i++) {
+      if(data.results[0].address_components[i].types.includes('administrative_area_level_1')){
+        console.log(data.results[0].address_components[i].short_name);
+      }
+    }
+
+  })
+    //create a group with the current specs
+    knex('groups').insert({
+      group_name: req.body.groupName,
+      group_photo: req.body.imageLink,
+      is_private: req.body.is_private,
+      is_hidden: req.body.hidden,
+      users_can_respond: true, //TODO fix this
+      geographically_limited: req.body.false, //TODO
+      group_latitude: '40.167207',
+      group_longitude: '-105.101927',
+      group_zip: req.body.groupZip,
+      group_state: req.body.groupState,
+      group_discipline: req.body.groupDiscipline
+    })
+
+  if(req.body.phoneNumbers){
+    for (var i = 0; i < req.body.phoneNumbers.length; i++) {
+      console.log(req.body.phoneNumbers[i]);
+      //look up the and get the user id for the phone number
+      //create a group membership for the given user id
+    }
+  }
+  res.json({ success: 'true', members: req.members });
+})
+
 Array.prototype.unique = function() {
     var o = {};
     var i;
