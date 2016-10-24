@@ -8,6 +8,7 @@ exports.up = function(knex, Promise) {
 
     table.string('group_name').notNullable();
     table.string('group_photo');
+    table.string('description');
 
     table.boolean('is_private');
     table.boolean('is_hidden');

@@ -303,38 +303,42 @@ router.post('/createNewGroup', function (req, res, next) {
   if(!req.body) res.json({ success: 'false' });
 
   var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.groupState+ '&sensor=true';
+  var state;
   request(url, function (error, response, body) {
     var data = JSON.parse(body);
     for (var i = 0; i < data.results[0].address_components.length; i++) {
       if(data.results[0].address_components[i].types.includes('administrative_area_level_1')){
-        console.log(data.results[0].address_components[i].short_name);
+        state = data.results[0].address_components[i].short_name;
       }
     }
+    console.log(state);
 
-  })
-    //create a group with the current specs
+    // create a group with the current specs
     knex('groups').insert({
       group_name: req.body.groupName,
       group_photo: req.body.imageLink,
+      description: req.body.description,
       is_private: req.body.is_private,
       is_hidden: req.body.hidden,
       users_can_respond: true, //TODO fix this
       geographically_limited: req.body.false, //TODO
       group_latitude: '40.167207',
       group_longitude: '-105.101927',
-      group_zip: req.body.groupZip,
-      group_state: req.body.groupState,
-      group_discipline: req.body.groupDiscipline
+      group_zip: req.body.zip,
+      group_state: state,
+      group_discipline: req.body.discipline,
+      geographically_limited: false,
+    }).then(function () {
+      if(req.body.phoneNumbers){
+        for (var i = 0; i < req.body.phoneNumbers.length; i++) {
+          console.log(req.body.invited[i]);
+          //look up the and get the user id for the phone number
+          //create a group membership for the given user id
+        }
+      }
+      res.json({ success: 'true', members: req.members });
     })
-
-  if(req.body.phoneNumbers){
-    for (var i = 0; i < req.body.phoneNumbers.length; i++) {
-      console.log(req.body.phoneNumbers[i]);
-      //look up the and get the user id for the phone number
-      //create a group membership for the given user id
-    }
-  }
-  res.json({ success: 'true', members: req.members });
+  })
 })
 
 Array.prototype.unique = function() {
