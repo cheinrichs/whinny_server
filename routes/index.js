@@ -368,6 +368,16 @@ router.get('/groupInvitations/:user_id', function (req, res, next) {
   })
 })
 
+router.post('/acceptInvitation', function (req, res, next) {
+  console.log(req.body);
+  res.json({ success: 'true' });
+})
+
+router.post('/declineInvitation', function (req, res, next) {
+  console.log(req.body);
+  res.json({ success: 'true' });
+})
+
 Array.prototype.unique = function() {
     var o = {};
     var i;
