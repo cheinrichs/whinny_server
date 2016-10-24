@@ -331,6 +331,8 @@ router.post('/createNewGroup', function (req, res, next) {
     }).returning('*').then(function (group) {
       //Now we need to find user ids for given phone numbers
 
+      //TODO create a group membership for the creator
+
       //TODO if there is not a user object for a given phone number, create a new user
       //and then create an invitation
       knex('users').whereIn('phone', req.body.invited).then(function (users) {
@@ -352,11 +354,17 @@ router.post('/createNewGroup', function (req, res, next) {
             //create a group membership for the given user id
           }
           knex('group_invitations').insert(invitations).then(function () {
-            res.json({ success: 'true' });
+            res.json({ group_id: group[0].group_id });
           })
         }
       })
     })
+  })
+})
+
+router.get('/groupInvitations/:user_id', function (req, res, next) {
+  knex('group_invitations').where('user_id', req.params.user_id).join('groups', 'group_invitations.group_id', '=', 'groups.group_id').then(function (invitations) {
+    res.json(invitations);
   })
 })
 
