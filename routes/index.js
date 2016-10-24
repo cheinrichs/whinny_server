@@ -328,15 +328,34 @@ router.post('/createNewGroup', function (req, res, next) {
       group_state: state,
       group_discipline: req.body.discipline,
       geographically_limited: false,
-    }).then(function () {
-      if(req.body.phoneNumbers){
-        for (var i = 0; i < req.body.phoneNumbers.length; i++) {
-          console.log(req.body.invited[i]);
-          //look up the and get the user id for the phone number
-          //create a group membership for the given user id
+    }).returning('*').then(function (group) {
+      //Now we need to find user ids for given phone numbers
+
+      //TODO if there is not a user object for a given phone number, create a new user
+      //and then create an invitation
+      knex('users').whereIn('phone', req.body.invited).then(function (users) {
+        console.log(users);
+        console.log(group[0]);
+        console.log(group[0].group_id);
+        if(users.length < req.body.invited.length){ //TODO remove once we add users
+          console.log(" some users weren't invited ");
         }
-      }
-      res.json({ success: 'true', members: req.members });
+        if(req.body.invited){
+          var invitations = [];
+          for (var i = 0; i < users.length; i++) {
+            invitations.push({
+              group_id: group[0].group_id,
+              user_id: users[i].user_id,
+              status: 'pending'
+            });
+            //look up the and get the user id for the phone number
+            //create a group membership for the given user id
+          }
+          knex('group_invitations').insert(invitations).then(function () {
+            res.json({ success: 'true' });
+          })
+        }
+      })
     })
   })
 })
