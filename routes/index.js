@@ -383,7 +383,7 @@ router.post('/acceptInvitation', function (req, res, next) {
 })
 
 router.post('/declineInvitation', function (req, res, next) {
-  knex('group_invitations').where({ invitation_id: req.body.invitation_id }).update({ status: 'declined' }).then(function () {
+  knex('group_invitations').where({ invitation_id: req.body.invitation_id }).del().then(function () {
     res.json({ groupMembershipDeclined: 'successful' });
   });
 })
