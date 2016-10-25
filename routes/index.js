@@ -369,7 +369,7 @@ router.get('/groupInvitations/:user_id', function (req, res, next) {
 })
 
 router.post('/acceptInvitation', function (req, res, next) {
-  knex('group_invitations').where({ group_id: req.body.group_id, user_id: req.body.user_id }).update({ status: 'accepted' }).then(function () {
+  knex('group_invitations').where({ group_id: req.body.group_id, user_id: req.body.user_id }).del().then(function () {
     //create a new group membership
     knex('group_memberships').insert({
       user_id: req.body.user_id,
