@@ -369,13 +369,23 @@ router.get('/groupInvitations/:user_id', function (req, res, next) {
 })
 
 router.post('/acceptInvitation', function (req, res, next) {
-  console.log(req.body);
-  res.json({ success: 'true' });
+  knex('group_invitations').where({ group_id: req.body.group_id, user_id: req.body.user_id }).update({ status: 'accepted' }).then(function () {
+    //create a new group membership
+    knex('group_memberships').insert({
+      user_id: req.body.user_id,
+      group_id: req.body.group_id,
+      admin: false,
+      notifications: true
+    }).then(function () {
+      res.json({ groupMembershipCreated: 'successful' });
+    })
+  })
 })
 
 router.post('/declineInvitation', function (req, res, next) {
-  console.log(req.body);
-  res.json({ success: 'true' });
+  knex('group_invitations').where({ invitation_id: req.body.invitation_id }).update({ status: 'declined' }).then(function () {
+    res.json({ groupMembershipDeclined: 'successful' });
+  });
 })
 
 Array.prototype.unique = function() {
