@@ -390,7 +390,7 @@ router.post('/declineInvitation', function (req, res, next) {
 
 router.get('/groupSearch/:user_id', function (req, res, next) {
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (group_ids) {
-    knex('groups').whereNotIn('group_id', group_ids).then(function (searchGroups) {
+    knex('groups').where('is_hidden', false).whereNotIn('group_id', group_ids).then(function (searchGroups) {
       res.json(searchGroups);
     })
   })
