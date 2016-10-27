@@ -76,9 +76,9 @@ exports.seed = function(knex, Promise) {
           group_discipline: 'All'
         }),
         knex('groups').insert({
-          group_name: 'Polo Players Support Group',
+          group_name: 'Stallmuckers Rugby Team',
           group_photo: 'http://www.efgcapital.com/cms1/files/live/sites/systemsite/files/images/sponsorship/polo/polo_big_1.jpg',
-          description: 'Youre not alone',
+          description: 'Looking for a flanker',
           is_private: false,
           is_hidden: false,
           users_can_respond: true,
@@ -92,7 +92,7 @@ exports.seed = function(knex, Promise) {
         knex('groups').insert({
           group_name: 'Budweiser Clydesdale Sightings Thread',
           group_photo: 'http://i2.cdn.turner.com/money/dam/assets/140115120942-superbowl-budweiser-ad-1024x576.png',
-          description: 'Youre not alone',
+          description: 'Puppies too',
           is_private: false,
           is_hidden: false,
           users_can_respond: true,
@@ -120,7 +120,7 @@ exports.seed = function(knex, Promise) {
         knex('groups').insert({
           group_name: 'Autumn Hill Barn Members',
           group_photo: 'http://www.jimemery.com/colorado/source/image/boulderbarn_co01519_600.jpg',
-          description: 'Youre not alone',
+          description: 'If youre not crazy you dont belong here',
           is_private: true,
           is_hidden: false,
           users_can_respond: true,
