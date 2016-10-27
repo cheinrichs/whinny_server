@@ -52,7 +52,7 @@ exports.seed = function(knex, Promise) {
           group_photo: 'http://vignette1.wikia.nocookie.net/disney/images/5/54/Pooh-bear-clip-art-winniepooh_1_800_800.jpg/revision/latest?cb=20140909020750',
           description: 'Private group for Whinny Staff',
           is_private: true,
-          is_hidden: false,
+          is_hidden: true,
           users_can_respond: true,
           geographically_limited: false,
           group_latitude: '40.167207',
@@ -131,6 +131,20 @@ exports.seed = function(knex, Promise) {
           group_state: null,
           group_discipline: 'All'
         }),
+        knex('groups').insert({
+          group_name: 'Secret invite only group',
+          group_photo: 'https://www.anonymousglobal.org/images/cells/AnonymousAndorra.jpg',
+          description: 'Theyre watching. Were watching back.',
+          is_private: true,
+          is_hidden: true,
+          users_can_respond: true,
+          geographically_limited: false,
+          group_latitude: '40.167207',
+          group_longitude: '-105.101927',
+          group_zip: null,
+          group_state: null,
+          group_discipline: 'All'
+        })
       ]);
     });
 };
