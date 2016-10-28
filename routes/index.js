@@ -396,6 +396,54 @@ router.get('/groupSearch/:user_id', function (req, res, next) {
   })
 })
 
+router.post('/joinGroup', function (req, res, next) {
+
+  if(!req.body.group_id){
+    console.log("No given group_id in joinGroup");
+    res.json({success: false});
+  }
+
+  if(!req.body.user_id){
+    console.log("No given user_id in joinGroup");
+    res.json({success: false});
+  }
+
+  console.log(req.body.group_id);
+  console.log(req.body.user_id);
+
+  knex('group_memberships').insert({
+    user_id: req.body.user_id,
+    group_id: req.body.group_id,
+    admin: false,
+    notifications: true
+  }).then(function () {
+    res.json({ success: true});
+  })
+
+})
+
+router.post('/leaveGroup', function (req, res, next) {
+  if(!req.body.group_id){
+    console.log("No given group_id in joinGroup");
+    res.json({success: false});
+  }
+
+  if(!req.body.user_id){
+    console.log("No given user_id in joinGroup");
+    res.json({success: false});
+  }
+
+  console.log(req.body.group_id);
+  console.log(req.body.user_id);
+
+  knex('group_memberships').where({
+    user_id: req.body.user_id,
+    group_id: req.body.group_id
+  }).del().then(function () {
+    res.json({ success: true });
+  })
+
+})
 Array.prototype.unique = function() {
     var o = {};
     var i;

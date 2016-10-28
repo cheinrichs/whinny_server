@@ -77,7 +77,7 @@ exports.seed = function(knex, Promise) {
         }),
         knex('groups').insert({
           group_name: 'Stallmuckers Rugby Team',
-          group_photo: 'http://www.efgcapital.com/cms1/files/live/sites/systemsite/files/images/sponsorship/polo/polo_big_1.jpg',
+          group_photo: 'https://www2.le.ac.uk/offices/sports/images/rugbyunion%20muddy%20peace.jpg/image_preview',
           description: 'Looking for a flanker',
           is_private: false,
           is_hidden: false,
