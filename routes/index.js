@@ -350,7 +350,7 @@ router.post('/createNewGroup', function (req, res, next) {
               user_id: users[i].user_id,
               status: 'pending'
             });
-            //look up the and get the user id for the phone number
+            //look up the user and get the user id for the phone number
             //create a group membership for the given user id
           }
           knex('group_invitations').insert(invitations).then(function () {
@@ -388,6 +388,27 @@ router.post('/declineInvitation', function (req, res, next) {
   });
 })
 
+router.get('/groupApplications/:user_id', function (req, res, next) {
+  var result = {};
+  knex('group_memberships').where({
+    user_id: req.params.user_id,
+    admin: true
+  }).pluck('group_id').then(function (group_ids) {
+    knex('groups').whereIn('group_id', group_ids).then(function (groups) {
+      for (var i = 0; i < groups.length; i++) {
+        result[groups[i].group_id] = groups[i];
+      }
+      knex('group_applications').whereIn('group_id', group_ids).then(function (applications) {
+        for (var i = 0; i < applications.length; i++) {
+          result[applications[i].group_id].applications = [];
+          result[applications[i].group_id].applications.push(applications[i])
+        }
+        res.json(result);
+      })
+    })
+  })
+})
+
 router.get('/groupSearch/:user_id', function (req, res, next) {
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (group_ids) {
     knex('groups').where('is_hidden', false).whereNotIn('group_id', group_ids).then(function (searchGroups) {
@@ -407,9 +428,6 @@ router.post('/joinGroup', function (req, res, next) {
     console.log("No given user_id in joinGroup");
     res.json({success: false});
   }
-
-  console.log(req.body.group_id);
-  console.log(req.body.user_id);
 
   knex('group_memberships').insert({
     user_id: req.body.user_id,
@@ -433,9 +451,6 @@ router.post('/leaveGroup', function (req, res, next) {
     res.json({success: false});
   }
 
-  console.log(req.body.group_id);
-  console.log(req.body.user_id);
-
   knex('group_memberships').where({
     user_id: req.body.user_id,
     group_id: req.body.group_id
@@ -444,6 +459,7 @@ router.post('/leaveGroup', function (req, res, next) {
   })
 
 })
+
 Array.prototype.unique = function() {
     var o = {};
     var i;
@@ -498,4 +514,5 @@ function sendMms(to_phone, content, from_first_name, from_last_name) {
     }
   })
 }
+
 module.exports = router;
