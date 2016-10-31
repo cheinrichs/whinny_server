@@ -409,17 +409,22 @@ router.get('/groupApplications/:user_id', function (req, res, next) {
          'users.last_name'
        ])
       .innerJoin('users', 'group_applications.user_id', '=', 'users.user_id').then(function (applications){
-        for (var i = 0; i < applications.length; i++) {
-          result[applications[i].group_id].applications = [];
-          result[applications[i].group_id].applications.push(applications[i])
+        if(applications.length > 0){
+          for (var i = 0; i < applications.length; i++) {
+            result[applications[i].group_id].applications = [];
+            result[applications[i].group_id].applications.push(applications[i])
+          }
+          res.json(result);
+        } else {
+          res.json({ noCurrentApplications: true });
         }
-        res.json(result);
       })
     })
   })
 })
 
 router.post('/acceptGroupApplication', function (req, res, next) {
+  //TODO instead of deleting, update the status to accepted
   knex('group_applications').where({ user_id: req.body.user_id, group_id: req.body.group_id }).del().then(function () {
     knex('group_memberships').insert({
       user_id: req.body.user_id,
@@ -433,6 +438,7 @@ router.post('/acceptGroupApplication', function (req, res, next) {
 })
 
 router.post('/declineGroupApplication', function (req, res, next) {
+  //TODO instead of deleting, update the status to deleted
   knex('group_applications').where({ application_id: req.body.application_id }).del().then(function () {
     res.json({ groupApplicationDeclined: 'successful' });
   })
