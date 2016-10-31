@@ -403,6 +403,7 @@ router.get('/groupApplications/:user_id', function (req, res, next) {
       .select(
         ['group_applications.application_id',
          'group_applications.group_id',
+         'group_applications.user_id',
          'group_applications.status',
          'users.first_name',
          'users.last_name'
@@ -415,6 +416,25 @@ router.get('/groupApplications/:user_id', function (req, res, next) {
         res.json(result);
       })
     })
+  })
+})
+
+router.post('/acceptApplication', function (req, res, next) {
+  knex('group_applications').where({ user_id: req.body.user_id, group_id: req.body.group_id }).del().then(function () {
+    knex('group_memberships').insert({
+      user_id: req.body.user_id,
+      group_id: req.body.group_id,
+      admin: false,
+      notifications: true
+    }).then(function () {
+      res.json({ groupMembershipCreated: 'successful' });
+    })
+  })
+})
+
+router.post('/declineApplication', function (req, res, next) {
+  knex('group_applications').where({ application_id: req.body.application_id }).del().then(function () {
+    res.json({ groupApplicationDeclined: 'successful' });
   })
 })
 
