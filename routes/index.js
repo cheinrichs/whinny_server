@@ -419,7 +419,7 @@ router.get('/groupApplications/:user_id', function (req, res, next) {
   })
 })
 
-router.post('/acceptApplication', function (req, res, next) {
+router.post('/acceptGroupApplication', function (req, res, next) {
   knex('group_applications').where({ user_id: req.body.user_id, group_id: req.body.group_id }).del().then(function () {
     knex('group_memberships').insert({
       user_id: req.body.user_id,
@@ -432,7 +432,7 @@ router.post('/acceptApplication', function (req, res, next) {
   })
 })
 
-router.post('/declineApplication', function (req, res, next) {
+router.post('/declineGroupApplication', function (req, res, next) {
   knex('group_applications').where({ application_id: req.body.application_id }).del().then(function () {
     res.json({ groupApplicationDeclined: 'successful' });
   })
