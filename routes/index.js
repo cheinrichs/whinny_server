@@ -398,7 +398,16 @@ router.get('/groupApplications/:user_id', function (req, res, next) {
       for (var i = 0; i < groups.length; i++) {
         result[groups[i].group_id] = groups[i];
       }
-      knex('group_applications').whereIn('group_id', group_ids).then(function (applications) {
+      knex('group_applications')
+      .whereIn('group_id', group_ids)
+      .select(
+        ['group_applications.application_id',
+         'group_applications.group_id',
+         'group_applications.status',
+         'users.first_name',
+         'users.last_name'
+       ])
+      .innerJoin('users', 'group_applications.user_id', '=', 'users.user_id').then(function (applications){
         for (var i = 0; i < applications.length; i++) {
           result[applications[i].group_id].applications = [];
           result[applications[i].group_id].applications.push(applications[i])
