@@ -503,7 +503,21 @@ router.get('/getUserInterests/:user_id', function (req, res, next) {
 
 router.post('/addUserInterests', function (req, res, next) {
   console.log(req.body);
-  res.json({ yyeaaa: 'yeah' });
+  var interests = [];
+  for (var i = 0; i < req.body.interests.length; i++) {
+    var interest = {
+      user_id: req.body.currentUser,
+      discipline_id: req.body.interests[i]
+    }
+    interests.push(interest);
+  }
+
+  knex('user_interests').insert(interests).then(function () {
+    knex('user_suggested_disciplines').insert(req.body.suggested_interest).then(function () {
+      res.json({ yyeaaa: 'yeah' });
+    })
+  });
+  
 })
 
 Array.prototype.unique = function() {
