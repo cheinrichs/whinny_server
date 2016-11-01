@@ -511,13 +511,14 @@ router.post('/addUserInterests', function (req, res, next) {
     }
     interests.push(interest);
   }
+  console.log(req.body.suggested_interest);
 
   knex('user_interests').insert(interests).then(function () {
-    knex('user_suggested_disciplines').insert(req.body.suggested_interest).then(function () {
+    knex('user_suggested_disciplines').insert({suggested_discipline: req.body.suggested_interest}).then(function () {
       res.json({ yyeaaa: 'yeah' });
     })
   });
-  
+
 })
 
 Array.prototype.unique = function() {
