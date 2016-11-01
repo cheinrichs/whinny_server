@@ -495,6 +495,17 @@ router.post('/leaveGroup', function (req, res, next) {
 
 })
 
+router.get('/getUserInterests/:user_id', function (req, res, next) {
+  knex('user_interests').where( 'user_id', req.params.user_id).then(function (interests) {
+    res.json(interests);
+  })
+})
+
+router.post('/addUserInterests', function (req, res, next) {
+  console.log(req.body);
+  res.json({ yyeaaa: 'yeah' });
+})
+
 Array.prototype.unique = function() {
     var o = {};
     var i;
