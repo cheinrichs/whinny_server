@@ -452,14 +452,6 @@ router.get('/groupSearch/:user_id', function (req, res, next) {
   })
 })
 
-router.get('/broadcastSearch/:user_id', function (req, res, next) {
-  knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcast_ids) {
-    knex('broadcasts').whereNotIn('broadcast_id', broadcast_ids).then(function (searchBroadcasts) {
-      res.json(searchBroadcasts);
-    })
-  })
-})
-
 router.post('/joinGroup', function (req, res, next) {
 
   if(!req.body.group_id){
@@ -501,6 +493,52 @@ router.post('/leaveGroup', function (req, res, next) {
     res.json({ success: true });
   })
 
+})
+
+router.get('/broadcastSearch/:user_id', function (req, res, next) {
+  knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcast_ids) {
+    knex('broadcasts').whereNotIn('broadcast_id', broadcast_ids).then(function (searchBroadcasts) {
+      res.json(searchBroadcasts);
+    })
+  })
+})
+
+router.post('/subscribeToBroadcast', function (req, res, next) {
+  if(!req.body.broadcast_id){
+    console.log("No given broadcast_id in subscribeFromBroadcast");
+    res.json({success: false});
+  }
+
+  if(!req.body.user_id){
+    console.log("No given user_id in subscribeFromBroadcast");
+    res.json({success: false});
+  }
+
+  var membership = {
+    user_id: req.body.user_id,
+    broadcast_id: req.body.broadcast_id,
+    admin: false,
+    notifications: true
+  }
+  knex('broadcast_memberships').insert(membership).then(function () {
+    res.json({ succes: true });
+  })
+})
+
+router.post('/unsubscribeFromBroadcast', function (req, res, next) {
+  if(!req.body.broadcast_id){
+    console.log("No given broadcast_id in unsubscribeFromBroadcast");
+    res.json({success: false});
+  }
+
+  if(!req.body.user_id){
+    console.log("No given user_id in unsubscribeFromBroadcast");
+    res.json({success: false});
+  }
+
+  knex('broadcast_memberships').where({ user_id: req.body.user_id, broadcast_id: req.body.broadcast_id}).del().then(function () {
+    res.json({ usubscribedFrom: req.body.broadcast_id });
+  })
 })
 
 router.get('/getUserInterests/:user_id', function (req, res, next) {
