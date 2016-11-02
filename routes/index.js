@@ -452,6 +452,14 @@ router.get('/groupSearch/:user_id', function (req, res, next) {
   })
 })
 
+router.get('/broadcastSearch/:user_id', function (req, res, next) {
+  knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcast_ids) {
+    knex('broadcasts').whereNotIn('broadcast_id', broadcast_ids).then(function (searchBroadcasts) {
+      res.json(searchBroadcasts);
+    })
+  })
+})
+
 router.post('/joinGroup', function (req, res, next) {
 
   if(!req.body.group_id){
