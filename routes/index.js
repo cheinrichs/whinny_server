@@ -317,18 +317,18 @@ router.post('/createNewGroup', function (req, res, next) {
 
     // create a group with the current specs
     knex('groups').insert({
-      group_name: req.body.groupName,
-      group_photo: req.body.imageLink,
-      description: req.body.description,
-      is_private: req.body.is_private,
-      is_hidden: req.body.hidden,
+      group_name: req.body.createGroupInfo.groupName,
+      group_photo: req.body.createGroupInfo.imageLink,
+      description: req.body.createGroupInfo.description,
+      is_private: req.body.createGroupInfo.is_private,
+      is_hidden: req.body.createGroupInfo.hidden,
       users_can_respond: true, //TODO fix this
-      geographically_limited: req.body.false, //TODO
+      geographically_limited: false, //TODO
       group_latitude: '40.167207',
       group_longitude: '-105.101927',
-      group_zip: req.body.zip,
+      group_zip: req.body.createGroupInfo.zip,
       group_state: state,
-      group_discipline: req.body.discipline,
+      group_discipline: req.body.createGroupInfo.discipline,
       geographically_limited: false,
     }).returning('*').then(function (group) {
       //Now we need to find user ids for given phone numbers
