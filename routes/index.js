@@ -304,7 +304,7 @@ router.post('/createNewGroup', function (req, res, next) {
   console.log('req body', req.body);
   if(!req.body) res.json({ success: 'false' });
 
-  var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.createGroupInfo.zip + '&sensor=true';
+  var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.zip + '&sensor=true';
   var state;
   request(url, function (error, response, body) {
     var data = JSON.parse(body);
@@ -317,26 +317,26 @@ router.post('/createNewGroup', function (req, res, next) {
 
     // create a group with the current specs
     knex('groups').insert({
-      group_name: req.body.createGroupInfo.groupName,
-      group_photo: req.body.createGroupInfo.imageLink,
-      description: req.body.createGroupInfo.description,
-      is_private: req.body.createGroupInfo.is_private,
-      is_hidden: req.body.createGroupInfo.hidden,
+      group_name: req.body.groupName,
+      group_photo: req.body.imageLink,
+      description: req.body.description,
+      is_private: req.body.is_private,
+      is_hidden: req.body.hidden,
       users_can_respond: true, //TODO fix this
       geographically_limited: false, //TODO
       group_latitude: '40.167207',
       group_longitude: '-105.101927',
-      group_zip: req.body.createGroupInfo.zip,
+      group_zip: req.body.zip,
       group_state: state,
-      group_discipline: req.body.createGroupInfo.discipline,
+      group_discipline: req.body.discipline,
       geographically_limited: false,
     }).returning('*').then(function (group) {
       //Now we need to find user ids for given phone numbers
-
+      console.log(group);
       //Create a group membership for the creator
       var membership = {
         user_id: req.body.fromUser.user_id,
-        group_id: group.group_id,
+        group_id: group[0].group_id,
         admin: true,
         notifications: true
       }
@@ -344,10 +344,14 @@ router.post('/createNewGroup', function (req, res, next) {
       knex('group_memberships').insert(membership).then(function () {
         //TODO if there is not a user object for a given phone number, create a new user
         //and then create an invitation
-        knex('users').whereIn('phone', req.body.invited).then(function (users) {
+        var invitedPhoneNumbers = [];
+        for (var i = 0; i < req.body.invited.length; i++) {
+          invitedPhoneNumbers.push(req.body.invited[i].phone);
+        }
+        console.log("invited phone numbers", invitedPhoneNumbers);
+        knex('users').whereIn('phone', invitedPhoneNumbers).then(function (users) {
           console.log(users);
           console.log(group[0]);
-          console.log(group[0].group_id);
           if(users.length < req.body.invited.length){ //TODO remove once we add users
             console.log(" some users weren't invited ");
           }
