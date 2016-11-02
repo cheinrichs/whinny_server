@@ -15,6 +15,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
 });
 
+//TODO post
 router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', function (req, res, next) {
   if(req.params.licenseAgreement === 'false' || req.params.licenseAgreement === false) res.json({error: 'invalid license agreement 1'});
   if (req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
@@ -152,6 +153,7 @@ router.get('/user/:user_phone', function (req, res, next) {
   });
 })
 
+//TODO POST
 router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, next){
   knex('messages').insert({
     to_user: req.params.to_user,
@@ -170,7 +172,7 @@ router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, n
     res.json({created: true});
   })
 })
-
+//TODO POST
 router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
   knex('group_messages').insert({
     to_group: req.params.to_group,
@@ -180,7 +182,7 @@ router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res
     res.json({confirmed: true})
   })
 })
-
+//TODO POST
 router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (req, res, next) {
   knex('broadcast_memberships').where({
     broadcast_id: req.params.to_broadcast,
@@ -200,7 +202,7 @@ router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (
   })
 })
 
-//TODO: change to post
+//TODO POST
 router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, next) {
   knex('users').where('phone', req.params.to_phone).first().then(function (user) {
     if(user){
@@ -331,32 +333,40 @@ router.post('/createNewGroup', function (req, res, next) {
     }).returning('*').then(function (group) {
       //Now we need to find user ids for given phone numbers
 
-      //TODO create a group membership for the creator
-
-      //TODO if there is not a user object for a given phone number, create a new user
-      //and then create an invitation
-      knex('users').whereIn('phone', req.body.invited).then(function (users) {
-        console.log(users);
-        console.log(group[0]);
-        console.log(group[0].group_id);
-        if(users.length < req.body.invited.length){ //TODO remove once we add users
-          console.log(" some users weren't invited ");
-        }
-        if(req.body.invited){
-          var invitations = [];
-          for (var i = 0; i < users.length; i++) {
-            invitations.push({
-              group_id: group[0].group_id,
-              user_id: users[i].user_id,
-              status: 'pending'
-            });
-            //look up the user and get the user id for the phone number
-            //create a group membership for the given user id
+      //Create a group membership for the creator
+      var membership = {
+        user_id: req.body.fromUser.user_id,
+        group_id: group.group_id,
+        admin: true,
+        notifications: true
+      }
+      console.log(membership);
+      knex('group_memberships').insert(membership).then(function () {
+        //TODO if there is not a user object for a given phone number, create a new user
+        //and then create an invitation
+        knex('users').whereIn('phone', req.body.invited).then(function (users) {
+          console.log(users);
+          console.log(group[0]);
+          console.log(group[0].group_id);
+          if(users.length < req.body.invited.length){ //TODO remove once we add users
+            console.log(" some users weren't invited ");
           }
-          knex('group_invitations').insert(invitations).then(function () {
-            res.json({ group_id: group[0].group_id });
-          })
-        }
+          if(req.body.invited){
+            var invitations = [];
+            for (var i = 0; i < users.length; i++) {
+              invitations.push({
+                group_id: group[0].group_id,
+                user_id: users[i].user_id,
+                status: 'pending'
+              });
+              //look up the user and get the user id for the phone number
+              //create a group membership for the given user id
+            }
+            knex('group_invitations').insert(invitations).then(function () {
+              res.json({ group_id: group[0].group_id });
+            })
+          }
+        })
       })
     })
   })
