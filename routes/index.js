@@ -504,6 +504,7 @@ router.get('/broadcastSearch/:user_id', function (req, res, next) {
 })
 
 router.post('/subscribeToBroadcast', function (req, res, next) {
+  console.log("subscribing to broadcast", req.body.broadcast_id, req.body.user_id);
   if(!req.body.broadcast_id){
     console.log("No given broadcast_id in subscribeFromBroadcast");
     res.json({success: false});
@@ -526,6 +527,7 @@ router.post('/subscribeToBroadcast', function (req, res, next) {
 })
 
 router.post('/unsubscribeFromBroadcast', function (req, res, next) {
+  console.log("unsubscribeFromBroadcast with", req.body.broadcast_id, req.body.user_id);
   if(!req.body.broadcast_id){
     console.log("No given broadcast_id in unsubscribeFromBroadcast");
     res.json({success: false});
