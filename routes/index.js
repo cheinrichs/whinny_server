@@ -306,14 +306,14 @@ router.post('/createNewGroup', function (req, res, next) {
 
   var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.zip + '&sensor=true';
   var state;
-  request(url, function (error, response, body) {
-    var data = JSON.parse(body);
-    for (var i = 0; i < data.results[0].address_components.length; i++) {
-      if(data.results[0].address_components[i].types.includes('administrative_area_level_1')){
-        state = data.results[0].address_components[i].short_name;
-      }
-    }
-    console.log(state);
+  // request(url, function (error, response, body) {
+  //   var data = JSON.parse(body);
+  //   for (var i = 0; i < data.results[0].address_components.length; i++) {
+  //     if(data.results[0].address_components[i].types.includes('administrative_area_level_1')){
+  //       state = data.results[0].address_components[i].short_name;
+  //     }
+  //   }
+  //   console.log(state);
 
     // create a group with the current specs
     knex('groups').insert({
@@ -327,7 +327,7 @@ router.post('/createNewGroup', function (req, res, next) {
       group_latitude: '40.167207',
       group_longitude: '-105.101927',
       group_zip: req.body.zip,
-      group_state: state,
+      group_state: 'CO', //TODO
       group_discipline: req.body.discipline,
       geographically_limited: false,
     }).returning('*').then(function (group) {
@@ -373,7 +373,7 @@ router.post('/createNewGroup', function (req, res, next) {
         })
       })
     })
-  })
+  // })
 })
 
 router.get('/groupInvitations/:user_id', function (req, res, next) {
