@@ -304,7 +304,7 @@ router.post('/createNewGroup', function (req, res, next) {
   console.log('req body', req.body);
   if(!req.body) res.json({ success: 'false' });
 
-  var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.groupState+ '&sensor=true';
+  var url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + req.body.createGroupInfo.zip + '&sensor=true';
   var state;
   request(url, function (error, response, body) {
     var data = JSON.parse(body);
