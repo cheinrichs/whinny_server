@@ -10,6 +10,76 @@ var authToken = process.env.TWILIO_AUTH_TOKEN;
 
 var textClient = new twilio.RestClient(accountSid, authToken);
 
+var AWS = require('aws-sdk');
+var s3 = new AWS.S3({params: {Bucket: 'whinnyphotos'}});
+var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const S3_BUCKET = process.env.S3_BUCKET;
+
+AWS.config.update({
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
+});
+
+AWS.config.region = 'us-west-2';
+
+
+router.get('/signedUrl/:fileName', function (req, res, next) {
+  // var params = {
+  //   Bucket: 'whinnynewbucket',
+  //   ACL: 'public-read-write',
+  //   CreateBucketConfiguration: {
+  //     LocationConstraint: 'us-west-1'
+  //   }
+  // }
+  // s3.createBucket(params, function (err, data) {
+  //   if(err) {
+  //     console.log(err);
+  //     res.json(err);
+  //   } else {
+  //     res.json(data);
+  //   }
+  // })
+  const s3Params = {
+    Bucket: S3_BUCKET,
+    Key: req.params.fileName,
+    Expires: 60,
+    ACL: 'public-read'
+  }
+
+  s3.getSignedUrl('putObject', s3Params, function (err, data) {
+    if(err){
+      console.log(err);
+    }
+    const returnData = {
+      signedRequest: data,
+      url: `https://${S3_BUCKET}.s3.amazonaws.com/${req.params.filename}`
+    }
+    console.log(data);
+    res.json(data)
+  })
+})
+
+router.post('/uploadPhoto', function (req, res, next) {
+  if(!req.body.image) res.json({ noImageGiven: true });
+  var params = {
+    Bucket: S3_BUCKET,
+    Key: 'newkeyzzzz', //TODO generate a random key
+    ACL: 'public-read',
+    Body: new Buffer(req.body.image, 'base64'),
+    ContentType: 'image/jpeg'
+  }
+  s3.putObject(params, function (err, data) {
+    if(err){
+      console.log(err);
+      res.json(err);
+    } else {
+      console.log("worked!");
+      res.json(data);
+    }
+  })
+})
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
@@ -309,7 +379,7 @@ router.post('/createNewGroup', function (req, res, next) {
   // request(url, function (error, response, body) {
   //   var data = JSON.parse(body);
   //   for (var i = 0; i < data.results[0].address_components.length; i++) {
-  //     if(data.results[0].address_components[i].types.includes('administrative_area_level_1')){
+  //     if(data.results[cd 0].address_components[i].types.includes('administrative_area_level_1')){
   //       state = data.results[0].address_components[i].short_name;
   //     }
   //   }
@@ -582,6 +652,16 @@ router.post('/addUserInterests', function (req, res, next) {
   });
 
 })
+
+router.post('/presigned', function (req, res, next) {
+  if(req.body.filename && req.body.type){
+
+    res.json()
+  } else {
+    res.json({ invalidParams: true });
+  }
+})
+
 
 Array.prototype.unique = function() {
     var o = {};
