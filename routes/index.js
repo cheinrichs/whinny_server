@@ -25,21 +25,6 @@ AWS.config.region = 'us-west-2';
 
 
 router.get('/signedUrl/:fileName', function (req, res, next) {
-  // var params = {
-  //   Bucket: 'whinnynewbucket',
-  //   ACL: 'public-read-write',
-  //   CreateBucketConfiguration: {
-  //     LocationConstraint: 'us-west-1'
-  //   }
-  // }
-  // s3.createBucket(params, function (err, data) {
-  //   if(err) {
-  //     console.log(err);
-  //     res.json(err);
-  //   } else {
-  //     res.json(data);
-  //   }
-  // })
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: req.params.fileName,
@@ -60,6 +45,7 @@ router.get('/signedUrl/:fileName', function (req, res, next) {
   })
 })
 
+//TODO remove
 router.post('/uploadPhoto', function (req, res, next) {
   if(!req.body.image) res.json({ noImageGiven: true });
   var params = {
