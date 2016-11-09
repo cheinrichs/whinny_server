@@ -46,7 +46,7 @@ app.use(multipartyMiddleware);
 
 app.post('/testUpload', function (req, res) {
   console.log(req);
-  var file = req.files.file;
+  var file = req.body.file;
   var stream = fs.createReadStream(file.path);
   return s3fsImpl.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
