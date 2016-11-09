@@ -28,19 +28,15 @@ router.get('/signedUrl/:fileName', function (req, res, next) {
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: req.params.fileName,
-    Expires: 60*60,
-    ACL: 'public-read'
+    Expires: 60*60
   }
 
   s3.getSignedUrl('putObject', s3Params, function (err, data) {
-    if(err){
-      console.log(err);
-    }
+    if(err) console.log(err);
     const returnData = {
       signedRequest: data,
       url: `https://${S3_BUCKET}.s3.amazonaws.com/${req.params.filename}`
     }
-    console.log(data);
     res.json(data)
   })
 })
