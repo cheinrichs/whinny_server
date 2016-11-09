@@ -7,6 +7,21 @@ var bodyParser = require('body-parser');
 
 var cors = require('cors');
 
+var fs = require('fs');
+var S3FS = require('s3fs');
+
+var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const S3_BUCKET = process.env.S3_BUCKET;
+
+var s3fsImpl = new S3FS('whinnyphotos', {
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
+})
+
+var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -26,6 +41,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(multipartyMiddleware);
+
+app.post('/testUpload', function (req, res) {
+  console.log(req);
+  var file = req.files.file;
+  var stream = fs.createReadStream(file.path);
+  return s3fsImpl.writeFile(file.originalFilename, stream).then(function () {
+    fs.unlink(file.path, function (err) {
+      if(err) console.err(err);
+      res.json({success: true})
+    })
+  })
+})
 
 app.use('/', routes);
 app.use('/users', users);

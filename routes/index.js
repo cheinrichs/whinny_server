@@ -41,27 +41,6 @@ router.get('/signedUrl/:fileName', function (req, res, next) {
   })
 })
 
-//TODO remove
-router.post('/uploadPhoto', function (req, res, next) {
-  if(!req.body.image) res.json({ noImageGiven: true });
-  var params = {
-    Bucket: S3_BUCKET,
-    Key: 'newkeyzzzz', //TODO generate a random key
-    ACL: 'public-read',
-    Body: new Buffer(req.body.image, 'base64'),
-    ContentType: 'image/jpeg'
-  }
-  s3.putObject(params, function (err, data) {
-    if(err){
-      console.log(err);
-      res.json(err);
-    } else {
-      console.log("worked!");
-      res.json(data);
-    }
-  })
-})
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
