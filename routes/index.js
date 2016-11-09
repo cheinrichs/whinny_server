@@ -28,7 +28,7 @@ router.get('/signedUrl/:fileName', function (req, res, next) {
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: req.params.fileName,
-    Expires: 60,
+    Expires: 60*60,
     ACL: 'public-read'
   }
 
