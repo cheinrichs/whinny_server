@@ -48,7 +48,7 @@ app.post('/testUpload', function (req, res) {
   console.log(req);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
-  return s3fsImpl.writeFile(file.originalFilename, stream).then(function () {
+  return s3fsImpl.writeFile('NewFileName', stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
       res.json({success: true})
