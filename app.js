@@ -44,7 +44,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(multipartyMiddleware);
 
-app.post('/testUpload', function (req, res) {
+app.post('/chatMessageUpload', function (req, res, next) {
+  res.json({ todo: true });
+})
+
+app.post('/groupMessageUpload', function (req, res, next) {
+  res.json({ todo: true });
+})
+
+app.post('/personalProfilePhotoUpload', function (req, res, next) {
+  res.json({ todo: true });
+})
+
+app.post('/groupProfilePhotoUpload', function (req, res, next) {
   console.log(req);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
