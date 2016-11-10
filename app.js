@@ -61,7 +61,8 @@ app.post('/groupProfilePhotoUpload', function (req, res, next) {
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   console.log(file);
-  console.log(file.originalFileName);
+  console.log("----------------------");
+  console.log(file.originalFilename);
   //TODO change file.originalFileName to new name
   return S3_GroupProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
