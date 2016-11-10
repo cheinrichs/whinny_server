@@ -336,7 +336,7 @@ router.post('/createNewGroup', function (req, res, next) {
       console.log("group:");
       console.log(group[0]);
       knex('groups').where('group_id', group[0].group_id).update({
-          group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group.group_id + '_GroupProfilePic.jpg'
+          group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group[0].group_id + '_GroupProfilePic.jpg'
       }).then(function () {
         console.log(group);
         //Create a group membership for the creator
