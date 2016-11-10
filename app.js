@@ -14,7 +14,7 @@ var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const S3_BUCKET = process.env.S3_BUCKET;
 
-var s3fsImpl = new S3FS('whinnyphotos', {
+var s3fsImpl = new S3FS('whinnyphotos/group_profile_photos', {
   accessKeyId: AWS_ACCESS_KEY_ID,
   secretAccessKey: AWS_SECRET_ACCESS_KEY
 })
