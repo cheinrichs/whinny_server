@@ -57,7 +57,7 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
 })
 
 app.post('/groupProfilePhotoUpload', function (req, res, next) {
-  console.log(req);
+  console.log(file.originalFileName);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   //TODO change file.originalFileName to new name
