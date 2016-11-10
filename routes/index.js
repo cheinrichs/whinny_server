@@ -10,36 +10,6 @@ var authToken = process.env.TWILIO_AUTH_TOKEN;
 
 var textClient = new twilio.RestClient(accountSid, authToken);
 
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3({params: {Bucket: 'whinnyphotos'}});
-var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
-var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
-const S3_BUCKET = process.env.S3_BUCKET;
-
-AWS.config.update({
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACCESS_KEY
-});
-
-AWS.config.region = 'us-west-2';
-
-
-router.get('/signedUrl/:fileName', function (req, res, next) {
-  const s3Params = {
-    Bucket: S3_BUCKET,
-    Key: req.params.fileName,
-    Expires: 60*60
-  }
-
-  s3.getSignedUrl('putObject', s3Params, function (err, data) {
-    if(err) console.log(err);
-    const returnData = {
-      signedRequest: data,
-      url: `https://${S3_BUCKET}.s3.amazonaws.com/${req.params.filename}`
-    }
-    res.json(data)
-  })
-})
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

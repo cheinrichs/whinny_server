@@ -14,7 +14,7 @@ var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const S3_BUCKET = process.env.S3_BUCKET;
 
-var s3fsImpl = new S3FS('whinnyphotos/group_profile_photos', {
+var S3_GroupProfilePhotos = new S3FS('whinnyphotos/group_profile_photos', {
   accessKeyId: AWS_ACCESS_KEY_ID,
   secretAccessKey: AWS_SECRET_ACCESS_KEY
 })
@@ -48,7 +48,8 @@ app.post('/testUpload', function (req, res) {
   console.log(req);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
-  return s3fsImpl.writeFile('NewFileName', stream).then(function () {
+  //TODO change file.originalFileName to new name
+  return S3_GroupProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
       res.json({success: true})
