@@ -319,7 +319,7 @@ router.post('/createNewGroup', function (req, res, next) {
     // create a group with the current specs
     knex('groups').insert({
       group_name: req.body.groupName,
-      group_photo: req.body.imageLink,
+      group_photo: 'Placeholder',
       description: req.body.description,
       is_private: req.body.is_private,
       is_hidden: req.body.hidden,
@@ -332,47 +332,52 @@ router.post('/createNewGroup', function (req, res, next) {
       group_discipline: req.body.discipline,
       geographically_limited: false,
     }).returning('*').then(function (group) {
-      //Now we need to find user ids for given phone numbers
-      console.log(group);
-      //Create a group membership for the creator
-      var membership = {
-        user_id: req.body.fromUser.user_id,
-        group_id: group[0].group_id,
-        admin: true,
-        notifications: true
-      }
-      console.log(membership);
-      knex('group_memberships').insert(membership).then(function () {
-        //TODO if there is not a user object for a given phone number, create a new user
-        //and then create an invitation
-        var invitedPhoneNumbers = [];
-        for (var i = 0; i < req.body.invited.length; i++) {
-          invitedPhoneNumbers.push(req.body.invited[i].phone);
+      //update the image link to the link that will be active
+      knex('groups').where('group_id', group.group_id).update({
+          group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group.group_id + '_GroupProfilePic.jpg';
+      }).then(function () {
+        console.log(group);
+        //Create a group membership for the creator
+        var membership = {
+          user_id: req.body.fromUser.user_id,
+          group_id: group[0].group_id,
+          admin: true,
+          notifications: true
         }
-        console.log("invited phone numbers", invitedPhoneNumbers);
-        knex('users').whereIn('phone', invitedPhoneNumbers).then(function (users) {
-          console.log(users);
-          console.log(group[0]);
-          if(users.length < req.body.invited.length){ //TODO remove once we add users
-            console.log(" some users weren't invited ");
+        console.log(membership);
+        knex('group_memberships').insert(membership).then(function () {
+          //TODO if there is not a user object for a given phone number, create a new user
+          //and then create an invitation
+          var invitedPhoneNumbers = [];
+          for (var i = 0; i < req.body.invited.length; i++) {
+            invitedPhoneNumbers.push(req.body.invited[i].phone);
           }
-          if(req.body.invited){
-            var invitations = [];
-            for (var i = 0; i < users.length; i++) {
-              invitations.push({
-                group_id: group[0].group_id,
-                user_id: users[i].user_id,
-                status: 'pending'
-              });
-              //look up the user and get the user id for the phone number
-              //create a group membership for the given user id
+          console.log("invited phone numbers", invitedPhoneNumbers);
+          knex('users').whereIn('phone', invitedPhoneNumbers).then(function (users) {
+            console.log(users);
+            console.log(group[0]);
+            if(users.length < req.body.invited.length){ //TODO remove once we add users
+              console.log(" some users weren't invited ");
             }
-            knex('group_invitations').insert(invitations).then(function () {
-              res.json({ group_id: group[0].group_id });
-            })
-          }
+            if(req.body.invited){
+              var invitations = [];
+              for (var i = 0; i < users.length; i++) {
+                invitations.push({
+                  group_id: group[0].group_id,
+                  user_id: users[i].user_id,
+                  status: 'pending'
+                });
+                //look up the user and get the user id for the phone number
+                //create a group membership for the given user id
+              }
+              knex('group_invitations').insert(invitations).then(function () {
+                res.json({ group_id: group[0].group_id });
+              })
+            }
+          })
         })
       })
+
     })
   // })
 })
