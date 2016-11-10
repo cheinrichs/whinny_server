@@ -333,7 +333,9 @@ router.post('/createNewGroup', function (req, res, next) {
       geographically_limited: false,
     }).returning('*').then(function (group) {
       //update the image link to the link that will be active
-      knex('groups').where('group_id', '=', group.group_id).update({
+      console.log("group:");
+      console.log(group);
+      knex('groups').where('group_id', group.group_id).update({
           group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group.group_id + '_GroupProfilePic.jpg'
       }).then(function () {
         console.log(group);
