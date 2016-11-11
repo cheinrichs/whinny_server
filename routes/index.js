@@ -591,13 +591,15 @@ router.post('/addUserInterests', function (req, res, next) {
 
 })
 
-router.post('/presigned', function (req, res, next) {
-  if(req.body.filename && req.body.type){
-
-    res.json()
-  } else {
-    res.json({ invalidParams: true });
-  }
+router.post('/updateNotificationSettings', function (req, res, next) {
+  console.log(req.body);
+  knex('users').where('user_id', req.body.user_id).update({
+    message_notifications: req.body.messaging,
+    group_notifications: req.body.group,
+    broadcast_notifications: req.body.broadcast
+  }).then(function () {
+    res.json({ success: true})
+  })
 })
 
 
