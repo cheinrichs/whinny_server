@@ -591,6 +591,7 @@ router.post('/addUserInterests', function (req, res, next) {
 
 })
 
+
 router.post('/updateNotificationSettings', function (req, res, next) {
   //TODO error handling
   console.log("---");
