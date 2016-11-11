@@ -592,7 +592,10 @@ router.post('/addUserInterests', function (req, res, next) {
 })
 
 router.post('/updateNotificationSettings', function (req, res, next) {
+  //TODO error handling
+  console.log("---");
   console.log(req.body);
+  console.log('---');
   knex('users').where('user_id', req.body.user_id).update({
     message_notifications: req.body.messaging,
     group_notifications: req.body.group,
