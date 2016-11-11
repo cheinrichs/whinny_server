@@ -572,22 +572,24 @@ router.get('/getUserInterests/:user_id', function (req, res, next) {
 })
 
 router.post('/addUserInterests', function (req, res, next) {
-  console.log(req.body);
-  var interests = [];
-  for (var i = 0; i < req.body.interests.length; i++) {
-    var interest = {
-      user_id: req.body.currentUser,
-      discipline_id: req.body.interests[i]
+  knex('user_interests').where('user_id', req.body.currentUser).del().then(function () {
+    console.log(req.body);
+    var interests = [];
+    for (var i = 0; i < req.body.interests.length; i++) {
+      var interest = {
+        user_id: req.body.currentUser,
+        discipline_id: req.body.interests[i]
+      }
+      interests.push(interest);
     }
-    interests.push(interest);
-  }
-  console.log(req.body.suggested_interest);
+    console.log(req.body.suggested_interest);
 
-  knex('user_interests').insert(interests).then(function () {
-    knex('user_suggested_disciplines').insert({suggested_discipline: req.body.suggested_interest}).then(function () {
-      res.json({ yyeaaa: 'yeah' });
-    })
-  });
+    knex('user_interests').insert(interests).then(function () {
+      knex('user_suggested_disciplines').insert({suggested_discipline: req.body.suggested_interest}).then(function () {
+        res.json({ yyeaaa: 'yeah' });
+      })
+    });
+  })
 
 })
 
