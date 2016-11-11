@@ -591,7 +591,6 @@ router.post('/addUserInterests', function (req, res, next) {
 
 })
 
-
 router.post('/updateNotificationSettings', function (req, res, next) {
   //TODO error handling
   console.log("---");
@@ -606,6 +605,11 @@ router.post('/updateNotificationSettings', function (req, res, next) {
   })
 })
 
+router.get('/userInterests/:user_id', function (req, res, next) {
+  knex('user_interests').where('user_id', req.params.user_id).pluck('discipline_id').then(function (disciplines) {
+    res.json(disciplines);
+  })
+})
 
 Array.prototype.unique = function() {
     var o = {};
