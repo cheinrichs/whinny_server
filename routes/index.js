@@ -595,12 +595,33 @@ router.post('/addUserInterests', function (req, res, next) {
 
 router.post('/updateNotificationSettings', function (req, res, next) {
   //TODO error handling
-  console.log("---");
-  console.log(req.body);
-  console.log('---');
   knex('users').where('user_id', req.body.user_id).update({
     message_notifications: req.body.messaging,
     group_notifications: req.body.group,
+    broadcast_notifications: req.body.broadcast
+  }).then(function () {
+    res.json({ success: true})
+  })
+})
+
+router.post('/updateMessageNotificationSettings', function (req, res, next) {
+  knex('users').where('user_id', req.body.user_id).update({
+    message_notifications: req.body.messaging
+  }).then(function () {
+    res.json({ success: true})
+  })
+})
+
+router.post('/updateGroupNotificationSettings', function (req, res, next) {
+  knex('users').where('user_id', req.body.user_id).update({
+    group_notifications: req.body.group
+  }).then(function () {
+    res.json({ success: true})
+  })
+})
+
+router.post('/updateBroadcastNotificationSettings', function (req, res, next) {
+  knex('users').where('user_id', req.body.user_id).update({
     broadcast_notifications: req.body.broadcast
   }).then(function () {
     res.json({ success: true})
