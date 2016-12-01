@@ -94,6 +94,36 @@ exports.seed = function(knex, Promise) {
           tutorial_5: true,
           EULA: true,
           EULA_date_agreed: knex.fn.now()
+        }),
+        knex('users').insert({
+          email: 'nora@hfamily.com',
+          phone: '3035891618',
+          first_name: 'Nora',
+          last_name: 'Heinrichs',
+          password: 'password',
+          portrait_link: 'http://www.silverdrache.com/assets/uploads/2014/12/norwegian-fjord-gelding-thorlief-head.jpg',
+          message_notifications: true,
+          group_notifications: true,
+          broadcast_notifications: true,
+          country_code: 1,
+          account_created: knex.fn.now(),
+          user_latitude: '40.167207',
+          user_longitude: '-105.101927',
+          verified: true,
+          last_login: knex.fn.now(),
+          banned: false,
+          ban_timestamp: null,
+          discipline: 'Hunter/Jumper',
+          confirmation_code: '54HW',
+          user_type: 'App',
+          ip_address: '69.170.209.157',
+          tutorial_1: true,
+          tutorial_2: true,
+          tutorial_3: true,
+          tutorial_4: true,
+          tutorial_5: true,
+          EULA: true,
+          EULA_date_agreed: knex.fn.now()
         })
       ]);
     });
