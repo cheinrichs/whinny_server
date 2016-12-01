@@ -3,6 +3,9 @@ var router = express.Router();
 var knex = require('../lib/knex.js');
 var request = require('request');
 
+var bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
+
 var twilio = require('twilio');
 
 var accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -10,6 +13,85 @@ var authToken = process.env.TWILIO_AUTH_TOKEN;
 
 var textClient = new twilio.RestClient(accountSid, authToken);
 
+
+//website routes
+router.post('/login_website', function (req, res, next) {
+  if(!req.body.params.email){
+    console.log("no email");
+    res.json({error:'Please enter an email'})
+  }
+  if(!req.body.params.password){
+    console.log("no password");
+    res.json({error:'Please enter a password'})
+  }
+
+  //get the user by email address
+  //check the users pasword against the given password
+  knex('users').where('email', req.body.params.email).first().then(function (user) {
+    if(!user){
+      res.json({ error: "Incorrect Username or Password"})
+    }
+    if(user.password === req.body.params.password){
+      var data = {};
+      var token = jwt.sign(user.user_id, process.env.JWT_SECRET)
+      data.token = token;
+      data.user = user;
+      res.json(data);
+    } else {
+      res.json({error: "Incorrect Username or Password"})
+    }
+  })
+  // if(bcrypt.compareSync(req.body.params.password, access)){
+  //   var userId = {userId: "1"};
+  //   var token = jwt.sign(userId, process.env.JWT_SECRET)
+  //   res.json({token: token});
+  // } else {
+  //   res.status(400).send({errors: ['You have entered an invalid email or password']});
+  // }
+});
+
+router.post('/createBroadcastMessage', function (req, res, next) {
+  console.log(req.body.params);
+  knex('broadcast_messages').where('broadcast_message_id', req.body.params.currentNewMessageId).update({
+    to_broadcast: req.body.params.selectedBroadcast,
+    from_user: req.body.params.currentUser.user_id,
+    broadcast_photo_url: req.body.params.broadcastPhoto,
+    broadcast_title: req.body.params.broadcastTitle,
+    broadcast_message: req.body.params.broadcastMessage,
+    link_text: req.body.params.linkText,
+    link_url: req.body.params.linkURL
+  }).then(function () {
+    console.log(req.params);
+    res.json({success: "true"});
+  })
+});
+
+router.get('/website/broadcastAdmin/:user_id', function (req, res, next) {
+  knex('broadcast_memberships').where({user_id: req.params.user_id, admin: true}).pluck('broadcast_id').then(function (memberships) {
+    knex('broadcasts').whereIn('broadcast_id', memberships).then(function (broadcasts) {
+      res.json(broadcasts)
+    })
+  })
+})
+
+router.get('/website/nextBroadcastMessageId', function (req, res, next) {
+  knex('broadcast_messages').count('broadcast_message_id').then(function (id_count) {
+    knex('broadcast_messages').insert({
+      to_broadcast: 1,
+      from_user: 1,
+      broadcast_photo_url: 'https://placeholdit.imgix.net/~text?txtsize=23&bg=ffffff&txtclr=000000&txt=250%C3%97250&w=250&h=250',
+      broadcast_title: "placeholder",
+      broadcast_message: "placeholder",
+      link_text: "placeholder",
+      link_url: 'https://placeholdit.imgix.net/~text?txtsize=23&bg=ffffff&txtclr=000000&txt=250%C3%97250&w=250&h=250'
+    }).then(function () {
+      var newMessageId = parseInt(id_count[0].count) + 1;
+      console.log(newMessageId);
+      res.json({ "newMessageId": newMessageId });
+    })
+  })
+})
+// ******** end website routes ********* //
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -183,7 +265,7 @@ router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res
     res.json({confirmed: true})
   })
 })
-//TODO POST
+//TODO POST - deprecated remove
 router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (req, res, next) {
   knex('broadcast_memberships').where({
     broadcast_id: req.params.to_broadcast,

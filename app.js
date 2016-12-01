@@ -24,6 +24,11 @@ var S3_PersonalProfilePhotos = new S3FS('whinnyphotos/profile_photos', {
   secretAccessKey: AWS_SECRET_ACCESS_KEY
 })
 
+var S3_BroadcastMessagePhotos = new S3FS('whinnyphotos/broadcast_message_photos', {
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
+})
+
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 
@@ -73,6 +78,35 @@ app.post('/groupProfilePhotoUpload', function (req, res, next) {
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   return S3_GroupProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
+    fs.unlink(file.path, function (err) {
+      if(err) console.err(err);
+      res.json({success: true})
+    })
+  })
+})
+
+app.post('/website/uploadBroadcastImage', function (req, res, next) {
+  console.log(req.body);
+  if(!req.body.newMessageId) res.json({ error: "No newMessageId given"})
+  //TODO error handling for no given photo?
+
+  var newFileName = 'broadcast_message_photo_' + req.body.newMessageId;
+
+  if(req.files.file[0].type === 'image/png'){
+    newFileName += '.png';
+  } else if(req.files.file[0].type === 'image/jpg'){
+    newFileName += '.jpg';
+  } else if(req.files.file[0].type === 'image/jpeg'){
+    newFileName += '.jpeg';
+  } else {
+    res.json({error: "Incorrect filetype provided"});
+  }
+
+
+  var file = req.files.file[0];
+  var stream = fs.createReadStream(file.path);
+
+  return S3_BroadcastMessagePhotos.writeFile(newFileName, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
       res.json({success: true})

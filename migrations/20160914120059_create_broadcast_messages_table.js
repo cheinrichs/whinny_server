@@ -19,7 +19,15 @@ exports.up = function(knex, Promise) {
          .inTable('users')
          .onDelete('cascade');
 
-    table.string('broadcast_message_content');
+    table.string('broadcast_photo_url')
+
+    table.string('broadcast_title');
+
+    table.string('broadcast_message');
+
+    table.string('link_text');
+
+    table.string('link_url');
   });
 };
 
