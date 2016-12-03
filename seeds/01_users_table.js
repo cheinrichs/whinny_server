@@ -36,7 +36,7 @@ exports.seed = function(knex, Promise) {
           EULA_date_agreed: knex.fn.now()
         }),
         knex('users').insert({
-          email: 'morgan.heinrichs@gmail.com',
+          email: 'morgan@whinny.com',
           phone: '3035892486',
           first_name: 'Morgan',
           last_name: 'Heinrichs',
@@ -66,7 +66,7 @@ exports.seed = function(knex, Promise) {
           EULA_date_agreed: knex.fn.now()
         }),
         knex('users').insert({
-          email: 'george.heinrichs@gmail.com',
+          email: 'george@whinny.com',
           phone: '7203464283',
           first_name: 'George',
           last_name: 'Heinrichs',

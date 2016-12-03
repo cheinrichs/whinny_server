@@ -101,7 +101,7 @@ router.get('/', function(req, res, next) {
 //TODO post
 router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', function (req, res, next) {
   if(req.params.licenseAgreement === 'false' || req.params.licenseAgreement === false) res.json({error: 'invalid license agreement 1'});
-  if (req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
+  if(req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
 
   knex('users').where('phone', req.params.phone).then(function (user) {
 
@@ -155,9 +155,25 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
 
 router.get('/log_in/:phone', function (req, res, next) {
   if(!req.params.phone) res.json({status: 'denied'});
-  knex('users').where('phone', req.params.phone).first().then(function (user) {
-    res.json(user);
-  })
+  //look for them in users
+  //if there is a user, create the new confirmation code and send it via text
+
+  //if there isn't a user, send a response to the client which redirects to a user creation form
+
+  knex('users').where('phone', req.params.phone).then(function (user) {
+
+    var confirmationCode = generateConfirmationCode();
+
+    if(user.length > 0){
+      knex('users').where('phone', req.params.phone).update({confirmation_code: confirmationCode}).then(function () {
+        confirmationCodeText(req.params.phone, confirmationCode);
+        res.json(user);
+      })
+    } else {
+      res.json({ newUser: "true"})
+    }
+  });
+  
 })
 
 router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next) {
