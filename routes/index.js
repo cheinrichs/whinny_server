@@ -98,7 +98,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
 });
 
-//TODO post
+//TODO post (deprecated)
 router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', function (req, res, next) {
   if(req.params.licenseAgreement === 'false' || req.params.licenseAgreement === false) res.json({error: 'invalid license agreement 1'});
   if(req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
@@ -153,6 +153,54 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
   })
 })
 
+
+router.post('/joinWhinny', function (req, res, next) {
+  console.log(req.body);
+
+  if(req.body.licenseAgreement === 'false' || req.body.licenseAgreement === false) res.json({error: 'invalid license agreement 1'});
+  if(req.body.first_name.length === 0 || req.body.last_name.length === 0) res.json({error: 'invalid user name first or last'})
+
+  var userEmail = req.body.email || "";
+  var userPassword = req.body.password || "";
+
+  var confirmationCode = generateConfirmationCode();
+
+  knex('users').insert({
+    email: userEmail,
+    phone: req.body.phone,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    password: userPassword,
+    portrait_link: '',
+    message_notifications: true,
+    group_notifications: true,
+    broadcast_notifications: true,
+    country_code: 1,
+    account_created: knex.fn.now(),
+    user_latitude: '40.167207',
+    user_longitude: '-105.101927',
+    verified: false,
+    last_login: knex.fn.now(),
+    banned: false,
+    ban_timestamp: null,
+    discipline: null,
+    confirmation_code: confirmationCode,
+    user_type: 'App',
+    ip_address: null,
+    tutorial_1: true,
+    tutorial_2: true,
+    tutorial_3: true,
+    tutorial_4: true,
+    tutorial_5: true,
+    EULA: true,
+    EULA_date_agreed: knex.fn.now()
+  }).then(function () {
+    confirmationCodeText(req.params.phone, confirmationCode);
+    res.json({ success: true })
+  })
+})
+
+//DEPRECATED
 router.get('/log_in/:phone', function (req, res, next) {
   if(!req.params.phone) res.json({ status: 'denied' });
   //look for them in users
@@ -177,14 +225,20 @@ router.get('/log_in/:phone', function (req, res, next) {
 
 })
 
-router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next) {
-  knex('users').where('user_id', req.params.user_id).first().then(function (user) {
-    //TODO set a flag in the database that user has been confirmed
-    //TODO if the user is null handle it
-    if(user.confirmation_code === req.params.confirmation_code.toLowerCase()){
-      res.json({confirmed: 'true'});
+router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, next) {
+  knex('users').where('phone', req.params.user_phone).first().then(function (user) {
+    if(user){
+      if(user.confirmation_code === req.params.confirmation_code.toLowerCase()){
+        knex('users').where('phone', req.params.user_phone).update({ verified: true }).then(function () {
+          knex('users').where('phone', req.params.user_phone).first().then(function (updatedUser) {
+            res.json(updatedUser);
+          })
+        })
+      } else {
+        res.json({ status: 'Incorrect code given'});
+      }
     } else {
-      res.json({confirmed: 'false'});
+      res.json({ status: 'No such user' })
     }
   })
 })
