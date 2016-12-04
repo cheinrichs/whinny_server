@@ -154,26 +154,27 @@ router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', functi
 })
 
 router.get('/log_in/:phone', function (req, res, next) {
-  if(!req.params.phone) res.json({status: 'denied'});
+  if(!req.params.phone) res.json({ status: 'denied' });
   //look for them in users
   //if there is a user, create the new confirmation code and send it via text
 
   //if there isn't a user, send a response to the client which redirects to a user creation form
 
   knex('users').where('phone', req.params.phone).then(function (user) {
-
-    var confirmationCode = generateConfirmationCode();
+    console.log(user);
 
     if(user.length > 0){
+      var confirmationCode = generateConfirmationCode();
+
       knex('users').where('phone', req.params.phone).update({confirmation_code: confirmationCode}).then(function () {
         confirmationCodeText(req.params.phone, confirmationCode);
         res.json(user);
       })
     } else {
-      res.json({ newUser: "true"})
+      res.json({ newUser: true})
     }
   });
-  
+
 })
 
 router.get('/confirmCode/:user_id/:confirmation_code', function (req, res, next) {
