@@ -115,7 +115,7 @@ router.post('/joinWhinny', function (req, res, next) {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     password: userPassword,
-    portrait_link: '../img/placeholder_avatar.jpg',
+    portrait_link: 'https://www.lovefabric.ie/img/placeholder-avatar.jpg',
     message_notifications: true,
     group_notifications: true,
     broadcast_notifications: true,
@@ -143,6 +143,30 @@ router.post('/joinWhinny', function (req, res, next) {
     confirmationCodeText(req.params.phone, confirmationCode);
     res.json({ success: true })
   })
+})
+
+router.get('/log_in/:phone', function (req, res, next) {
+  if(!req.params.phone) res.json({ status: 'denied' });
+  //look for them in users
+  //if there is a user, create the new confirmation code and send it via text
+
+  //if there isn't a user, send a response to the client which redirects to a user creation form
+
+  knex('users').where('phone', req.params.phone).then(function (user) {
+    console.log(user);
+
+    if(user.length > 0){
+      var confirmationCode = generateConfirmationCode();
+
+      knex('users').where('phone', req.params.phone).update({confirmation_code: confirmationCode}).then(function () {
+        confirmationCodeText(req.params.phone, confirmationCode);
+        res.json(user);
+      })
+    } else {
+      res.json({ newUser: true})
+    }
+  });
+
 })
 
 router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, next) {

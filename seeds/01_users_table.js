@@ -104,7 +104,7 @@ exports.seed = function(knex, Promise) {
           first_name: 'Nora',
           last_name: 'Heinrichs',
           password: 'password',
-          portrait_link: 'http://www.silverdrache.com/assets/uploads/2014/12/norwegian-fjord-gelding-thorlief-head.jpg',
+          portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/4_PersonalProfilePic.jpg',
           message_notifications: true,
           group_notifications: true,
           broadcast_notifications: true,

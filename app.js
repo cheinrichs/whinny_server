@@ -69,7 +69,7 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
-      res.json({success: true})
+      res.json({ success: true, filePath: file.path })
     })
   })
 })
