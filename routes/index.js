@@ -115,7 +115,7 @@ router.post('/joinWhinny', function (req, res, next) {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     password: userPassword,
-    portrait_link: 'https://www.lovefabric.ie/img/placeholder-avatar.jpg',
+    portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/ + ',
     message_notifications: true,
     group_notifications: true,
     broadcast_notifications: true,
@@ -139,9 +139,14 @@ router.post('/joinWhinny', function (req, res, next) {
     EULA: true,
     EULA_date_agreed: knex.fn.now(),
     account_is_setup: false
-  }).then(function () {
-    confirmationCodeText(req.params.phone, confirmationCode);
-    res.json({ success: true })
+  }).returning('*').then(function (users) {
+    console.log(users);
+    //Update the portrait link using the ID, that way the link will always be correct
+    knex('users').where('user_id', users[0].user_id).update({ portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + users[0].user_id + 'PersonalProfilePic.jpg'}).then(function () {
+      confirmationCodeText(req.params.phone, confirmationCode);
+      res.json({ success: true })
+    })
+
   })
 })
 

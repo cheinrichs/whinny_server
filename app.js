@@ -63,25 +63,12 @@ app.post('/groupMessageUpload', function (req, res, next) {
 })
 
 app.post('/personalProfilePhotoUpload', function (req, res, next) {
-  console.log("personal file upload");
-  console.log(req);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
-      var fileString = file.originalFilename.toString();
-      var index;
-      for(var i = 0; i < file.originalFilename.length; i++){
-        if(file.originalFilename[i] === "_"){
-          index = i;
-        }
-      }
-      var user_id = parseInt(file.originalFilename.substring(0,index));
-      var newPortraitLink = 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + file.originalFilename;
-      knex('users').where('user_id', user_id).update({portrait_link: newPortraitLink, account_is_setup: true}).then(function () {
-        res.json({ success: true })
-      })
+      res.json({ status: 'success' });
     })
   })
 })
