@@ -64,11 +64,14 @@ app.post('/groupMessageUpload', function (req, res, next) {
 
 app.post('/personalProfilePhotoUpload', function (req, res, next) {
   console.log("personal file upload");
+  console.log(req);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
+      console.log("uploaded photo");
+      console.log(file.path);
       res.json({ success: true, filePath: file.path })
     })
   })
