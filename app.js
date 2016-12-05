@@ -75,7 +75,7 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
       console.log(typeof(file.originalFilename));
       var fileString = file.originalFilename.toString();
       var index;
-      for(var i = 0; i < file.originalFilename; i++){
+      for(var i = 0; i < file.originalFilename.length; i++){
         console.log(file.originalFilename[i]);
         if(file.originalFilename[i] === "_"){
           console.log("true");
