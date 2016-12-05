@@ -98,62 +98,6 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
 });
 
-//TODO post (deprecated)
-router.get('/joinWhinny/:first_name/:last_name/:phone/:licenseAgreement', function (req, res, next) {
-  if(req.params.licenseAgreement === 'false' || req.params.licenseAgreement === false) res.json({error: 'invalid license agreement 1'});
-  if(req.params.first_name.length === 0 || req.params.last_name.length === 0) res.json({error: 'invalid user name first or last'})
-
-  knex('users').where('phone', req.params.phone).then(function (user) {
-
-    var confirmationCode = generateConfirmationCode();
-
-    if(user.length > 0){
-      knex('users').where('phone', req.params.phone).update({confirmation_code: confirmationCode}).then(function () {
-        confirmationCodeText(req.params.phone, confirmationCode);
-        res.json(user);
-      })
-    } else {
-
-
-      knex('users').insert({
-        email: null,
-        phone: req.params.phone,
-        first_name: req.params.first_name,
-        last_name: req.params.last_name,
-        password: null,
-        portrait_link: 'http://www.boostinspiration.com/wp-content/uploads/2010/09/11_victory_bw_photography.jpg',
-        message_notifications: true,
-        group_notifications: true,
-        broadcast_notifications: true,
-        country_code: 1,
-        account_created: knex.fn.now(),
-        user_latitude: '40.167207',
-        user_longitude: '-105.101927',
-        verified: false,
-        last_login: knex.fn.now(),
-        banned: false,
-        ban_timestamp: null,
-        discipline: null,
-        confirmation_code: confirmationCode,
-        user_type: 'App',
-        ip_address: null,
-        tutorial_1: true,
-        tutorial_2: true,
-        tutorial_3: true,
-        tutorial_4: true,
-        tutorial_5: true,
-        EULA: true,
-        EULA_date_agreed: knex.fn.now()
-      }).returning('*').then(function (user) {
-        //send a text with twilio
-        confirmationCodeText(req.params.phone, confirmationCode);
-        res.json(user)
-      });
-    }
-  })
-})
-
-
 router.post('/joinWhinny', function (req, res, next) {
   console.log(req.body);
 
@@ -171,7 +115,7 @@ router.post('/joinWhinny', function (req, res, next) {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     password: userPassword,
-    portrait_link: '',
+    portrait_link: 'https://www.lovefabric.ie/img/placeholder-avatar.jpg',
     message_notifications: true,
     group_notifications: true,
     broadcast_notifications: true,
@@ -193,7 +137,8 @@ router.post('/joinWhinny', function (req, res, next) {
     tutorial_4: true,
     tutorial_5: true,
     EULA: true,
-    EULA_date_agreed: knex.fn.now()
+    EULA_date_agreed: knex.fn.now(),
+    account_is_setup: false
   }).then(function () {
     confirmationCodeText(req.params.phone, confirmationCode);
     res.json({ success: true })
@@ -415,7 +360,8 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         tutorial_4: true,
         tutorial_5: true,
         EULA: false,
-        EULA_date_agreed: null
+        EULA_date_agreed: null,
+        account_is_setup: false
       }).returning('*').then(function (new_users) {
         //Create a message to the new user
         console.log('new user', new_users);

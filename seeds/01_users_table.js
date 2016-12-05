@@ -33,7 +33,8 @@ exports.seed = function(knex, Promise) {
           tutorial_4: true,
           tutorial_5: true,
           EULA: true,
-          EULA_date_agreed: knex.fn.now()
+          EULA_date_agreed: knex.fn.now(),
+          account_is_setup: true
         }),
         knex('users').insert({
           email: 'morgan@whinny.com',
@@ -63,7 +64,8 @@ exports.seed = function(knex, Promise) {
           tutorial_4: false,
           tutorial_5: true,
           EULA: true,
-          EULA_date_agreed: knex.fn.now()
+          EULA_date_agreed: knex.fn.now(),
+          account_is_setup: true,
         }),
         knex('users').insert({
           email: 'george@whinny.com',
@@ -93,7 +95,8 @@ exports.seed = function(knex, Promise) {
           tutorial_4: true,
           tutorial_5: true,
           EULA: true,
-          EULA_date_agreed: knex.fn.now()
+          EULA_date_agreed: knex.fn.now(),
+          account_is_setup: true
         }),
         knex('users').insert({
           email: 'nora@hfamily.com',
@@ -123,7 +126,8 @@ exports.seed = function(knex, Promise) {
           tutorial_4: true,
           tutorial_5: true,
           EULA: true,
-          EULA_date_agreed: knex.fn.now()
+          EULA_date_agreed: knex.fn.now(),
+          account_is_setup: true
         })
       ]);
     });
