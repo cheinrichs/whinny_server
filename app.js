@@ -70,23 +70,18 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
-      console.log("uploaded photo");
-      console.log(file.originalFilename);
-      console.log(typeof(file.originalFilename));
       var fileString = file.originalFilename.toString();
       var index;
       for(var i = 0; i < file.originalFilename.length; i++){
-        console.log(file.originalFilename[i]);
         if(file.originalFilename[i] === "_"){
-          console.log("true");
           index = i;
         }
       }
-      console.log("index", index);
-      console.log(file.originalFilename.substring(0,index));
       var user_id = parseInt(file.originalFilename.substring(0,index));
-      console.log("user_id", user_id);
-      res.json({ success: true })
+      var newPortraitLink = 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + file.originalFilename;
+      knex('users').where('user_id', user_id).update({portrait_link: newPortraitLink}).then(function () {
+        res.json({ success: true })
+      })
     })
   })
 })
