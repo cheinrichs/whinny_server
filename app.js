@@ -79,7 +79,7 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
       }
       var user_id = parseInt(file.originalFilename.substring(0,index));
       var newPortraitLink = 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + file.originalFilename;
-      knex('users').where('user_id', user_id).update({portrait_link: newPortraitLink}).then(function () {
+      knex('users').where('user_id', user_id).update({portrait_link: newPortraitLink, account_is_setup: true}).then(function () {
         res.json({ success: true })
       })
     })
