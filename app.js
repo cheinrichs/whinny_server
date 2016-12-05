@@ -71,7 +71,15 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
       console.log("uploaded photo");
-      console.log(file.path);
+      console.log(file.originalFilename);
+      var index;
+      for(var i = 0; i < file.originalFilename; i++){
+        if(fileName[i] === "_"){
+          index = i;
+        }
+      }
+      var user_id = fileName.substring(0,index);
+      console.log(user_id);
       res.json({ success: true, filePath: file.path })
     })
   })
