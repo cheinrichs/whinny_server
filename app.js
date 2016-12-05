@@ -74,10 +74,14 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
       console.log(file.originalFilename);
       var index;
       for(var i = 0; i < file.originalFilename; i++){
+        console.log(file.originalFilename[i]);
         if(file.originalFilename[i] === "_"){
+          console.log("true");
           index = i;
         }
       }
+      console.log(index);
+      console.log(file.originalFilename.substring(0,index));
       var user_id = file.originalFilename.substring(0,index);
       console.log(user_id);
       res.json({ success: true })
