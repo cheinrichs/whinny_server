@@ -142,7 +142,7 @@ router.post('/joinWhinny', function (req, res, next) {
   }).returning('*').then(function (users) {
     console.log(users);
     //Update the portrait link using the ID, that way the link will always be correct
-    knex('users').where('user_id', users[0].user_id).update({ portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + users[0].user_id + 'PersonalProfilePic.jpg'}).then(function () {
+    knex('users').where('user_id', users[0].user_id).update({ portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + users[0].user_id + '_PersonalProfilePic.jpg'}).then(function () {
       confirmationCodeText(req.params.phone, confirmationCode);
       res.json({ success: true })
     })
