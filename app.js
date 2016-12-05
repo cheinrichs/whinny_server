@@ -72,6 +72,8 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
       if(err) console.err(err);
       console.log("uploaded photo");
       console.log(file.originalFilename);
+      console.log(typeof(file.originalFilename));
+      var fileString = file.originalFilename.toString();
       var index;
       for(var i = 0; i < file.originalFilename; i++){
         console.log(file.originalFilename[i]);
