@@ -82,10 +82,10 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
           index = i;
         }
       }
-      console.log(index);
+      console.log("index", index);
       console.log(file.originalFilename.substring(0,index));
-      var user_id = file.originalFilename.substring(0,index);
-      console.log(user_id);
+      var user_id = parseInt(file.originalFilename.substring(0,index));
+      console.log("user_id", user_id);
       res.json({ success: true })
     })
   })
