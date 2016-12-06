@@ -3,12 +3,15 @@ exports.seed = function(knex, Promise) {
     knex('group_memberships').del()
   ).then(function () {
     return Promise.join(
-      createGroupMembership('Cooper', 'Horse Application Developers', true, true),
       createGroupMembership('Cooper', 'Whinny Staff', false, false),
+      createGroupMembership('Cooper', 'Gray Filly Farm', false, false),
+
       createGroupMembership('Morgan', 'Whinny Staff', true, false),
-      createGroupMembership('Morgan', 'Paragon', true, false),
-      createGroupMembership('Morgan', 'Horse Fans', false, true),
-      createGroupMembership('George', 'Whinny Staff', false, true)
+      createGroupMembership('Morgan', 'Paragon Equestrian Centre', true, false),
+      createGroupMembership('Morgan', 'Gray Filly Farm', false, false),
+
+      createGroupMembership('George', 'Whinny Staff', false, true),
+      createGroupMembership('George', 'Gray Filly Farm', false, false)
     )
   });
 

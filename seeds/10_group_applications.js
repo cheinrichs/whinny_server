@@ -3,8 +3,8 @@ exports.seed = function(knex, Promise) {
     knex('group_applications').del()
   ).then(function () {
     return Promise.join(
-      createGroupApplication('Cooper', 'Paragon'),
-      createGroupApplication('George', 'Horse Application Developers')
+      createGroupApplication('Cooper', 'Paragon Equestrian Centre'),
+      createGroupApplication('Morgan', 'Wild Rose Farm')
     )
   });
 

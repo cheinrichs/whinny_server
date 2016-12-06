@@ -6,8 +6,8 @@ exports.seed = function(knex, Promise) {
       return Promise.all([
         // Inserts seed entries
         knex('broadcasts').insert({
-          broadcast_name: 'EDCC Contagious Disease Alerts',
-          broadcast_photo: 'http://www.equinediseasecc.org/images/EDCC-logo-web.png',
+          broadcast_name: 'Whinny Tips',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/1_BroadcastProfilePic.jpg',
           geographically_limited: true,
           broadcast_latitude: '40.167207',
           broadcast_longitude: '-105.101927',
@@ -16,8 +16,8 @@ exports.seed = function(knex, Promise) {
           broadcast_discipline: 'All'
         }),
         knex('broadcasts').insert({
-          broadcast_name: 'Kentucky Derby Race Results',
-          broadcast_photo: 'http://sports-odds.com/images/assets/2014/05/kentucky-derby-logo.jpg',
+          broadcast_name: 'EDCC Contagious Disease Alerts',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/2_BroadcastProfilePic.jpg',
           geographically_limited: false,
           broadcast_latitude: '40.167207',
           broadcast_longitude: '-105.101927',
@@ -26,8 +26,8 @@ exports.seed = function(knex, Promise) {
           broadcast_discipline: 'Racing'
         }),
         knex('broadcasts').insert({
-          broadcast_name: 'Palm Beach Drassage Derby',
-          broadcast_photo: 'http://cache.trustedpartner.com/images/library/PalmBeachIllustrated2010/News%20&%20Blogs/Hot%20for-/2012/jan/wdm/dressage.jpg',
+          broadcast_name: 'Equestrian News',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/3_BroadcastProfilePic.jpg',
           geographically_limited: false,
           broadcast_latitude: '40.167207',
           broadcast_longitude: '-105.101927',
@@ -36,8 +36,48 @@ exports.seed = function(knex, Promise) {
           broadcast_discipline: 'Drassage'
         }),
         knex('broadcasts').insert({
-          broadcast_name: 'Del Mar National',
-          broadcast_photo: 'http://delmarnational.com/wp-content/uploads/2016/06/dmnhs-logo.png',
+          broadcast_name: 'Funnies',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/4_BroadcastProfilePic.jpg',
+          geographically_limited: false,
+          broadcast_latitude: '40.167207',
+          broadcast_longitude: '-105.101927',
+          broadcast_zip: 92014,
+          broadcast_state: 'CA',
+          broadcast_discipline: 'Drassage'
+        }),
+        knex('broadcasts').insert({
+          broadcast_name: 'Barn Business',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/5_BroadcastProfilePic.jpg',
+          geographically_limited: false,
+          broadcast_latitude: '40.167207',
+          broadcast_longitude: '-105.101927',
+          broadcast_zip: 92014,
+          broadcast_state: 'CA',
+          broadcast_discipline: 'Drassage'
+        }),
+        knex('broadcasts').insert({
+          broadcast_name: 'Beautiful Barns',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/6_BroadcastProfilePic.jpg',
+          geographically_limited: false,
+          broadcast_latitude: '40.167207',
+          broadcast_longitude: '-105.101927',
+          broadcast_zip: 92014,
+          broadcast_state: 'CA',
+          broadcast_discipline: 'Drassage'
+        }),
+        knex('broadcasts').insert({
+          broadcast_name: 'Equestrian Style',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/7_BroadcastProfilePic.jpg',
+          geographically_limited: false,
+          broadcast_latitude: '40.167207',
+          broadcast_longitude: '-105.101927',
+          broadcast_zip: 92014,
+          broadcast_state: 'CA',
+          broadcast_discipline: 'Drassage'
+        }),
+        knex('broadcasts').insert({
+          broadcast_name: 'Valegro',
+          broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/8_BroadcastProfilePic.jpg',
           geographically_limited: false,
           broadcast_latitude: '40.167207',
           broadcast_longitude: '-105.101927',

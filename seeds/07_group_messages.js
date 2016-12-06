@@ -4,11 +4,13 @@ exports.seed = function(knex, Promise) {
     knex('group_messages').del()
   ).then(function () {
     return Promise.join(
-      createGroupMessage('Cooper', 'Whinny Staff', 'get back to work. all of yas'),
-      createGroupMessage('Cooper', 'Horse Application Developers', 'Oh hey! Looks like I\'m the only one'),
 
-      createGroupMessage('Morgan', 'Paragon', 'We need more allergy medicine again or something'),
-      createGroupMessage('Morgan', 'Horse Fans', 'Check out this HILAROOUSDOS foto -'),
+
+      createGroupMessage('Cooper', 'Whinny Staff', 'get back to work. all of yas'),
+      createGroupMessage('Cooper', 'Gray Filly Farm', 'Someone left hay all over the road...'),
+
+      createGroupMessage('Morgan', 'Paragon Equestrian Centre', 'Aleshe will help with the farrier today, thank you!'),
+      createGroupMessage('Morgan', 'Gray Filly Farm', 'Ollie has had his medicine'),
       createGroupMessage('Morgan', 'Whinny Staff', 'Sry bbl I\'m riding!'),
 
       createGroupMessage('George', 'Whinny Staff', 'Are there any more gluten free cookies...?')
