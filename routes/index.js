@@ -763,21 +763,7 @@ function generateConfirmationCode(){
 }
 
 function confirmationCodeText(to_phone, confirmationCode) {
-  textClient.sms.messages.create({
-    // to: to_phone,
-    to: '3035892321',
-    from: '+17204087635',
-    body: 'Hello! Thank you for registering with Whinny! CONFIRMTATION CODE: ' + confirmationCode,
-  }, function (error, message) {
-    if(!error){
-      console.log("Success! The SID for this SMS message is: ", message.sid);
-    } else {
-      console.log("There was an error with twilio confirmation code");
-    }
-  })
-}
 
-function sendMms(to_phone, content, from_first_name, from_last_name) {
   console.log(to_phone);
   console.log(typeof(to_phone));
   var sendTo;
@@ -795,6 +781,21 @@ function sendMms(to_phone, content, from_first_name, from_last_name) {
   textClient.sms.messages.create({
     // to: to_phone,
     to: sendTo,
+    from: '+17204087635',
+    body: 'Hello! Thank you for registering with Whinny! CONFIRMTATION CODE: ' + confirmationCode,
+  }, function (error, message) {
+    if(!error){
+      console.log("Success! The SID for this SMS message is: ", message.sid);
+    } else {
+      console.log("There was an error with twilio confirmation code");
+    }
+  })
+}
+
+function sendMms(to_phone, content, from_first_name, from_last_name) {
+  textClient.sms.messages.create({
+    // to: to_phone,
+    to: '+13035892321',
     from: '+17204087635',
     body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo download the Whinny App click here! http://www.whinny.com/',
   }, function (error, message) {
