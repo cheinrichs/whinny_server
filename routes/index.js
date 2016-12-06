@@ -778,6 +778,8 @@ function confirmationCodeText(to_phone, confirmationCode) {
 }
 
 function sendMms(to_phone, content, from_first_name, from_last_name) {
+  console.log(to_phone);
+  console.log(typeof(to_phone));
   var sendTo;
 
   if(to_phone === '3035892321' || to_phone === '1111111111'){
