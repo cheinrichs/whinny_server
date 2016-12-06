@@ -778,9 +778,21 @@ function confirmationCodeText(to_phone, confirmationCode) {
 }
 
 function sendMms(to_phone, content, from_first_name, from_last_name) {
+  var sendTo;
+
+  if(to_phone === '3035892321' || to_phone === '1111111111'){
+    sendTo = '+13035892321';
+  } else if (to_phone === '7203464283' || to_phone === '3333333333'){
+    sendTo = '+17203464283';
+  } else if(to_phone === '3035892486' || to_phone === '2222222222'){
+    sendTo = '+13035892486';
+  } else {
+    sendTo = '+13035892321';
+  }
+
   textClient.sms.messages.create({
     // to: to_phone,
-    to: '+13035892321',
+    to: sendTo,
     from: '+17204087635',
     body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo download the Whinny App click here! http://www.whinny.com/',
   }, function (error, message) {
