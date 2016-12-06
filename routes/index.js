@@ -782,7 +782,7 @@ function confirmationCodeText(to_phone, confirmationCode) {
     // to: to_phone,
     to: sendTo,
     from: '+17204087635',
-    body: 'Hello! Thank you for registering with Whinny! CONFIRMTATION CODE: ' + confirmationCode,
+    body: 'Hello! Thank you for registering with Whinny! CONFIRMATION CODE: ' + confirmationCode,
   }, function (error, message) {
     if(!error){
       console.log("Success! The SID for this SMS message is: ", message.sid);
