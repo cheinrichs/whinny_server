@@ -46,6 +46,8 @@ exports.up = function(knex, Promise) {
     table.timestamp('EULA_date_agreed');
 
     table.boolean('account_is_setup');
+
+    table.string('device_token');
   });
 };
 

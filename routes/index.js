@@ -138,7 +138,8 @@ router.post('/joinWhinny', function (req, res, next) {
     tutorial_5: true,
     EULA: true,
     EULA_date_agreed: knex.fn.now(),
-    account_is_setup: false
+    account_is_setup: false,
+    device_token: NULL
   }).returning('*').then(function (users) {
     console.log(users);
     //Update the portrait link using the ID, that way the link will always be correct
@@ -365,7 +366,8 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         tutorial_5: true,
         EULA: false,
         EULA_date_agreed: null,
-        account_is_setup: false
+        account_is_setup: false,
+        device_token: NULL
       }).returning('*').then(function (new_users) {
         //Create a message to the new user
         console.log('new user', new_users);
