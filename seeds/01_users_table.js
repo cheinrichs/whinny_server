@@ -35,7 +35,7 @@ exports.seed = function(knex, Promise) {
           EULA: true,
           EULA_date_agreed: knex.fn.now(),
           account_is_setup: true,
-          device_token: NULL
+          device_token: ''
         }),
         knex('users').insert({
           email: 'morgan@whinny.com',
@@ -67,7 +67,7 @@ exports.seed = function(knex, Promise) {
           EULA: true,
           EULA_date_agreed: knex.fn.now(),
           account_is_setup: true,
-          device_token: NULL
+          device_token: ''
         }),
         knex('users').insert({
           email: 'george@whinny.com',
@@ -99,7 +99,7 @@ exports.seed = function(knex, Promise) {
           EULA: true,
           EULA_date_agreed: knex.fn.now(),
           account_is_setup: true,
-          device_token: NULL
+          device_token: ''
         }),
         knex('users').insert({
           email: 'nora@hfamily.com',
@@ -131,7 +131,7 @@ exports.seed = function(knex, Promise) {
           EULA: true,
           EULA_date_agreed: knex.fn.now(),
           account_is_setup: true,
-          device_token: NULL
+          device_token: ''
         })
       ]);
     });
