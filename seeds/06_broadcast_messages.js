@@ -6,7 +6,7 @@ exports.seed = function(knex, Promise) {
       return Promise.all([
         // Inserts seed entries
         knex('broadcast_messages').insert({
-          to_broadcast: 1,
+          to_broadcast: 2,
           from_user: 1,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_1.jpg',
           broadcast_title: 'Woozles. I repeat. Woozles',
@@ -15,7 +15,7 @@ exports.seed = function(knex, Promise) {
           link_url: 'https://www.youtube.com/watch?v=j21f7aeTrbc'
         }),
         knex('broadcast_messages').insert({
-          to_broadcast: 2,
+          to_broadcast: 1,
           from_user: 1,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_2.jpg',
           broadcast_title: 'Race Results 12/19/16',

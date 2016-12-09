@@ -151,6 +151,26 @@ router.post('/joinWhinny', function (req, res, next) {
   })
 })
 
+router.post('/logIn', function (req, res, next) {
+  console.log(req.body);
+  knex('users').where('phone', req.body.phone).then(function (user) {
+    console.log(user);
+
+    if(user.length > 0){
+      var confirmationCode = generateConfirmationCode();
+
+      //Updates the newly created confirmation code in the user record
+      knex('users').where('phone', req.body.phone).update({confirmation_code: confirmationCode}).then(function () {
+        confirmationCodeText(req.body.phone, confirmationCode);
+        res.json(user);
+      })
+    } else {
+      res.json({ newUser: true})
+    }
+  });
+})
+
+//TODO being rebuilt above - deprecated
 router.get('/log_in/:phone', function (req, res, next) {
   if(!req.params.phone) res.json({ status: 'denied' });
   //look for them in users
