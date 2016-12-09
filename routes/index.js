@@ -160,7 +160,7 @@ router.post('/logIn', function (req, res, next) {
       var confirmationCode = generateConfirmationCode();
 
       //Updates the newly created confirmation code in the user record
-      knex('users').where('phone', req.body.phone).update({confirmation_code: confirmationCode}).then(function () {
+      knex('users').where('phone', req.body.phone).update({confirmation_code: confirmationCode, device_token: req.body.device_token}).then(function () {
         confirmationCodeText(req.body.phone, confirmationCode);
         res.json(user);
       })
