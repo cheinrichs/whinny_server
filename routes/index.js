@@ -270,18 +270,18 @@ router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, ne
       if(user.confirmation_code === req.params.confirmation_code.toLowerCase()){
         knex('users').where('phone', req.params.user_phone).update({ verified: true }).then(function () {
           knex('users').where('phone', req.params.user_phone).first().then(function (updatedUser) {
-            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Successfully confirmed their log in to a device', action_time: knex.fn.now() }).then(function () {
+            knex('user_action_log').insert({ user_id: user.user_id, action: 'Successfully confirmed their log in to a device', action_time: knex.fn.now() }).then(function () {
               res.json(updatedUser);
             })
           })
         })
       } else {
-        knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Unsuccessfully attempted to confirm a code on a device', action_time: knex.fn.now() }).then(function () {
+        knex('user_action_log').insert({ user_id: user.user_id, action: 'Unsuccessfully attempted to confirm a code on a device', action_time: knex.fn.now() }).then(function () {
           res.json({ status: 'Incorrect code given'});
         })
       }
     } else {
-      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Attempted to send a confirmation code to a non-existant user', action_time: knex.fn.now() }).then(function () {
+      knex('user_action_log').insert({ user_id: '0', action: 'Attempted to send a confirmation code to a non-existant user', action_time: knex.fn.now() }).then(function () {
         res.json({ status: 'No such user' })
       })
     }
