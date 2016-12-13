@@ -3,6 +3,9 @@ var router = express.Router();
 var knex = require('../lib/knex.js');
 var request = require('request');
 
+var SparkPost = require('sparkpost');
+var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
+
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 
@@ -41,6 +44,7 @@ router.post('/login_website', function (req, res, next) {
       res.json({error: "Incorrect Username or Password"})
     }
   })
+  //TODO encrypt passwords
   // if(bcrypt.compareSync(req.body.params.password, access)){
   //   var userId = {userId: "1"};
   //   var token = jwt.sign(userId, process.env.JWT_SECRET)
@@ -90,6 +94,43 @@ router.get('/website/nextBroadcastMessageId', function (req, res, next) {
       res.json({ "newMessageId": newMessageId });
     })
   })
+})
+
+router.post('/website/contactUs', function (req, res, next) {
+  console.log(req);
+
+  sp.transmissions.send({
+    recipients: [
+      {
+        "address": {
+          "email": 'cooper.heinrichs@gmail.com',
+          "name": 'Cooper Heinrichs'
+        }
+      }
+    ],
+    content: {
+      from: {
+        "name": "Whinny the Coop",
+        "email": "postmaster@whinny.com"
+      },
+      subject: 'Tryna get this to work',
+      html: '<html><body> yolo </html></body>'
+    }
+  }, function (err, apiResponse) {
+    if(err){
+      res.json(err);
+    } else {
+      res.json(apiResponse.body);
+    }
+  });
+});
+
+router.post('/website/signUpForUpdates', function (req, res, next) {
+  res.json({ todo: 'true' });
+})
+
+router.post('/website/broadcasterSignup', function (req, res, next) {
+  res.json({ todo: 'true' });
 })
 // ******** end website routes ********* //
 
