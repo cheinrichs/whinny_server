@@ -592,7 +592,7 @@ router.post('/createNewGroup', function (req, res, next) {
                 //create a group membership for the given user id
               }
               knex('group_invitations').insert(invitations).then(function () {
-                knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Created group ' + group[0].group_id, action_time: knex.fn.now() }).then(function () {
+                knex('user_action_log').insert({ user_id: req.body.fromUser.user_id, action: 'Created group ' + group[0].group_id, action_time: knex.fn.now() }).then(function () {
                   res.json({ group_id: group[0].group_id });
                 })
               })
