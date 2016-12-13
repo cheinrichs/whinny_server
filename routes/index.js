@@ -19,29 +19,29 @@ var textClient = new twilio.RestClient(accountSid, authToken);
 
 //website routes
 router.post('/login_website', function (req, res, next) {
-  if(!req.body.params.email){
-    console.log("no email");
-    res.json({error:'Please enter an email'})
-  }
-  if(!req.body.params.password){
-    console.log("no password");
-    res.json({error:'Please enter a password'})
-  }
+  if(!req.body.params.email) return res.json({error:'Please enter an email'});
+  if(!req.body.params.password) return res.json({error:'Please enter a password'});
 
   //get the user by email address
   //check the users pasword against the given password
   knex('users').where('email', req.body.params.email).first().then(function (user) {
     if(!user){
-      res.json({ error: "Incorrect Username or Password"})
+      knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: Failed a login attempt with no such user:' + req.body.params.email, action_time: knex.fn.now() }).then(function () {
+        res.json({ error: "Incorrect Username or Password"})
+      })
     }
     if(user.password === req.body.params.password){
       var data = {};
       var token = jwt.sign(user.user_id, process.env.JWT_SECRET)
       data.token = token;
       data.user = user;
-      res.json(data);
+      knex('user_action_log').insert({ user_id: user.user_id, action: 'WEBSITE: Successfully logged in to the website.', action_time: knex.fn.now() }).then(function () {
+        res.json(data);
+      })
     } else {
-      res.json({error: "Incorrect Username or Password"})
+      knex('user_action_log').insert({ user_id: user.user_id, action: 'WEBSITE: Failed a login attempt.', action_time: knex.fn.now() }).then(function () {
+        res.json({ error: "Incorrect Username or Password"})
+      })
     }
   })
   //TODO encrypt passwords
@@ -66,14 +66,18 @@ router.post('/createBroadcastMessage', function (req, res, next) {
     link_url: req.body.params.linkURL
   }).then(function () {
     console.log(req.params);
-    res.json({success: "true"});
+    knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + 'created a broadcast message.', action_time: knex.fn.now() }).then(function () {
+      res.json({success: "true"});
+    })
   })
 });
 
 router.get('/website/broadcastAdmin/:user_id', function (req, res, next) {
   knex('broadcast_memberships').where({user_id: req.params.user_id, admin: true}).pluck('broadcast_id').then(function (memberships) {
     knex('broadcasts').whereIn('broadcast_id', memberships).then(function (broadcasts) {
-      res.json(broadcasts)
+      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'WEBSITE: A broadcaster logged in to the website to send broadcasts', action_time: knex.fn.now() }).then(function () {
+        res.json(broadcasts)
+      })
     })
   })
 })
@@ -91,7 +95,9 @@ router.get('/website/nextBroadcastMessageId', function (req, res, next) {
     }).then(function () {
       var newMessageId = parseInt(id_count[0].count) + 1;
       console.log(newMessageId);
-      res.json({ "newMessageId": newMessageId });
+      knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: A broadcaster grabbed the most recent message id', action_time: knex.fn.now() }).then(function () {
+        res.json({ "newMessageId": newMessageId });
+      })
     })
   })
 })
@@ -118,19 +124,27 @@ router.post('/website/contactUs', function (req, res, next) {
     }
   }, function (err, apiResponse) {
     if(err){
-      res.json(err);
+      knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: There was an error when a user attempted to contact Whinny', action_time: knex.fn.now() }).then(function () {
+        res.json(err);
+      })
     } else {
-      res.json(apiResponse.body);
+      knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: A user attempted to contact Whinny', action_time: knex.fn.now() }).then(function () {
+        res.json(apiResponse.body);
+      })
     }
   });
 });
 
 router.post('/website/signUpForUpdates', function (req, res, next) {
-  res.json({ todo: 'true' });
+  knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: A user attempted to sign up for updates', action_time: knex.fn.now() }).then(function () {
+    res.json({ todo: 'true' });
+  })
 })
 
 router.post('/website/broadcasterSignup', function (req, res, next) {
-  res.json({ todo: 'true' });
+  knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: A broadcaster attempted to sign up', action_time: knex.fn.now() }).then(function () {
+    res.json({ todo: 'true' });
+  })
 })
 // ******** end website routes ********* //
 
@@ -139,6 +153,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
 });
 
+//iOS and Android Client Routes
 router.post('/joinWhinny', function (req, res, next) {
   console.log(req.body);
 
@@ -186,7 +201,9 @@ router.post('/joinWhinny', function (req, res, next) {
     //Update the portrait link using the ID, that way the link will always be correct
     knex('users').where('user_id', users[0].user_id).update({ portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + users[0].user_id + '_PersonalProfilePic.jpg'}).then(function () {
       confirmationCodeText(req.params.phone, confirmationCode);
-      res.json({ success: true })
+      knex('user_action_log').insert({ user_id: users[0].user_id, action: 'Joined Whinny', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true })
+      })
     })
 
   })
@@ -203,10 +220,14 @@ router.post('/logIn', function (req, res, next) {
       //Updates the newly created confirmation code in the user record
       knex('users').where('phone', req.body.phone).update({confirmation_code: confirmationCode, device_token: req.body.device_token}).then(function () {
         confirmationCodeText(req.body.phone, confirmationCode);
-        res.json(user);
+        knex('user_action_log').insert({ user_id: user.user_id, action: 'Logged in to a new device and received a new confirmation code (POST login)', action_time: knex.fn.now() }).then(function () {
+          res.json(user);
+        })
       })
     } else {
-      res.json({ newUser: true})
+      knex('user_action_log').insert({ user_id: '0', action: 'A new user began the account creation process (POST login)', action_time: knex.fn.now() }).then(function () {
+        res.json({ newUser: true})
+      })
     }
   });
 })
@@ -227,10 +248,14 @@ router.get('/log_in/:phone', function (req, res, next) {
 
       knex('users').where('phone', req.params.phone).update({confirmation_code: confirmationCode}).then(function () {
         confirmationCodeText(req.params.phone, confirmationCode);
-        res.json(user);
+        knex('user_action_log').insert({ user_id: user.user_id, action: 'A user began a fresh login process (GET login)', action_time: knex.fn.now() }).then(function () {
+          res.json(user);
+        })
       })
     } else {
-      res.json({ newUser: true})
+      knex('user_action_log').insert({ user_id: '0', action: 'A user started creating a new account (GET login)', action_time: knex.fn.now() }).then(function () {
+        res.json({ newUser: true})
+      })
     }
   });
 
@@ -242,14 +267,20 @@ router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, ne
       if(user.confirmation_code === req.params.confirmation_code.toLowerCase()){
         knex('users').where('phone', req.params.user_phone).update({ verified: true }).then(function () {
           knex('users').where('phone', req.params.user_phone).first().then(function (updatedUser) {
-            res.json(updatedUser);
+            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Successfully confirmed their log in to a device', action_time: knex.fn.now() }).then(function () {
+              res.json(updatedUser);
+            })
           })
         })
       } else {
-        res.json({ status: 'Incorrect code given'});
+        knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Unsuccessfully attempted to confirm a code on a device', action_time: knex.fn.now() }).then(function () {
+          res.json({ status: 'Incorrect code given'});
+        })
       }
     } else {
-      res.json({ status: 'No such user' })
+      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Attempted to send a confirmation code to a non-existant user', action_time: knex.fn.now() }).then(function () {
+        res.json({ status: 'No such user' })
+      })
     }
   })
 })
@@ -268,7 +299,9 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
     user_ids = user_ids.unique();
     knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
       result.userObjects = userObjects;
-      res.json(result);
+      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their chat messages', action_time: knex.fn.now() }).then(function () {
+        res.json(result);
+      })
     })
   })
 })
@@ -286,7 +319,9 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
             for (var i = 0; i < groupObjects.length; i++) {
               result.groupObjects[groupObjects[i].group_id] = groupObjects[i];
             }
-            res.json(result);
+            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
+              res.json(result);
+            })
           })
         })
       })
@@ -306,17 +341,20 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
       .where('user_id', req.params.user_id)
       .then(function (broadcastObjects) {
         result.broadcastObjects = broadcastObjects;
-        res.json(result);
+        knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their broadcast messages', action_time: knex.fn.now() }).then(function () {
+          res.json(result);
+        })
       })
     })
   })
 })
 
-router.get('/user/:user_phone', function (req, res, next) {
-  knex('users').where('phone', req.params.user_phone).then(function (result) {
-    res.json(result);
-  });
-})
+//TODO deprecated. remove
+// router.get('/user/:user_phone', function (req, res, next) {
+//   knex('users').where('phone', req.params.user_phone).then(function (result) {
+//     res.json(result);
+//   });
+// })
 
 //TODO POST
 router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, next){
@@ -334,7 +372,9 @@ router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, n
     latitude: null,
     longitude: null
   }).then(function () {
-    res.json({created: true});
+    knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Sent a chat message to user ' + req.params.to_user, action_time: knex.fn.now() }).then(function () {
+      res.json({created: true});
+    })
   })
 })
 //TODO POST
@@ -344,7 +384,9 @@ router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res
     from_user: req.params.from_user,
     group_message_content: req.params.content
   }).then(function () {
-    res.json({confirmed: true})
+    knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Sent a group message to group ' + req.params.to_group, action_time: knex.fn.now() }).then(function () {
+      res.json({confirmed: true})
+    })
   })
 })
 //TODO POST - deprecated remove
@@ -361,7 +403,9 @@ router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (
         from_user: req.params.from_user,
         broadcast_message_content: req.params.content
       }).then(function () {
-        res.json({confirmed: true})
+        knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Sent a broadcast message to broadcast ' + req.params.to_broadcast, action_time: knex.fn.now() }).then(function () {
+          res.json({confirmed: true})
+        })
       })
     }
   })
@@ -389,7 +433,9 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         latitude: null,
         longitude: null
       }).then(function () {
-        res.json(user);
+        knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with current whinny user ' + user.user_id, action_time: knex.fn.now() }).then(function () {
+          res.json(user);
+        })
       })
 
     } else {
@@ -454,11 +500,15 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
               console.log('sending text message');
               sendMms(req.params.to_phone, req.params.content, from_user.first_name, from_user.last_name);
               new_users[0].textSent = true;
-              res.json(new_users[0]);
+              knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with a user not registered to Whinny. A text was sent to ' + req.params.to_phone, action_time: knex.fn.now() }).then(function () {
+                res.json(new_users[0]);
+              })
             } else {
               console.log("couldnt send text message");
               new_users[0].textSent = false;
-              res.json(new_users[0]);
+              knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with a user not registered to Whinny. A text was not sent to ' + req.params.to_phone, action_time: knex.fn.now() }).then(function () {
+                res.json(new_users[0]);
+              })
             }
           })
         })
@@ -539,7 +589,9 @@ router.post('/createNewGroup', function (req, res, next) {
                 //create a group membership for the given user id
               }
               knex('group_invitations').insert(invitations).then(function () {
-                res.json({ group_id: group[0].group_id });
+                knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Created group ' + group[0].group_id, action_time: knex.fn.now() }).then(function () {
+                  res.json({ group_id: group[0].group_id });
+                })
               })
             }
           })
@@ -552,7 +604,9 @@ router.post('/createNewGroup', function (req, res, next) {
 
 router.get('/groupInvitations/:user_id', function (req, res, next) {
   knex('group_invitations').where('user_id', req.params.user_id).join('groups', 'group_invitations.group_id', '=', 'groups.group_id').then(function (invitations) {
-    res.json(invitations);
+    knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group invitations', action_time: knex.fn.now() }).then(function () {
+      res.json(invitations);
+    })
   })
 })
 
@@ -565,14 +619,18 @@ router.post('/acceptInvitation', function (req, res, next) {
       admin: false,
       notifications: true
     }).then(function () {
-      res.json({ groupMembershipCreated: 'successful' });
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Accepted a group invitation to ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
+        res.json({ groupMembershipCreated: 'successful' });
+      })
     })
   })
 })
 
 router.post('/declineInvitation', function (req, res, next) {
   knex('group_invitations').where({ invitation_id: req.body.invitation_id }).del().then(function () {
-    res.json({ groupMembershipDeclined: 'successful' });
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Declined a group invitation', action_time: knex.fn.now() }).then(function () {
+      res.json({ groupMembershipDeclined: 'successful' });
+    })
   });
 })
 
@@ -602,9 +660,13 @@ router.get('/groupApplications/:user_id', function (req, res, next) {
             result[applications[i].group_id].applications = [];
             result[applications[i].group_id].applications.push(applications[i])
           }
-          res.json(result);
+          knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group applications', action_time: knex.fn.now() }).then(function () {
+            res.json(result);
+          })
         } else {
-          res.json({ noCurrentApplications: true });
+          knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group applications', action_time: knex.fn.now() }).then(function () {
+            res.json({ noCurrentApplications: true });
+          })
         }
       })
     })
@@ -620,7 +682,9 @@ router.post('/acceptGroupApplication', function (req, res, next) {
       admin: false,
       notifications: true
     }).then(function () {
-      res.json({ groupMembershipCreated: 'successful' });
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Was accepted into group ' + req.body.group_id + ' after applying.', action_time: knex.fn.now() }).then(function () {
+        res.json({ groupMembershipCreated: 'successful' });
+      })
     })
   })
 })
@@ -628,28 +692,30 @@ router.post('/acceptGroupApplication', function (req, res, next) {
 router.post('/declineGroupApplication', function (req, res, next) {
   //TODO instead of deleting, update the status to deleted
   knex('group_applications').where({ application_id: req.body.application_id }).del().then(function () {
-    res.json({ groupApplicationDeclined: 'successful' });
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Declined a group application', action_time: knex.fn.now() }).then(function () {
+      res.json({ groupApplicationDeclined: 'successful' });
+    })
   })
 })
 
 router.get('/groupSearch/:user_id', function (req, res, next) {
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (group_ids) {
     knex('groups').where('is_hidden', false).whereNotIn('group_id', group_ids).then(function (searchGroups) {
-      res.json(searchGroups);
+      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Searched for groups', action_time: knex.fn.now() }).then(function () {
+        res.json(searchGroups);
+      })
     })
   })
 })
 
 router.post('/joinGroup', function (req, res, next) {
-
   if(!req.body.group_id){
-    console.log("No given group_id in joinGroup");
-    res.json({success: false});
+    res.json({ error: "No given group_id in joinGroup"});
+    return;
   }
-
   if(!req.body.user_id){
-    console.log("No given user_id in joinGroup");
-    res.json({success: false});
+    res.json({ error: "No given user_id in joinGroup" });
+    return;
   }
 
   knex('group_memberships').insert({
@@ -658,27 +724,30 @@ router.post('/joinGroup', function (req, res, next) {
     admin: false,
     notifications: true
   }).then(function () {
-    res.json({ success: true});
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Joined group ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
+      res.json({ succes: true });
+    })
   })
 
 })
 
 router.post('/leaveGroup', function (req, res, next) {
   if(!req.body.group_id){
-    console.log("No given group_id in joinGroup");
-    res.json({success: false});
+    res.json({ error: "No given group_id in joinGroup" });
+    return;
   }
-
   if(!req.body.user_id){
-    console.log("No given user_id in joinGroup");
-    res.json({success: false});
+    res.json({ error: "No given user_id in joinGroup" });
+    return
   }
 
   knex('group_memberships').where({
     user_id: req.body.user_id,
     group_id: req.body.group_id
   }).del().then(function () {
-    res.json({ success: true });
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Left group ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
+      res.json({ succes: true });
+    })
   })
 
 })
@@ -686,22 +755,16 @@ router.post('/leaveGroup', function (req, res, next) {
 router.get('/broadcastSearch/:user_id', function (req, res, next) {
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcast_ids) {
     knex('broadcasts').whereNotIn('broadcast_id', broadcast_ids).then(function (searchBroadcasts) {
-      res.json(searchBroadcasts);
+      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Searched broadcasts', action_time: knex.fn.now() }).then(function () {
+        res.json(searchBroadcasts);
+      })
     })
   })
 })
 
 router.post('/subscribeToBroadcast', function (req, res, next) {
-  console.log("subscribing to broadcast", req.body.broadcast_id, req.body.user_id);
-  if(!req.body.broadcast_id){
-    console.log("No given broadcast_id in subscribeFromBroadcast");
-    res.json({success: false});
-  }
-
-  if(!req.body.user_id){
-    console.log("No given user_id in subscribeFromBroadcast");
-    res.json({success: false});
-  }
+  if(!req.body.broadcast_id) return res.json({ error: "No given broadcast_id in subscribeFromBroadcast" });
+  if(!req.body.user_id) return res.json({ error: "No given user_id in subscribeFromBroadcast"});
 
   var membership = {
     user_id: req.body.user_id,
@@ -709,37 +772,38 @@ router.post('/subscribeToBroadcast', function (req, res, next) {
     admin: false,
     notifications: true
   }
+
   knex('broadcast_memberships').insert(membership).then(function () {
-    res.json({ succes: true });
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Subscribed to broadcast ' + req.body.broadcast_id, action_time: knex.fn.now() }).then(function () {
+      res.json({ succes: true });
+    })
   })
 })
 
 router.post('/unsubscribeFromBroadcast', function (req, res, next) {
   console.log("unsubscribeFromBroadcast with", req.body.broadcast_id, req.body.user_id);
-  if(!req.body.broadcast_id){
-    console.log("No given broadcast_id in unsubscribeFromBroadcast");
-    res.json({success: false});
-  }
-
-  if(!req.body.user_id){
-    console.log("No given user_id in unsubscribeFromBroadcast");
-    res.json({success: false});
-  }
+  if(!req.body.broadcast_id) return res.json({ error: "No given broadcast_id in unsubscribeFromBroadcast" });
+  if(!req.body.user_id) return res.json({error: "No given user_id in unsubscribeFromBroadcast"});
 
   knex('broadcast_memberships').where({ user_id: req.body.user_id, broadcast_id: req.body.broadcast_id}).del().then(function () {
-    res.json({ usubscribedFrom: req.body.broadcast_id });
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Unsubscribed from broadcast ' + req.body.broadcast_id, action_time: knex.fn.now() }).then(function () {
+      res.json({ usubscribedFrom: req.body.broadcast_id });
+    })
   })
 })
 
 router.get('/getUserInterests/:user_id', function (req, res, next) {
   knex('user_interests').where( 'user_id', req.params.user_id).then(function (interests) {
-    res.json(interests);
+    knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Accessed their interests (1st Route)', action_time: knex.fn.now() }).then(function () {
+      res.json(interests);
+    })
   })
 })
 
 router.post('/addUserInterests', function (req, res, next) {
+  if(!req.body.currentUser) return res.json({error: "No given user_id in addUserInterests"});
+  if(!req.body.interests) return res.json({error: "No given interests in addUserInterests"});
   knex('user_interests').where('user_id', req.body.currentUser).del().then(function () {
-    console.log(req.body);
     var interests = [];
     for (var i = 0; i < req.body.interests.length; i++) {
       var interest = {
@@ -752,51 +816,87 @@ router.post('/addUserInterests', function (req, res, next) {
 
     knex('user_interests').insert(interests).then(function () {
       knex('user_suggested_disciplines').insert({suggested_discipline: req.body.suggested_interest}).then(function () {
-        res.json({ yyeaaa: 'yeah' });
+        knex('user_action_log').insert({ user_id: '2', action: 'Updated their interests to ' + req.body.interests, action_time: knex.fn.now() }).then(function () {
+          res.json({ success: true})
+        })
       })
     });
   })
-
 })
 
-router.post('/updateNotificationSettings', function (req, res, next) {
-  //TODO error handling
-  knex('users').where('user_id', req.body.user_id).update({
-    message_notifications: req.body.messaging,
-    group_notifications: req.body.group,
-    broadcast_notifications: req.body.broadcast
-  }).then(function () {
-    res.json({ success: true})
-  })
-})
+//deprecated?
+// router.post('/updateNotificationSettings', function (req, res, next) {
+//   if(!req.body.user_id) res.json({ error: "Missing user_id" });
+//   knex('users').where('user_id', req.body.user_id).update({
+//     message_notifications: req.body.messaging,
+//     group_notifications: req.body.group,
+//     broadcast_notifications: req.body.broadcast
+//   }).then(function () {
+//     res.json({ success: true})
+//   })
+// })
 
 router.post('/updateMessageNotificationSettings', function (req, res, next) {
+  if(!req.body.user_id) return res.json({ error: "Missing user_id" });
+  if(!req.body.messaging) return res.json({ error: "Missing messaging" });
   knex('users').where('user_id', req.body.user_id).update({
     message_notifications: req.body.messaging
   }).then(function () {
-    res.json({ success: true})
+    if(req.body.messaging === 'true'){
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Turned on messaging notification settings', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true})
+      })
+    } else {
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Turned off messaging notification settings', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true})
+      })
+    }
   })
 })
 
 router.post('/updateGroupNotificationSettings', function (req, res, next) {
+  if(!req.body.user_id) return res.json({ error: "Missing user_id" });
+  if(!req.body.group) return res.json({ error: "Missing group" });
   knex('users').where('user_id', req.body.user_id).update({
     group_notifications: req.body.group
   }).then(function () {
-    res.json({ success: true})
+    if(req.body.group === 'true'){
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Turned on group notification settings', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true})
+      })
+    } else {
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Turned off group notification settings', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true})
+      })
+    }
   })
 })
 
 router.post('/updateBroadcastNotificationSettings', function (req, res, next) {
+  if(!req.body.user_id) return res.json({ error: "Missing user_id" });
+  if(!req.body.broadcast) return res.json({ error: "Missing broadcast" });
   knex('users').where('user_id', req.body.user_id).update({
     broadcast_notifications: req.body.broadcast
   }).then(function () {
-    res.json({ success: true})
+    if(req.body.broadcast === 'true'){
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Turned on broadcast notification settings', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true})
+      })
+    } else {
+      knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Turned off broadcast notification settings', action_time: knex.fn.now() }).then(function () {
+        res.json({ success: true})
+      })
+    }
   })
 })
 
 router.get('/userInterests/:user_id', function (req, res, next) {
+  //Select all interests for a certain user_id and return them
   knex('user_interests').where('user_id', req.params.user_id).pluck('discipline_id').then(function (disciplines) {
-    res.json(disciplines);
+    //Log that the user accessed their disciplines
+    knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Accessed disciplines (2nd route?)', action_time: knex.fn.now() }).then(function () {
+      res.json(disciplines);
+    });
   })
 })
 
