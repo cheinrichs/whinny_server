@@ -221,7 +221,7 @@ router.post('/logIn', function (req, res, next) {
       knex('users').where('phone', req.body.phone).update({confirmation_code: confirmationCode, device_token: req.body.device_token}).then(function () {
         confirmationCodeText(req.body.phone, confirmationCode);
         console.log(user);
-        knex('user_action_log').insert({ user_id: user.user_id, action: 'Logged in to a new device and received a new confirmation code (POST login)', action_time: knex.fn.now() }).then(function () {
+        knex('user_action_log').insert({ user_id: user[0].user_id, action: 'Logged in to a new device and received a new confirmation code (POST login)', action_time: knex.fn.now() }).then(function () {
           res.json(user);
         })
       })
