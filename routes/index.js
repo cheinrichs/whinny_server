@@ -291,22 +291,76 @@ router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, ne
 
 router.get('/chatMessages/:user_id', function (req, res, next) {
   var result = {};
+
+  //get all messages involving the given id as to_user or from_user
   knex('messages').where('to_user', req.params.user_id)
   .orWhere('from_user', req.params.user_id).then(function (messages) {
-    result.messages = messages;
     var user_ids = [];
+    //for loop through all the retrieved messages
     for (var i = 0; i < messages.length; i++) {
-      if(messages[i].from_user) user_ids.push(messages[i].from_user);
-      if(messages[i].to_user) user_ids.push(messages[i].to_user);
+      //push each message into an object
+      //the key of each message object is the user id
+      //that is not the given id
+      if(messages[i].to_user == req.params.user_id){
+
+        if(!result[messages[i].from_user]){
+          result[messages[i].from_user] = {
+            unread: false,
+            messages: [],
+            convoUser: {},
+          };
+        }
+
+        result[messages[i].from_user].messages.push(messages[i]);
+
+        //while checking that, see if any of them are unread
+        //if they are, flip the unread flag
+        if(messages[i].read === false) result[messages[i].from_user].unread = true;
+
+      } else if(messages[i].from_user == req.params.user_id){
+
+        if(!result[messages[i].to_user]){
+          result[messages[i].to_user] = {
+            unread: false,
+            messages: [],
+            convoUser: {},
+          };
+        }
+
+        result[messages[i].to_user].messages.push(messages[i]);
+
+        if(messages[i].read === false) result[messages[i].to_user].unread = true;
+      }
     }
-    user_ids = user_ids.unique();
-    knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
-      result.userObjects = userObjects;
-      knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their chat messages', action_time: knex.fn.now() }).then(function () {
-        res.json(result);
-      })
+
+    knex('users').whereIn('user_id', Object.keys(result)).then(function (userObjects) {
+      for (var i = 0; i < userObjects.length; i++) result[userObjects[i].user_id].convoUser = userObjects[i];
+      res.json(result)
     })
+
   })
+
+
+  //then stick in the convo user
+
+  // knex('messages').where('to_user', req.params.user_id)
+  // .orWhere('from_user', req.params.user_id).then(function (messages) {
+  //   result.messages = messages;
+  //   var user_ids = [];
+  //
+  //   //Find all user ids that are involved in conversations
+  //   for (var i = 0; i < messages.length; i++) {
+  //     if(messages[i].from_user) user_ids.push(messages[i].from_user);
+  //     if(messages[i].to_user) user_ids.push(messages[i].to_user);
+  //   }
+  //   user_ids = user_ids.unique();
+  //   knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
+  //     result.userObjects = userObjects;
+  //     knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their chat messages', action_time: knex.fn.now() }).then(function () {
+  //       res.json(result);
+  //     })
+  //   })
+  // })
 })
 
 router.get('/groupMessages/:user_id', function (req, res, next) {
@@ -352,12 +406,6 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
   })
 })
 
-//TODO deprecated. remove
-// router.get('/user/:user_phone', function (req, res, next) {
-//   knex('users').where('phone', req.params.user_phone).then(function (result) {
-//     res.json(result);
-//   });
-// })
 
 //TODO POST
 router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, next){
@@ -826,18 +874,6 @@ router.post('/addUserInterests', function (req, res, next) {
     });
   })
 })
-
-//deprecated?
-// router.post('/updateNotificationSettings', function (req, res, next) {
-//   if(!req.body.user_id) res.json({ error: "Missing user_id" });
-//   knex('users').where('user_id', req.body.user_id).update({
-//     message_notifications: req.body.messaging,
-//     group_notifications: req.body.group,
-//     broadcast_notifications: req.body.broadcast
-//   }).then(function () {
-//     res.json({ success: true})
-//   })
-// })
 
 router.post('/updateMessageNotificationSettings', function (req, res, next) {
   if(!req.body.user_id) return res.json({ error: "Missing user_id" });
