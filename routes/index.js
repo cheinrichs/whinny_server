@@ -406,14 +406,12 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
   })
 })
 
-
-//TODO POST
-router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, next){
+router.post('/sendChatMessage', function (req, res, next) {
   knex('messages').insert({
-    to_user: req.params.to_user,
-    from_user: req.params.from_user,
+    to_user: req.body.to_user,
+    from_user: req.body.from_user,
     message_type: 'chat',
-    content: req.params.content,
+    content: req.body.content,
     read: false,
     sent_in_app: true,
     sent_as_mms: false,
@@ -423,11 +421,31 @@ router.get('/sendChatMessage/:to_user/:from_user/:content', function(req, res, n
     latitude: null,
     longitude: null
   }).then(function () {
-    knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Sent a chat message to user ' + req.params.to_user, action_time: knex.fn.now() }).then(function () {
-      res.json({created: true});
+    var body = JSON.stringify({
+      "tokens": ["ca71d45630dcb7e83019fb7891c6379cec4dbf82fb2c23132b21a37fd4c37cbe"],
+      "profile": "whinny_push_notifications_dev",
+      "notification": {
+        "title": req.body.senderName,
+        "message": req.body.content
+      }
+    });
+    request({
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+      },
+      uri: 'https://api.ionic.io/push/notifications',
+      body: body,
+      method: 'POST'
+    }, function (err, response, body) {
+      if(err) console.log(err);
+      knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
+        res.json({created: true});
+      })
     })
   })
 })
+
 //TODO POST
 router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
   knex('group_messages').insert({
