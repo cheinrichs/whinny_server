@@ -16,6 +16,8 @@ var authToken = process.env.TWILIO_AUTH_TOKEN;
 
 var textClient = new twilio.RestClient(accountSid, authToken);
 
+var CLIENT_CURRENT_VERSION = '0.0.1';
+
 
 //website routes
 router.post('/login_website', function (req, res, next) {
@@ -148,6 +150,14 @@ router.post('/website/broadcasterSignup', function (req, res, next) {
 })
 // ******** end website routes ********* //
 
+router.get('/versionCheck/:version', function (req, res, next) {
+  if(req.params.version === CLIENT_CURRENT_VERSION){
+    return res.json({ deprecatedClient: false });
+  } else {
+    return res.json({ deprecatedClient: true });
+  }
+})
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Server' });
@@ -210,6 +220,7 @@ router.post('/joinWhinny', function (req, res, next) {
 })
 
 router.post('/logIn', function (req, res, next) {
+  if(req.body.version !== CLIENT_CURRENT_VERSION) return res.json({ deprecatedClient: 'true' });
   console.log(req.body);
   knex('users').where('phone', req.body.phone).then(function (user) {
     console.log(user);
@@ -232,8 +243,11 @@ router.post('/logIn', function (req, res, next) {
   });
 })
 
-//TODO being rebuilt above - deprecated
+//TODO deprecated?
 router.get('/log_in/:phone', function (req, res, next) {
+  console.log("deprecated login route");
+  if(req.body.version !== CLIENT_CURRENT_VERSION) res.json({ deprecatedClient: 'true' });
+
   if(!req.params.phone) res.json({ status: 'denied' });
   //look for them in users
   //if there is a user, create the new confirmation code and send it via text
@@ -410,40 +424,42 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
 })
 
 router.post('/sendChatMessage', function (req, res, next) {
-  knex('messages').insert({
-    to_user: req.body.to_user,
-    from_user: req.body.from_user,
-    message_type: 'chat',
-    content: req.body.content,
-    read: false,
-    sent_in_app: true,
-    sent_as_mms: false,
-    geographically_limited: false,
-    state: null,
-    zip: null,
-    latitude: null,
-    longitude: null
-  }).then(function () {
-    var body = JSON.stringify({
-      "tokens": ["ca71d45630dcb7e83019fb7891c6379cec4dbf82fb2c23132b21a37fd4c37cbe"],
-      "profile": "whinny_push_notifications_dev",
-      "notification": {
-        "title": req.body.senderName,
-        "message": req.body.content
-      }
-    });
-    request({
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
-      },
-      uri: 'https://api.ionic.io/push/notifications',
-      body: body,
-      method: 'POST'
-    }, function (err, response, body) {
-      if(err) console.log(err);
-      knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
-        res.json({created: true});
+  knex('users').where('user_id', req.body.to_user).first().then(function (toUser) {
+    knex('messages').insert({
+      to_user: req.body.to_user,
+      from_user: req.body.from_user,
+      message_type: 'chat',
+      content: req.body.content,
+      read: false,
+      sent_in_app: true,
+      sent_as_mms: false,
+      geographically_limited: false,
+      state: null,
+      zip: null,
+      latitude: null,
+      longitude: null
+    }).then(function () {
+      var body = JSON.stringify({
+        "tokens": [toUser.device_token],
+        "profile": "whinny_push_notifications_dev",
+        "notification": {
+          "title": req.body.senderName,
+          "message": req.body.content
+        }
+      });
+      request({
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+        },
+        uri: 'https://api.ionic.io/push/notifications',
+        body: body,
+        method: 'POST'
+      }, function (err, response, body) {
+        if(err) console.log(err);
+        knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
+          res.json({created: true});
+        })
       })
     })
   })
@@ -963,6 +979,7 @@ router.get('/userInterests/:user_id', function (req, res, next) {
 router.post('/logOut', function (req, res, next) {
   console.log(req.body.user_id);
   knex('users').where('user_id', req.body.user_id).update({ verified: false, device_token: '' }).then(function () {
+
     res.json({ loggedOut: 'Successful' });
   })
 })
