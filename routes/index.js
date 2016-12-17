@@ -222,7 +222,7 @@ router.post('/joinWhinny', function (req, res, next) {
 
 router.post('/logIn', function (req, res, next) {
   //Checks version on a new login
-  if(req.body.version === CLIENT_CURRENT_VERSION) return res.json({ deprecatedClient: 'true' });
+  if(req.body.version !== CLIENT_CURRENT_VERSION) return res.json({ deprecatedClient: 'true' });
   console.log(req.body);
   knex('users').where('phone', req.body.phone).then(function (user) {
     console.log(user);
