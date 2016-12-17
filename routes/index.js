@@ -290,6 +290,9 @@ router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, ne
 
 
 router.get('/chatMessages/:user_id', function (req, res, next) {
+  if(!req.params.user_id){
+    res.json({ error: "User undefined" });
+  }
   var result = {};
 
   //get all messages involving the given id as to_user or from_user
@@ -954,6 +957,13 @@ router.get('/userInterests/:user_id', function (req, res, next) {
     knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Accessed disciplines (2nd route?)', action_time: knex.fn.now() }).then(function () {
       res.json(disciplines);
     });
+  })
+})
+
+router.post('/logOut', function (req, res, next) {
+  console.log(req.body.user_id);
+  knex('users').where('user_id', req.body.user_id).update({ verified: false, device_token: '' }).then(function () {
+    res.json({ loggedOut: 'Successful' });
   })
 })
 
