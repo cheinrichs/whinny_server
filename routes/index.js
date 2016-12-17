@@ -150,6 +150,7 @@ router.post('/website/broadcasterSignup', function (req, res, next) {
 })
 // ******** end website routes ********* //
 
+//checks version when you auto log in
 router.get('/versionCheck/:version', function (req, res, next) {
   if(req.params.version === CLIENT_CURRENT_VERSION){
     return res.json({ deprecatedClient: false });
@@ -220,7 +221,8 @@ router.post('/joinWhinny', function (req, res, next) {
 })
 
 router.post('/logIn', function (req, res, next) {
-  if(req.body.version !== CLIENT_CURRENT_VERSION) return res.json({ deprecatedClient: 'true' });
+  //Checks version on a new login
+  if(req.body.version === CLIENT_CURRENT_VERSION) return res.json({ deprecatedClient: 'true' });
   console.log(req.body);
   knex('users').where('phone', req.body.phone).then(function (user) {
     console.log(user);
