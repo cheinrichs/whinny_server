@@ -441,29 +441,81 @@ router.post('/sendChatMessage', function (req, res, next) {
       latitude: null,
       longitude: null
     }).then(function () {
-      var body = JSON.stringify({
-        "tokens": [toUser.device_token],
-        "profile": "whinny_push_notifications_dev",
-        "notification": {
-          "title": req.body.senderName,
-          "message": req.body.content
+      if(toUser.message_notifications === true){
+        var body = JSON.stringify({
+          "tokens": [toUser.device_token],
+          "profile": "whinny_push_notifications_dev",
+          "notification": {
+            "title": req.body.senderName,
+            "message": req.body.content
+          }
+        });
+        request({
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+          },
+          uri: 'https://api.ionic.io/push/notifications',
+          body: body,
+          method: 'POST'
+        }, function (err, response, body) {
+          if(err) console.log(err);
+          knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
+            res.json({created: true});
+          })
+        })
+      }
+    })
+  })
+})
+
+router.post('/sendGroupMessage', function (req, res, next) {
+  knex('group_messages').insert({
+    to_group: req.body.to_group,
+    from_user: req.body.from_user,
+    group_message_content: req.body.content
+  }).then(function () {
+    //search through users that are part of the to_group
+    //pluck their device ids
+    knex('group_memberships').where('group_id', req.body.to_group).pluck('user_id').then(function (user_ids) {
+      console.log(user_ids);
+      knex('users').whereIn('user_id', user_ids).where('group_notifications', true).then(function (users_with_notifications) {
+        var group_device_tokens = [];
+        for (var i = 0; i < users_with_notifications.length; i++) {
+          group_device_tokens.push(users_with_notifications[i].device_token);
         }
-      });
-      request({
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
-        },
-        uri: 'https://api.ionic.io/push/notifications',
-        body: body,
-        method: 'POST'
-      }, function (err, response, body) {
-        if(err) console.log(err);
-        knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
-          res.json({created: true});
+        console.log(group_device_tokens);
+
+        //make a new push message using that array
+        var body = JSON.stringify({
+          "tokens": group_device_tokens,
+          "profile": "whinny_push_notifications_dev",
+          "notification": {
+            "title": req.body.senderName,
+            "message": req.body.content
+          }
+        });
+        request({
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+          },
+          uri: 'https://api.ionic.io/push/notifications',
+          body: body,
+          method: 'POST'
+        }, function (err, response, body) {
+          if(err){
+            console.log(err);
+            return res.json({ error: err })  
+          }
+
+          knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a group message to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
+            return res.json({confirmed: true})
+          })
         })
       })
     })
+
   })
 })
 
