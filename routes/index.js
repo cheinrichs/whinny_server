@@ -57,7 +57,8 @@ router.post('/login_website', function (req, res, next) {
 });
 
 router.post('/createBroadcastMessage', function (req, res, next) {
-  console.log(req.body.params);
+  //When we uploaded a photo, we created a placeholder broadcast with currentNewMessageId as the messageID
+  //Here we update the new record with all the given info
   knex('broadcast_messages').where('broadcast_message_id', req.body.params.currentNewMessageId).update({
     to_broadcast: req.body.params.selectedBroadcast,
     from_user: req.body.params.currentUser.user_id,
@@ -67,10 +68,45 @@ router.post('/createBroadcastMessage', function (req, res, next) {
     link_text: req.body.params.linkText,
     link_url: req.body.params.linkURL
   }).then(function () {
-    console.log(req.params);
-    knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + 'created a broadcast message.', action_time: knex.fn.now() }).then(function () {
-      res.json({success: "true"});
+    //Now find all users subscribed to the broadcast
+    knex('broadcast_memberships').where('broadcast_id', req.body.params.selectedBroadcast).pluck('user_id').then(function (user_ids) {
+      console.log('user ids');
+      console.log(user_ids);
+      //select all users objects subscribed to the given broadcast who have broadcast notifications turned on
+      knex('users').whereIn('user_id', user_ids).where('broadcast_notifications', true).pluck('device_token').then(function (broadcast_device_tokens) {
+        console.log("broadcast_device_tokens");
+        console.log(broadcast_device_tokens);
+        //create the push
+        //make a new push message using that array
+        var body = JSON.stringify({
+          "tokens": broadcast_device_tokens,
+          "profile": "whinny_push_notifications_dev",
+          "notification": {
+            "title": req.body.senderName,
+            "message": req.body.content
+          }
+        });
+        request({
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+          },
+          uri: 'https://api.ionic.io/push/notifications',
+          body: body,
+          method: 'POST'
+        }, function (err, response, body) {
+          if(err){
+            console.log(err);
+            return res.json({ error: err })
+          }
+
+          knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + 'created a broadcast message.', action_time: knex.fn.now() }).then(function () {
+            res.json({success: "true"});
+          })
+        })
+      })
     })
+
   })
 });
 
@@ -506,7 +542,7 @@ router.post('/sendGroupMessage', function (req, res, next) {
         }, function (err, response, body) {
           if(err){
             console.log(err);
-            return res.json({ error: err })  
+            return res.json({ error: err })
           }
 
           knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a group message to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
@@ -527,10 +563,11 @@ router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res
     group_message_content: req.params.content
   }).then(function () {
     knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Sent a group message to group ' + req.params.to_group, action_time: knex.fn.now() }).then(function () {
-      res.json({confirmed: true})
+      res.json({outdatedRoute: "Stop using!"})
     })
   })
 })
+
 //TODO POST - deprecated remove
 router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (req, res, next) {
   knex('broadcast_memberships').where({
