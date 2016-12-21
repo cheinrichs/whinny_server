@@ -345,7 +345,7 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
   if(!req.params.user_id){
     res.json({ error: "User undefined" });
   }
-  var result = {};
+  var result = [];
 
   //get all messages involving the given id as to_user or from_user
   knex('messages').where('to_user', req.params.user_id)
