@@ -74,7 +74,7 @@ router.post('/createBroadcastMessage', function (req, res, next) {
       console.log(user_ids);
       //select all users objects subscribed to the given broadcast who have broadcast notifications turned on
       knex('users').whereIn('user_id', user_ids).where('broadcast_notifications', true).pluck('device_token').then(function (broadcast_device_tokens) {
-        console.log("broadcast_device_tokens");
+        console.log("broadcast");
         console.log(broadcast_device_tokens);
         //create the push
         //make a new push message using that array
@@ -345,7 +345,7 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
   if(!req.params.user_id){
     res.json({ error: "User undefined" });
   }
-  var result = [];
+  var result = {};
 
   //get all messages involving the given id as to_user or from_user
   knex('messages').where('to_user', req.params.user_id)
@@ -358,6 +358,7 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
       //that is not the given id
       if(messages[i].to_user == req.params.user_id){
 
+
         if(!result[messages[i].from_user]){
           result[messages[i].from_user] = {
             unread: false,
@@ -366,12 +367,14 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
           };
         }
 
+        //push each message into the convo object
         result[messages[i].from_user].messages.push(messages[i]);
 
         //while checking that, see if any of them are unread
         //if they are, flip the unread flag
         if(messages[i].read === false) result[messages[i].from_user].unread = true;
 
+      //From the current user
       } else if(messages[i].from_user == req.params.user_id){
 
         if(!result[messages[i].to_user]){
@@ -384,38 +387,22 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
 
         result[messages[i].to_user].messages.push(messages[i]);
 
-        if(messages[i].read === false) result[messages[i].to_user].unread = true;
+        //This marks messages a user sent as unread, which is backwards
+        // if(messages[i].read === false) result[messages[i].to_user].unread = true;
       }
     }
 
+    //Orderby in angular did not like the object syntax, so we quickly make an array
+    var finalResult = [];
+    for (key in result) finalResult.push(result[key]);
+
     knex('users').whereIn('user_id', Object.keys(result)).then(function (userObjects) {
       for (var i = 0; i < userObjects.length; i++) result[userObjects[i].user_id].convoUser = userObjects[i];
-      res.json(result)
+      res.json(finalResult)
     })
 
   })
 
-
-  //then stick in the convo user
-
-  // knex('messages').where('to_user', req.params.user_id)
-  // .orWhere('from_user', req.params.user_id).then(function (messages) {
-  //   result.messages = messages;
-  //   var user_ids = [];
-  //
-  //   //Find all user ids that are involved in conversations
-  //   for (var i = 0; i < messages.length; i++) {
-  //     if(messages[i].from_user) user_ids.push(messages[i].from_user);
-  //     if(messages[i].to_user) user_ids.push(messages[i].to_user);
-  //   }
-  //   user_ids = user_ids.unique();
-  //   knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
-  //     result.userObjects = userObjects;
-  //     knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their chat messages', action_time: knex.fn.now() }).then(function () {
-  //       res.json(result);
-  //     })
-  //   })
-  // })
 })
 
 router.get('/groupMessages/:user_id', function (req, res, next) {
@@ -587,6 +574,12 @@ router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (
         })
       })
     }
+  })
+})
+
+router.post('/markChatMessagesAsRead', function (req, res, next) {
+  knex('messages').whereIn('message_id', req.body.newlyReadMessages).update({read: true}).then(function () {
+    res.json({marked: true}); 
   })
 })
 
