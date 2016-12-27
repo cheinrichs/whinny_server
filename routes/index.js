@@ -1127,8 +1127,7 @@ function confirmationCodeText(to_phone, confirmationCode) {
 
 function sendMms(to_phone, content, from_first_name, from_last_name) {
   textClient.sms.messages.create({
-    // to: to_phone,
-    to: '+13035892321',
+    to: to_phone,
     from: '+17204087635',
     body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo download the Whinny App click here! http://www.whinny.com/',
   }, function (error, message) {
