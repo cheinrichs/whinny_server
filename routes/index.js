@@ -99,6 +99,8 @@ router.post('/createBroadcastMessage', function (req, res, next) {
             console.log(err);
             return res.json({ error: err })
           }
+          console.log(response);
+          console.log(body);
 
           knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + 'created a broadcast message.', action_time: knex.fn.now() }).then(function () {
             res.json({success: "true"});
@@ -579,7 +581,7 @@ router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (
 
 router.post('/markChatMessagesAsRead', function (req, res, next) {
   knex('messages').whereIn('message_id', req.body.newlyReadMessages).update({read: true}).then(function () {
-    res.json({marked: true}); 
+    res.json({marked: true});
   })
 })
 
