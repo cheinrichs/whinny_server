@@ -149,8 +149,8 @@ router.post('/website/contactUs', function (req, res, next) {
     recipients: [
       {
         "address": {
-          "email": 'cooper.heinrichs@gmail.com',
-          "name": 'Cooper'
+          "email": 'morgan@whinny.com',
+          "name": 'Whinny Website'
         }
       }
     ],
@@ -160,7 +160,7 @@ router.post('/website/contactUs', function (req, res, next) {
         "email": "postmaster@whinny.com"
       },
       subject: 'Website: Contact Us',
-      html: '<html><body>'+ req.body.text + ' from: ' + req.body.email  + '</html></body>'
+      html: '<html><body>'+ req.body.text + '<br> contact sender at: ' + req.body.email  + '</html></body>'
     }
   }, function (err, apiResponse) {
     if(err){
