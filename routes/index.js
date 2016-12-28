@@ -149,18 +149,18 @@ router.post('/website/contactUs', function (req, res, next) {
     recipients: [
       {
         "address": {
-          "email": 'cooper.heinrichs@gmail.com',
-          "name": 'Cooper Heinrichs'
+          "email": 'cooper.heinrichs@gmail.com'
+          "name": 'Cooper'
         }
       }
     ],
     content: {
       from: {
-        "name": "Whinny the Coop",
+        "name": "Whinny Server",
         "email": "postmaster@whinny.com"
       },
-      subject: 'Tryna get this to work',
-      html: '<html><body> yolo </html></body>'
+      subject: 'Website: Contact Us',
+      html: '<html><body>'+ req.body.text + ' from: ' + req.body.email  + '</html></body>'
     }
   }, function (err, apiResponse) {
     if(err){
