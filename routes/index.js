@@ -149,7 +149,7 @@ router.post('/website/contactUs', function (req, res, next) {
     recipients: [
       {
         "address": {
-          "email": 'cooper.heinrichs@gmail.com'
+          "email": 'cooper.heinrichs@gmail.com',
           "name": 'Cooper'
         }
       }
