@@ -616,18 +616,19 @@ router.post('/markChatMessagesAsRead', function (req, res, next) {
 })
 
 router.post('/resetTutorials', function (req, res, next) {
-  console.log(req.body);
   knex('users').where('user_id', req.body.user_id).update({
     tutorial_1: true,
     tutorial_2: true,
     tutorial_3: true,
     tutorial_4: true,
     tutorial_5: true
-  }).returning('*').first().then(function (user) {
-    console.log(user);
-    res.json({updatedUser: user});
+  }).then(function () {
+    knex('users').where('user_id', req.body.user_id).then(function (user) {
+      res.json({updatedUser: user[0]});
+    })
   })
 })
+
 //TODO POST
 router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, next) {
   knex('users').where('phone', req.params.to_phone).first().then(function (user) {
