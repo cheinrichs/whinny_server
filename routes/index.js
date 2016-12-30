@@ -82,8 +82,8 @@ router.post('/createBroadcastMessage', function (req, res, next) {
           "tokens": broadcast_device_tokens,
           "profile": "whinny_push_notifications_dev",
           "notification": {
-            "title": req.body.params.broadcastTitle,
-            "message": req.body.params.broadcastMessage
+            "title": req.body.params.broadcastName,
+            "message": req.body.params.broadcastTitle + ': ' + req.body.params.broadcastMessage
           }
         });
         request({
