@@ -342,11 +342,32 @@ router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, ne
   })
 })
 
+router.post('/markTutorialAsRead', function (req, res, next) {
+  if(req.body.tutorial === 1){
+    knex('users').where('user_id', req.body.user_id).update({tutorial_1: false}).then(function () {
+      return res.json({ tutorialUpdated: true });
+    })
+  } else if (req.body.tutorial === 2){
+    knex('users').where('user_id', req.body.user_id).update({tutorial_2: false}).then(function () {
+      return res.json({ tutorialUpdated: true });
+    })
+  } else if (req.body.tutorial === 3){
+    knex('users').where('user_id', req.body.user_id).update({tutorial_3: false}).then(function () {
+      return res.json({ tutorialUpdated: true });
+    })
+  } else if (req.body.tutorial === 4){
+    knex('users').where('user_id', req.body.user_id).update({tutorial_4: false}).then(function () {
+      return res.json({ tutorialUpdated: true });
+    })
+  } else if (req.body.tutorial === 5){
+    knex('users').where('user_id', req.body.user_id).update({tutorial_5: false}).then(function () {
+      return res.json({ tutorialUpdated: true });
+    })
+  }
+})
 
 router.get('/chatMessages/:user_id', function (req, res, next) {
-  if(!req.params.user_id){
-    res.json({ error: "User undefined" });
-  }
+  if(!req.params.user_id) return res.json({noUserIdProvided: true });
   var result = {};
 
   //get all messages involving the given id as to_user or from_user
@@ -408,6 +429,7 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
 })
 
 router.get('/groupMessages/:user_id', function (req, res, next) {
+  if(!req.params.user_id) res.json({noUserIdProvided: true });
   var result = {};
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (memberships) {
     knex('group_memberships').whereIn('group_id', memberships).pluck('user_id').then(function (user_ids) {
@@ -431,6 +453,7 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
 })
 
 router.get('/broadcastMessages/:user_id', function (req, res, next) {
+  if(!req.params.user_id) return res.json({noUserIdProvided: true });
   var result = {};
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcasts) {
     knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
