@@ -82,7 +82,7 @@ router.post('/createBroadcastMessage', function (req, res, next) {
           "tokens": broadcast_device_tokens,
           "profile": "whinny_push_notifications_dev",
           "notification": {
-            "title": req.body.senderName,
+            "title": req.body.params.broadcastTitle,
             "message": req.body.params.broadcastMessage
           }
         });
@@ -99,10 +99,10 @@ router.post('/createBroadcastMessage', function (req, res, next) {
             console.log(err);
             return res.json({ error: err })
           }
+          console.log("ionic api response:");
           console.log(response);
-          console.log(body);
 
-          knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + 'created a broadcast message.', action_time: knex.fn.now() }).then(function () {
+          knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + ' created a broadcast message.', action_time: knex.fn.now() }).then(function () {
             res.json({success: "true"});
           })
         })
@@ -568,11 +568,11 @@ router.post('/sendGroupMessage', function (req, res, next) {
 })
 
 //TODO remove?
-router.get('/user/:user_id', function (req, res, next) {
-  knex('users').where('user_id', req.params.user_id).then(function (user) {
-    res.json(user);
-  })
-})
+// router.get('/user/:user_id', function (req, res, next) {
+//   knex('users').where('user_id', req.params.user_id).then(function (user) {
+//     res.json(user);
+//   })
+// })
 
 //TODO POST
 router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
