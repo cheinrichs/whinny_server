@@ -567,11 +567,13 @@ router.post('/sendGroupMessage', function (req, res, next) {
   })
 })
 
+//TODO remove?
 router.get('/user/:user_id', function (req, res, next) {
   knex('users').where('user_id', req.params.user_id).then(function (user) {
     res.json(user);
   })
 })
+
 //TODO POST
 router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
   knex('group_messages').insert({
@@ -613,6 +615,17 @@ router.post('/markChatMessagesAsRead', function (req, res, next) {
   })
 })
 
+router.post('/resetTutorials', function (req, res, next) {
+  knex('users').where('user_id', req.body.user_id).update({
+    tutorial_1: true,
+    tutorial_2: true,
+    tutorial_3: true,
+    tutorial_4: true,
+    tutorial_5: true
+  }).returning('*').first().then(function (user) {
+    res.json({updatedUser: user});
+  })
+})
 //TODO POST
 router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, next) {
   knex('users').where('phone', req.params.to_phone).first().then(function (user) {
