@@ -19,7 +19,7 @@ var textClient = new twilio.RestClient(accountSid, authToken);
 var CLIENT_CURRENT_VERSION = '0.0.1';
 
 
-//website routes
+// ******** website routes ************* //
 router.post('/login_website', function (req, res, next) {
   if(!req.body.params.email) return res.json({error:'Please enter an email'});
   if(!req.body.params.password) return res.json({error:'Please enter a password'});
@@ -567,6 +567,11 @@ router.post('/sendGroupMessage', function (req, res, next) {
   })
 })
 
+router.get('/user/:user_id', function (req, res, next) {
+  knex('users').where('user_id', req.params.user_id).then(function (user) {
+    res.json(user);
+  })
+})
 //TODO POST
 router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
   knex('group_messages').insert({
