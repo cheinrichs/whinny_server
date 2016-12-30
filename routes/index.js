@@ -624,6 +624,7 @@ router.post('/resetTutorials', function (req, res, next) {
     tutorial_4: true,
     tutorial_5: true
   }).returning('*').first().then(function (user) {
+    console.log(user);
     res.json({updatedUser: user});
   })
 })
