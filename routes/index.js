@@ -616,6 +616,7 @@ router.post('/markChatMessagesAsRead', function (req, res, next) {
 })
 
 router.post('/resetTutorials', function (req, res, next) {
+  console.log(req.body);
   knex('users').where('user_id', req.body.user_id).update({
     tutorial_1: true,
     tutorial_2: true,
