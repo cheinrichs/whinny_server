@@ -539,8 +539,8 @@ router.post('/sendGroupMessage', function (req, res, next) {
           "tokens": group_device_tokens,
           "profile": "whinny_push_notifications_dev",
           "notification": {
-            "title": req.body.senderName,
-            "message": req.body.content
+            "title": req.body.groupName,
+            "message": req.body.senderName + ': ' + req.body.content
           }
         });
         request({
@@ -566,13 +566,6 @@ router.post('/sendGroupMessage', function (req, res, next) {
 
   })
 })
-
-//TODO remove?
-// router.get('/user/:user_id', function (req, res, next) {
-//   knex('users').where('user_id', req.params.user_id).then(function (user) {
-//     res.json(user);
-//   })
-// })
 
 //TODO POST
 router.get('/sendGroupMessage/:to_group/:from_user/:content', function (req, res, next) {
