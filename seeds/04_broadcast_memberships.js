@@ -6,7 +6,7 @@ exports.seed = function(knex, Promise) {
     return Promise.join(
       createBroadcastMembership('Cooper', 'Whinny Tips', true, true),
       createBroadcastMembership('Cooper', 'EDCC Contagious Disease Alerts', true, true),
-      createBroadcastMembership('Cooper', 'Funnies', false, false),
+      createBroadcastMembership('Cooper', 'Funnies', true, true),
 
       createBroadcastMembership('Morgan', 'Whinny Tips', true, true),
       createBroadcastMembership('Morgan', 'EDCC Contagious Disease Alerts', true, true),
