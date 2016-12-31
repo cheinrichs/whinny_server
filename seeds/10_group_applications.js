@@ -4,7 +4,11 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
       createGroupApplication('Cooper', 'Paragon Equestrian Centre'),
-      createGroupApplication('Morgan', 'Wild Rose Farm')
+      createGroupApplication('Morgan', 'Wild Rose Farm'),
+      createGroupApplication('George', 'Secret invite only group'),
+      createGroupApplication('Morgan', 'Secret invite only group'),
+      createGroupApplication('Morgan', 'Somerset Farms')
+
     )
   });
 
