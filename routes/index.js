@@ -367,7 +367,7 @@ router.post('/markTutorialAsRead', function (req, res, next) {
 })
 
 router.get('/chatMessages/:user_id', function (req, res, next) {
-  if(!req.params.user_id) return res.json({noUserIdProvided: true });
+  if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
 
   //get all messages involving the given id as to_user or from_user
@@ -429,7 +429,7 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
 })
 
 router.get('/groupMessages/:user_id', function (req, res, next) {
-  if(!req.params.user_id) res.json({noUserIdProvided: true });
+  if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (memberships) {
     knex('group_memberships').whereIn('group_id', memberships).pluck('user_id').then(function (user_ids) {
@@ -453,7 +453,7 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
 })
 
 router.get('/broadcastMessages/:user_id', function (req, res, next) {
-  if(!req.params.user_id) return res.json({noUserIdProvided: true });
+  if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcasts) {
     knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
@@ -1100,9 +1100,7 @@ router.get('/userInterests/:user_id', function (req, res, next) {
 })
 
 router.post('/logOut', function (req, res, next) {
-  console.log(req.body.user_id);
   knex('users').where('user_id', req.body.user_id).update({ verified: false, device_token: '' }).then(function () {
-
     res.json({ loggedOut: 'Successful' });
   })
 })
