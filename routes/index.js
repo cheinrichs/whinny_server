@@ -508,6 +508,8 @@ router.post('/sendChatMessage', function (req, res, next) {
           method: 'POST'
         }, function (err, response, body) {
           if(err) console.log(err);
+          console.log(response);
+          console.log(body);
           knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
             res.json({created: true});
           })
@@ -1100,6 +1102,10 @@ router.get('/userInterests/:user_id', function (req, res, next) {
 })
 
 router.post('/logOut', function (req, res, next) {
+  if(!req.body.user_id){
+    console.log(req.body);
+    return res.json({noUserIdProvided: true});
+  }
   knex('users').where('user_id', req.body.user_id).update({ verified: false, device_token: '' }).then(function () {
     res.json({ loggedOut: 'Successful' });
   })
