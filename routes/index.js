@@ -249,7 +249,7 @@ router.post('/joinWhinny', function (req, res, next) {
     console.log(users);
     //Update the portrait link using the ID, that way the link will always be correct
     knex('users').where('user_id', users[0].user_id).update({ portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + users[0].user_id + '_PersonalProfilePic.jpg'}).then(function () {
-      confirmationCodeText(req.params.phone, confirmationCode);
+      confirmationCodeText(req.body.phone, confirmationCode);
       knex('user_action_log').insert({ user_id: users[0].user_id, action: 'Joined Whinny', action_time: knex.fn.now() }).then(function () {
         res.json({ success: true })
       })
@@ -1134,23 +1134,11 @@ function generateConfirmationCode(){
 
 function confirmationCodeText(to_phone, confirmationCode) {
 
-  console.log(to_phone);
-  console.log(typeof(to_phone));
-  var sendTo;
-
-  if(to_phone === '3035892321' || to_phone === '1111111111'){
-    sendTo = '+13035892321';
-  } else if (to_phone === '7203464283' || to_phone === '3333333333'){
-    sendTo = '+17203464283';
-  } else if(to_phone === '3035892486' || to_phone === '2222222222'){
-    sendTo = '+13035892486';
-  } else {
-    sendTo = '+13035892321';
-  }
+  console.log("sending confirmation text to " + to_phone);
 
   textClient.sms.messages.create({
     // to: to_phone,
-    to: sendTo,
+    to: to_phone,
     from: '+17204087635',
     body: 'Hello! Thank you for registering with Whinny! CONFIRMATION CODE: ' + confirmationCode,
   }, function (error, message) {
@@ -1166,7 +1154,7 @@ function sendMms(to_phone, content, from_first_name, from_last_name) {
   textClient.sms.messages.create({
     to: to_phone,
     from: '+17204087635',
-    body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo download the Whinny App click here! http://www.whinny.com/',
+    body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo learn about beta testing with us go to http://www.whinny.com/',
   }, function (error, message) {
     if(!error){
       console.log("Success! The SID for this SMS message is: ", message.sid);
