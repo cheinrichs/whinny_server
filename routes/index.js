@@ -220,7 +220,7 @@ router.post('/joinWhinny', function (req, res, next) {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     password: userPassword,
-    portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/ + ',
+    portrait_link: 'https://s3.amazonaws.com/whinnyphotos/whinny_placeholder_portrait.png',
     message_notifications: true,
     group_notifications: true,
     broadcast_notifications: true,
