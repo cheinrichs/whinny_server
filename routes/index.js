@@ -366,6 +366,14 @@ router.post('/markTutorialAsRead', function (req, res, next) {
   }
 })
 
+router.post('/markAccountAsSetUp', function (req, res, next) {
+  console.log("mark account as setup");
+  console.log(req.body);
+  knex('users').where('user_id', req.body.user_id).update({ account_is_setup:  true }).then(function () {
+    res.json({ accountSetup: true });
+  })
+})
+
 router.get('/chatMessages/:user_id', function (req, res, next) {
   if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
