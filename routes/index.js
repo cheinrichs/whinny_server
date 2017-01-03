@@ -367,8 +367,6 @@ router.post('/markTutorialAsRead', function (req, res, next) {
 })
 
 router.post('/markAccountAsSetUp', function (req, res, next) {
-  console.log("mark account as setup");
-  console.log(req.body);
   knex('users').where('user_id', req.body.user_id).update({ account_is_setup:  true }).then(function () {
     res.json({ accountSetup: true });
   })
@@ -498,29 +496,39 @@ router.post('/sendChatMessage', function (req, res, next) {
       longitude: null
     }).then(function () {
       if(toUser.message_notifications === true){
-        var body = JSON.stringify({
-          "tokens": [toUser.device_token],
-          "profile": "whinny_push_notifications_dev",
-          "notification": {
-            "title": req.body.senderName,
-            "message": req.body.content
-          }
-        });
-        request({
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
-          },
-          uri: 'https://api.ionic.io/push/notifications',
-          body: body,
-          method: 'POST'
-        }, function (err, response, body) {
-          if(err) console.log(err);
-          console.log(response);
-          console.log(body);
-          knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user, action_time: knex.fn.now() }).then(function () {
-            res.json({created: true});
+        if(toUser.device_token !== '' && toUser.device_token.length > 0){
+          var body = JSON.stringify({
+            "tokens": [toUser.device_token],
+            "profile": "whinny_push_notifications_dev",
+            "notification": {
+              "title": req.body.senderName,
+              "message": req.body.content
+            }
+          });
+          request({
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+            },
+            uri: 'https://api.ionic.io/push/notifications',
+            body: body,
+            method: 'POST'
+          }, function (err, response, body) {
+            if(err) console.log(err);
+            console.log(response);
+            console.log(body);
+            knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user + ' with a push notification', action_time: knex.fn.now() }).then(function () {
+              res.json({created: true, push: true});
+            })
           })
+        } else {
+          knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user + ' but they didnt have a device id set up' , action_time: knex.fn.now() }).then(function () {
+            res.json({created: true, noDeviceId: false});
+          })
+        }
+      } else {
+        knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user + ' but their push notifications were off', action_time: knex.fn.now() }).then(function () {
+          res.json({created: true, notificationsWereOff: true});
         })
       }
     })
