@@ -250,8 +250,32 @@ router.post('/joinWhinny', function (req, res, next) {
     //Update the portrait link using the ID, that way the link will always be correct
     knex('users').where('user_id', users[0].user_id).update({ portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + users[0].user_id + '_PersonalProfilePic.jpg'}).then(function () {
       confirmationCodeText(req.body.phone, confirmationCode);
-      knex('user_action_log').insert({ user_id: users[0].user_id, action: 'Joined Whinny', action_time: knex.fn.now() }).then(function () {
-        res.json({ success: true })
+      //sign them up for whinny tips, edcc, equestrian news broadcasts
+      var memberships = [
+        {
+          user_id: users[0].user_id,
+          broadcast_id: 1,
+          admin:  false,
+          notifications: true
+        },
+        {
+          user_id: users[0].user_id,
+          broadcast_id: 2,
+          admin: false,
+          notifications: true
+        },
+        {
+          user_id: users[0].user_id,
+          broadcast_id: 4,
+          admin: false,
+          notifications: true
+        }
+      ]
+
+      knex('broadcast_memberships').insert(memberships).then(function () {
+        knex('user_action_log').insert({ user_id: users[0].user_id, action: 'Joined Whinny', action_time: knex.fn.now() }).then(function () {
+          res.json({ success: true });
+        })
       })
     })
 
@@ -705,41 +729,70 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
         account_is_setup: false,
         device_token: ''
       }).returning('*').then(function (new_users) {
-        //Create a message to the new user
-        console.log('new user', new_users);
-        console.log(new_users[0].user_id);
-        console.log("creating message");
-        knex('messages').insert({
-          to_user: new_users[0].user_id,
-          from_user: req.params.from_user,
-          message_type: 'chat',
-          content: req.params.content,
-          read: false,
-          sent_in_app: true,
-          sent_as_mms: false,
-          geographically_limited: false,
-          state: null,
-          zip: null,
-          latitude: null,
-          longitude: null
-        }).then(function () {
-          //send a text message to the given phone number
-          knex('users').where('user_id', req.params.from_user).first().then(function (from_user) {
-            if(from_user){
-              console.log('sending text message');
-              sendMms(req.params.to_phone, req.params.content, from_user.first_name, from_user.last_name);
-              new_users[0].textSent = true;
-              knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with a user not registered to Whinny. A text was sent to ' + req.params.to_phone, action_time: knex.fn.now() }).then(function () {
-                res.json(new_users[0]);
-              })
-            } else {
-              console.log("couldnt send text message");
-              new_users[0].textSent = false;
-              knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with a user not registered to Whinny. A text was not sent to ' + req.params.to_phone, action_time: knex.fn.now() }).then(function () {
-                res.json(new_users[0]);
-              })
+        //update the portrait link to the correct user id
+        knex('users').where('user_id', new_users[0].user_id).update({portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/' + new_users[0].user_id + '_PersonalProfilePic.jpg'}).then(function () {
+          //subscribe the new user to three broadcasts
+          var memberships = [
+            {
+              user_id: users[0].user_id,
+              broadcast_id: 1,
+              admin:  false,
+              notifications: true
+            },
+            {
+              user_id: users[0].user_id,
+              broadcast_id: 2,
+              admin: false,
+              notifications: true
+            },
+            {
+              user_id: users[0].user_id,
+              broadcast_id: 4,
+              admin: false,
+              notifications: true
             }
+          ]
+          //insert the new broadcast memberships
+          knex('broadcast_memberships').insert(memberships).then(function () {
+            //Create a message to the new user
+            console.log('new user', new_users);
+            console.log(new_users[0].user_id);
+            console.log("creating message");
+            knex('messages').insert({
+              to_user: new_users[0].user_id,
+              from_user: req.params.from_user,
+              message_type: 'chat',
+              content: req.params.content,
+              read: false,
+              sent_in_app: true,
+              sent_as_mms: false,
+              geographically_limited: false,
+              state: null,
+              zip: null,
+              latitude: null,
+              longitude: null
+            }).then(function () {
+              //send a text message to the given phone number
+              //grab the user info for the sending user to get their name for the text
+              knex('users').where('user_id', req.params.from_user).first().then(function (from_user) {
+                if(from_user){
+                  console.log('sending text message');
+                  sendMms(req.params.to_phone, req.params.content, from_user.first_name, from_user.last_name);
+                  new_users[0].textSent = true;
+                  knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with a user not registered to Whinny. A text was sent to ' + req.params.to_phone, action_time: knex.fn.now() }).then(function () {
+                    res.json(new_users[0]);
+                  })
+                } else {
+                  console.log("couldnt send text message");
+                  new_users[0].textSent = false;
+                  knex('user_action_log').insert({ user_id: req.params.from_user, action: 'Created a new chat with a user not registered to Whinny. A text was not sent to ' + req.params.to_phone, action_time: knex.fn.now() }).then(function () {
+                    res.json(new_users[0]);
+                  })
+                }
+              })
+            })
           })
+
         })
       });
     }
@@ -924,6 +977,17 @@ router.post('/declineGroupApplication', function (req, res, next) {
     knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Declined a group application', action_time: knex.fn.now() }).then(function () {
       res.json({ groupApplicationDeclined: 'successful' });
     })
+  })
+})
+
+router.post('/applyToGroup', function (req, res, next) {
+  var application = {
+    user_id: req.body.user_id,
+    group_id: req.body.group_id,
+    status: 'pending'
+  }
+  knex('group_applications').insert(application).then(function () {
+    return res.json({ groupApplicationCreated: true });
   })
 })
 
