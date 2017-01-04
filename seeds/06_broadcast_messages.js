@@ -12,7 +12,7 @@ exports.seed = function(knex, Promise) {
           broadcast_message: '',
           link_text: '',
           link_url: ''
-        })
+        }),
         knex('broadcast_messages').insert({
           to_broadcast: 1,
           from_user: 1,
