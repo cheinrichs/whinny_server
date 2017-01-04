@@ -2,12 +2,14 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('broadcasts', function (table) {
     table.increments('broadcast_id');
-    
+
     table.timestamp('broadcast_created_at').defaultTo(knex.fn.now());
     table.timestamp('last_used').defaultTo(knex.fn.now());
 
     table.string('broadcast_name');
     table.string('broadcast_photo');
+
+    table.string('broadcast_description');
 
     table.boolean('geographically_limited');
 

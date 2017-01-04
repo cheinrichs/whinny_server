@@ -254,19 +254,19 @@ router.post('/joinWhinny', function (req, res, next) {
       var memberships = [
         {
           user_id: users[0].user_id,
-          broadcast_id: 1,
+          broadcast_id: 5,
           admin:  false,
           notifications: true
         },
         {
           user_id: users[0].user_id,
-          broadcast_id: 2,
+          broadcast_id: 7,
           admin: false,
           notifications: true
         },
         {
           user_id: users[0].user_id,
-          broadcast_id: 4,
+          broadcast_id: 2,
           admin: false,
           notifications: true
         }
@@ -568,6 +568,12 @@ router.post('/sendGroupMessage', function (req, res, next) {
     //search through users that are part of the to_group
     //pluck their device ids
     knex('group_memberships').where('group_id', req.body.to_group).pluck('user_id').then(function (user_ids) {
+      //find the sender's user id and remove it from the ids
+      var index = 0;
+      for (var i = 0; i < user_ids.length; i++) {
+        if(user_ids[i] === req.body.from_user) index = i;
+      }
+      user_ids.splice(index, 1);
       console.log(user_ids);
       knex('users').whereIn('user_id', user_ids).where('group_notifications', true).then(function (users_with_notifications) {
         var group_device_tokens = [];
@@ -735,19 +741,19 @@ router.get('/createNewChat/:to_phone/:from_user/:content', function (req, res, n
           var memberships = [
             {
               user_id: users[0].user_id,
-              broadcast_id: 1,
+              broadcast_id: 5,
               admin:  false,
               notifications: true
             },
             {
               user_id: users[0].user_id,
-              broadcast_id: 2,
+              broadcast_id: 7,
               admin: false,
               notifications: true
             },
             {
               user_id: users[0].user_id,
-              broadcast_id: 4,
+              broadcast_id: 2,
               admin: false,
               notifications: true
             }

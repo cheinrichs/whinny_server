@@ -5,20 +5,16 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
       createBroadcastMembership('Cooper', 'Whinny Tips', true, true),
-      createBroadcastMembership('Cooper', 'EDCC Contagious Disease Alerts', true, true),
-      createBroadcastMembership('Cooper', 'Funnies', true, true),
+      createBroadcastMembership('Cooper', 'Disease Communication Center', true, true),
+      createBroadcastMembership('Cooper', 'Equestrian News', true, true),
 
       createBroadcastMembership('Morgan', 'Whinny Tips', true, true),
-      createBroadcastMembership('Morgan', 'EDCC Contagious Disease Alerts', true, true),
+      createBroadcastMembership('Morgan', 'Disease Communication Center', true, true),
       createBroadcastMembership('Morgan', 'Equestrian News', true, true),
-      createBroadcastMembership('Morgan', 'Funnies', false, false),
 
       createBroadcastMembership('George', 'Whinny Tips', true, true),
-      createBroadcastMembership('George', 'EDCC Contagious Disease Alerts', true, true),
-      createBroadcastMembership('George', 'Funnies', false, false),
-      createBroadcastMembership('George', 'Barn Business', false, false)
-
-
+      createBroadcastMembership('George', 'Disease Communication Center', true, true),
+      createBroadcastMembership('George', 'Equestrian News', false, false)
     )
   });
 
