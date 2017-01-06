@@ -58,7 +58,7 @@ exports.seed = function(knex, Promise) {
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_6.jpg',
           broadcast_title: '12/12/16',
           broadcast_message: 'Valegro is at Olympia and will soon take part in his public retirement ceremony so the world can thank him for his contribution to dressage. PC: Charlotte Dujardin',
-          link_text: 'http://www.olympiahorseshow.com/',
+          link_text: 'Click Here for Full Story',
           link_url: 'http://www.olympiahorseshow.com/'
         }),
 
