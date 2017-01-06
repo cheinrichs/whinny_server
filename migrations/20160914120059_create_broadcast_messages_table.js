@@ -23,7 +23,7 @@ exports.up = function(knex, Promise) {
 
     table.string('broadcast_title');
 
-    table.string('broadcast_message');
+    table.text('broadcast_message');
 
     table.string('link_text');
 
