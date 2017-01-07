@@ -189,7 +189,7 @@ exports.seed = function(knex, Promise) {
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_19.jpg',
           broadcast_title: 'Outbreak Update',
-          broadcast_message: 'Date: 1/7/2017 <br> Disease: Equine Herpes Virus <br> Location: Los Angeles, CA <br> There are no new EHM cases at the Los Angeles Equestrian Center as of January 6, 2017. LAEC continues to have one horse in quarantined isolation awaiting prescribed negative testing.',
+          broadcast_message: 'Date: 1/7/2017 Disease: Equine Herpes Virus Location: Los Angeles, CA There are no new EHM cases at the Los Angeles Equestrian Center as of January 6, 2017. LAEC continues to have one horse in quarantined isolation awaiting prescribed negative testing.',
           link_text: 'Read More from EDCC',
           link_url: 'http://www.equinediseasecc.org/outbreaks.aspx'
         }),
