@@ -9,7 +9,7 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 1,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_1.jpg',
-          broadcast_title: '',
+          broadcast_title: 'Wellington, FL',
           broadcast_message: '',
           link_text: '',
           link_url: ''
@@ -18,8 +18,8 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 1,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_2.jpg',
-          broadcast_title: '',
-          broadcast_message: '',
+          broadcast_title: 'Heberg, Sweden',
+          broadcast_message: 'Hannell Dressage Arena with a 5 star restaurant upstairs.',
           link_text: '',
           link_url: ''
         }),
@@ -148,7 +148,7 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 6,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_15.jpg',
-          broadcast_title: '',
+          broadcast_title: 'Lavender Navy Black and Grey',
           broadcast_message: '',
           link_text: '',
           link_url: ''
@@ -157,7 +157,7 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 6,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_16.jpg',
-          broadcast_title: '',
+          broadcast_title: 'Pikeur breeches in Jasha Mustard Navy',
           broadcast_message: '',
           link_text: '',
           link_url: ''
@@ -166,7 +166,7 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 6,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_17.jpg',
-          broadcast_title: '',
+          broadcast_title: 'Sky Blue',
           broadcast_message: '',
           link_text: '',
           link_url: ''
@@ -175,7 +175,7 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 6,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_18.jpg',
-          broadcast_title: '',
+          broadcast_title: 'Roeckl Gold',
           broadcast_message: '',
           link_text: '',
           link_url: ''
