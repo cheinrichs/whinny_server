@@ -94,24 +94,24 @@ exports.seed = function(knex, Promise) {
 
         //EqBusiness
         //3 placeholders
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 4,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_10.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 4,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_11.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
+        knex('broadcast_messages').insert({
+          to_broadcast: 4,
+          from_user: 2,
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_10.jpeg',
+          broadcast_title: 'He didn’t run the organization; the organization ran him.',
+          broadcast_message: '“It\'s so important to not let the demands of the day run you around, constantly forcing your priorities, and putting your plans on the back burner. If you let the fire drills take control, you’ll never get ahead of the work enough to be able to run the organization.” Jim Joseph, marketing guru, shares his insight into effective daily management of priorities.',
+          link_text: 'Full Article',
+          link_url: 'https://www.entrepreneur.com/article/285805'
+        }),
+        knex('broadcast_messages').insert({
+          to_broadcast: 4,
+          from_user: 2,
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_11.jpeg',
+          broadcast_title: 'Weathering the Seas of Sole Proprietorship',
+          broadcast_message: 'How to prepare for the unknowns that you will undoubtedly face when running your own business. Summarized thoughts from Michael Mamas… Keep your eyes toward the distant shore- “remain steadfastly fixed and dedicated to your larger goal”, but be always be prepared to pivot. Stay flexible and resilient- “never lose sight of the great paradox of business: it requires you to remain simultaneously flexible and rigid.” Keep the boat afloat- there are times to seek progression and times to hold steady. Be comfortable with both, but not overly comfortable with just one. Steer clear of the Sirens (think Odyssey)- “there will always be such experts to distract you with fear and greed.” Beware the serpents- “serpents come in many forms: competitors, misguided experts, friends-turned-foe, narrow-visioned advisors, etc. Trust your judgment about people.” PC: RubberBall Productions-Getty Images',
+          link_text: 'Full Article',
+          link_url: 'https://www.entrepreneur.com/article/271806'
+        }),
         // knex('broadcast_messages').insert({
         //   to_broadcast: 4,
         //   from_user: 2,
@@ -184,15 +184,15 @@ exports.seed = function(knex, Promise) {
 
         //Disease Communications Center
         //2 placeholder
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 7,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_19.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
+        knex('broadcast_messages').insert({
+          to_broadcast: 7,
+          from_user: 2,
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_19.jpg',
+          broadcast_title: 'Outbreak Update',
+          broadcast_message: 'Date: 1/7/2017 <br> Disease: Equine Herpes Virus <br> Location: Los Angeles, CA <br> There are no new EHM cases at the Los Angeles Equestrian Center as of January 6, 2017. LAEC continues to have one horse in quarantined isolation awaiting prescribed negative testing.',
+          link_text: 'Read More from EDCC',
+          link_url: 'http://www.equinediseasecc.org/outbreaks.aspx'
+        }),
         // knex('broadcast_messages').insert({
         //   to_broadcast: 7,
         //   from_user: 2,
