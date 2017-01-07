@@ -114,20 +114,20 @@ exports.seed = function(knex, Promise) {
 
         //Whinny Tips
         knex('broadcast_messages').insert({
-          to_broadcast: 4,
+          to_broadcast: 5,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_12.png',
-          broadcast_title: '',
-          broadcast_message: '',
+          broadcast_title: 'How to Unsubscribe from Broadcasts',
+          broadcast_message: 'If you\'d like to unsubscribe from a broadcast, just swipe left on it and tap the \'Unsubscribe\' button!',
           link_text: '',
           link_url: ''
         }),
         knex('broadcast_messages').insert({
-          to_broadcast: 4,
+          to_broadcast: 5,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_13.jpeg',
-          broadcast_title: '',
-          broadcast_message: '',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_13.jpg',
+          broadcast_title: 'Hidden Groups',
+          broadcast_message: 'When you make a new group you have the choice to make it hidden. This means that only you and the people you invite to join will know it exists (it will not appear in searches). This can be used for anything you like! One use is to make health or training logs for a particular horse. This can be very helpful when more than one person is involved with the care and/or a few people need to be kept in the loop. Check out our example!',
           link_text: '',
           link_url: ''
         }),
