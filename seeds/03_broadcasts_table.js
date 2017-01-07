@@ -81,7 +81,7 @@ exports.seed = function(knex, Promise) {
                     broadcast_discipline: 'Drassage'
                   }).then(function () {
                     return knex('broadcasts').insert({
-                      broadcast_name: 'Equine Veterinary Information and News',
+                      broadcast_name: 'Equine Veterinary Info',
                       broadcast_description: 'Equine veterinary tips, information, and news. Always consult with your own vet. ',
                       broadcast_photo: 'https://s3.amazonaws.com/whinnyphotos/broadcast_profile_photos/8_BroadcastProfilePic.png',
                       geographically_limited: false,

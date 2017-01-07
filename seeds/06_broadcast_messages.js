@@ -93,7 +93,6 @@ exports.seed = function(knex, Promise) {
         }),
 
         //EqBusiness
-        //3 placeholders
         knex('broadcast_messages').insert({
           to_broadcast: 4,
           from_user: 2,
@@ -112,42 +111,32 @@ exports.seed = function(knex, Promise) {
           link_text: 'Full Article',
           link_url: 'https://www.entrepreneur.com/article/271806'
         }),
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 4,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_12.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
 
         //Whinny Tips
-        //2 placeholders
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 4,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_13.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 4,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_14.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
+        knex('broadcast_messages').insert({
+          to_broadcast: 4,
+          from_user: 2,
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_12.png',
+          broadcast_title: '',
+          broadcast_message: '',
+          link_text: '',
+          link_url: ''
+        }),
+        knex('broadcast_messages').insert({
+          to_broadcast: 4,
+          from_user: 2,
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_13.jpeg',
+          broadcast_title: '',
+          broadcast_message: '',
+          link_text: '',
+          link_url: ''
+        }),
 
         //Equestrian Fasion seeds
         knex('broadcast_messages').insert({
           to_broadcast: 6,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_15.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_14.jpg',
           broadcast_title: 'Lavender Navy Black and Grey',
           broadcast_message: '',
           link_text: '',
@@ -156,7 +145,7 @@ exports.seed = function(knex, Promise) {
         knex('broadcast_messages').insert({
           to_broadcast: 6,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_16.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_15.jpg',
           broadcast_title: 'Pikeur breeches in Jasha Mustard Navy',
           broadcast_message: '',
           link_text: '',
@@ -165,7 +154,7 @@ exports.seed = function(knex, Promise) {
         knex('broadcast_messages').insert({
           to_broadcast: 6,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_17.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_16.jpg',
           broadcast_title: 'Sky Blue',
           broadcast_message: '',
           link_text: '',
@@ -174,7 +163,7 @@ exports.seed = function(knex, Promise) {
         knex('broadcast_messages').insert({
           to_broadcast: 6,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_18.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_17.jpg',
           broadcast_title: 'Roeckl Gold',
           broadcast_message: '',
           link_text: '',
@@ -183,32 +172,21 @@ exports.seed = function(knex, Promise) {
 
 
         //Disease Communications Center
-        //2 placeholder
         knex('broadcast_messages').insert({
           to_broadcast: 7,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_19.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_18.jpg',
           broadcast_title: 'Outbreak Update',
           broadcast_message: 'Date: 1/7/2017 Disease: Equine Herpes Virus Location: Los Angeles, CA There are no new EHM cases at the Los Angeles Equestrian Center as of January 6, 2017. LAEC continues to have one horse in quarantined isolation awaiting prescribed negative testing.',
           link_text: 'Read More from EDCC',
           link_url: 'http://www.equinediseasecc.org/outbreaks.aspx'
         }),
-        // knex('broadcast_messages').insert({
-        //   to_broadcast: 7,
-        //   from_user: 2,
-        //   broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_20.jpg',
-        //   broadcast_title: '',
-        //   broadcast_message: '',
-        //   link_text: '',
-        //   link_url: ''
-        // }),
-
 
         //Vet info seeds
         knex('broadcast_messages').insert({
           to_broadcast: 8,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_21.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_19.jpg',
           broadcast_title: 'Fun Fact!',
           broadcast_message: 'Did you know that horses do not have a gall bladder? Bile aids in digestion and is produced in the liver. The gall bladder stores bile. Because horses are meant to be eating for the majority of the day, they do not need to store excess bile- hence, no gall bladder!',
           link_text: '',
@@ -217,7 +195,7 @@ exports.seed = function(knex, Promise) {
         knex('broadcast_messages').insert({
           to_broadcast: 8,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_22.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_20.jpg',
           broadcast_title: 'Basic Eye Anatomy of the Horse',
           broadcast_message: '',
           link_text: '',
@@ -226,7 +204,7 @@ exports.seed = function(knex, Promise) {
         knex('broadcast_messages').insert({
           to_broadcast: 8,
           from_user: 2,
-          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_23.jpg',
+          broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_21.jpg',
           broadcast_title: 'Avoiding Shipping Fever',
           broadcast_message: 'Transporting your horse in a box stall is one way to avoid shipping fever. Allowing a horse to lower his or her head during transport will help to reduce the risk of airway disease. Read Dr. Ryan Lukens’ top 5 tips regarding preventing shipping fever by clicking the link…',
           link_text: 'Link text- “Dr. Lukens’ Top 5 Tips”',
