@@ -106,10 +106,10 @@ exports.seed = function(knex, Promise) {
           to_broadcast: 4,
           from_user: 2,
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_11.jpeg',
-          broadcast_title: 'Weathering the Seas of Sole Proprietorship',
-          broadcast_message: 'How to prepare for the unknowns that you will undoubtedly face when running your own business. Summarized thoughts from Michael Mamas… Keep your eyes toward the distant shore- “remain steadfastly fixed and dedicated to your larger goal”, but be always be prepared to pivot. Stay flexible and resilient- “never lose sight of the great paradox of business: it requires you to remain simultaneously flexible and rigid.” Keep the boat afloat- there are times to seek progression and times to hold steady. Be comfortable with both, but not overly comfortable with just one. Steer clear of the Sirens (think Odyssey)- “there will always be such experts to distract you with fear and greed.” Beware the serpents- “serpents come in many forms: competitors, misguided experts, friends-turned-foe, narrow-visioned advisors, etc. Trust your judgment about people.” PC: RubberBall Productions-Getty Images',
-          link_text: 'Full Article',
-          link_url: 'https://www.entrepreneur.com/article/271806'
+          broadcast_title: '5 Things Not to Do Running a Small Business',
+          broadcast_message: 'by Maria Rapetskaya 1. Don\'t rush into partnerships. 2. Don\'t get discouraged!',
+          link_text: 'Click Here For Full Article',
+          link_url: 'https://www.entrepreneur.com/article/253073'
         }),
 
         //Whinny Tips
@@ -207,7 +207,7 @@ exports.seed = function(knex, Promise) {
           broadcast_photo_url: 'https://s3.amazonaws.com/whinnyphotos/broadcast_message_photos/broadcast_message_photo_21.jpg',
           broadcast_title: 'Avoiding Shipping Fever',
           broadcast_message: 'Transporting your horse in a box stall is one way to avoid shipping fever. Allowing a horse to lower his or her head during transport will help to reduce the risk of airway disease. Read Dr. Ryan Lukens’ top 5 tips regarding preventing shipping fever by clicking the link…',
-          link_text: 'Link text- “Dr. Lukens’ Top 5 Tips”',
+          link_text: 'Dr. Lukens’ Top 5 Tips',
           link_url: 'http://equineclinic.com/2016/11/shipping-fever-what-to-know-and-how-to-reduce-risk/'
         })
 
