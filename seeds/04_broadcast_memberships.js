@@ -14,6 +14,7 @@ exports.seed = function(knex, Promise) {
       createBroadcastMembership('Morgan', 'EqBusiness', true, true),
       createBroadcastMembership('Morgan', 'Whinny Tips', true, true),
       createBroadcastMembership('Morgan', 'EqFashion', true, true),
+      createBroadcastMembership('Morgan', 'Disease Communication Center', true, true),
       createBroadcastMembership('Morgan', 'Equine Veterinary Info', true, true),
 
       createBroadcastMembership('George', 'Whinny Tips', true, true),

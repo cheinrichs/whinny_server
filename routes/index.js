@@ -70,12 +70,10 @@ router.post('/createBroadcastMessage', function (req, res, next) {
   }).then(function () {
     //Now find all users subscribed to the broadcast
     knex('broadcast_memberships').where('broadcast_id', req.body.params.selectedBroadcast).pluck('user_id').then(function (user_ids) {
-      console.log('user ids');
-      console.log(user_ids);
       //select all users objects subscribed to the given broadcast who have broadcast notifications turned on
       knex('users').whereIn('user_id', user_ids).where('broadcast_notifications', true).pluck('device_token').then(function (broadcast_device_tokens) {
-        console.log("broadcast");
         console.log(broadcast_device_tokens);
+        console.log(req.body);
         //create the push
         //make a new push message using that array
         var body = JSON.stringify({
