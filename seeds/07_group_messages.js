@@ -5,15 +5,14 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
 
-
-      createGroupMessage('Cooper', 'Whinny Staff', 'get back to work. all of yas'),
-      createGroupMessage('Cooper', 'Gray Filly Farm', 'Someone left hay all over the road...'),
-
-      createGroupMessage('Morgan', 'Paragon Equestrian Centre', 'Aleshe will help with the farrier today, thank you!'),
-      createGroupMessage('Morgan', 'Gray Filly Farm', 'Ollie has had his medicine'),
-      createGroupMessage('Morgan', 'Whinny Staff', 'Sry bbl I\'m riding!'),
-
-      createGroupMessage('George', 'Whinny Staff', 'Are there any more gluten free cookies...?')
+      // createGroupMessage('Cooper', 'Whinny Staff', ''),
+      // createGroupMessage('Cooper', 'Gray Filly Farm', ''),
+      //
+      // createGroupMessage('Morgan', 'Paragon Equestrian Centre', ''),
+      // createGroupMessage('Morgan', 'Gray Filly Farm', ''),
+      // createGroupMessage('Morgan', 'Whinny Staff', ''),
+      //
+      // createGroupMessage('George', 'Whinny Staff', '')
     )
   });
 
