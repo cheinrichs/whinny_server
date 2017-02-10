@@ -1049,6 +1049,14 @@ router.post('/leaveGroup', function (req, res, next) {
 
 })
 
+router.get('/groupMembers/:group_id', function (req, res, next) {
+  knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (groupMemberships) {
+    knex.select('user_id', 'first_name', 'last_name', 'portrait_link').from('users').whereIn('user_id', groupMemberships).then(function (users) {
+      res.json(users);
+    })
+  })
+})
+
 router.get('/broadcastSearch/:user_id', function (req, res, next) {
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcast_ids) {
     knex('broadcasts').whereNotIn('broadcast_id', broadcast_ids).then(function (searchBroadcasts) {
