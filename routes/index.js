@@ -1050,12 +1050,14 @@ router.post('/leaveGroup', function (req, res, next) {
 })
 
 router.post('/updateGroupName', function (req, res, next) {
+  console.log(req);
   knex('groups').where('group_id', req.body.group_id).update({description: req.body.newName}).then(function () {
     res.json({ updatedGroupName: true });
   })
 })
 
 router.post('/updateGroupDescription', function (req, res, next) {
+  console.log(req);
   knex('groups').where('group_id', req.body.group_id).update({description: req.body.newDescription}).then(function () {
     res.json({ UpdatedGroupDescription: true });
   })
