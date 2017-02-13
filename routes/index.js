@@ -1061,6 +1061,12 @@ router.post('/updateGroupDescription', function (req, res, next) {
   })
 })
 
+router.post('/removeUserFromGroup', function (req, res, next) {
+  knex('group_memberships').where({group_id: req.body.group_id, user_id: req.body.user_id}).del().then(function () {
+    res.json({ UserRemoved: true });
+  })
+})
+
 router.get('/groupMembers/:group_id', function (req, res, next) {
   knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (groupMemberships) {
     knex.select('user_id', 'first_name', 'last_name', 'portrait_link').from('users').whereIn('user_id', groupMemberships).then(function (users) {
