@@ -1052,7 +1052,16 @@ router.post('/leaveGroup', function (req, res, next) {
 router.get('/groupMembers/:group_id', function (req, res, next) {
   knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (groupMemberships) {
     knex.select('user_id', 'first_name', 'last_name', 'portrait_link').from('users').whereIn('user_id', groupMemberships).then(function (users) {
-      res.json(users);
+      knex('group_memberships').where({ group_id: req.params.group_id, admin: true }).pluck('user_id').then(function (admin) {
+        for (var i = 0; i < users.length; i++) {
+          if(admin.includes(users[i].user_id)){
+            users[i].admin = true;
+          } else {
+            users[i].admin = false;
+          }
+        }
+        res.json(users);
+      })
     })
   })
 })
