@@ -1049,6 +1049,18 @@ router.post('/leaveGroup', function (req, res, next) {
 
 })
 
+router.post('/updateGroupName', function (req, res, next) {
+  knex('groups').where('group_id', req.body.group_id).update({description: req.body.newName}).then(function () {
+    res.json({ updatedGroupName: true });
+  })
+})
+
+router.post('/updateGroupDescription', function (req, res, next) {
+  knex('groups').where('group_id', req.body.group_id).update({description: req.body.newDescription}).then(function () {
+    res.json({ UpdatedGroupDescription: true });
+  })
+})
+
 router.get('/groupMembers/:group_id', function (req, res, next) {
   knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (groupMemberships) {
     knex.select('user_id', 'first_name', 'last_name', 'portrait_link').from('users').whereIn('user_id', groupMemberships).then(function (users) {
