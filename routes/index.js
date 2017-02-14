@@ -1067,6 +1067,26 @@ router.post('/removeUserFromGroup', function (req, res, next) {
   })
 })
 
+router.post('/makeUserAdmin', function (req, res, next) {
+  knex('group_memberships').where({group_id: req.body.group_id, user_id: req.body.user_id}).update({admin: true}).then(function () {
+    res.json({ MadeUserAdmin: true });
+  })
+})
+
+router.post('/deleteGroup', function (req, res, next) {
+  knex('groups').where({group_id: req.body.group_id}).del().then(function () {
+    knex('group_memberships').where('group_id', req.body.group_id).del().then(function () {
+      knex('group_messages').where('group_id', req.body.group_id).del().then(function () {
+        knex('group_applications').where('group_id', req.body.group_id).del().then(function () {
+          knex('group_memberships').where('group_id', req.body.group_id).del().then(function () {
+            res.json({ groupDeleted: true });
+          })
+        })
+      })
+    })
+  })
+})
+
 router.get('/groupMembers/:group_id', function (req, res, next) {
   knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (groupMemberships) {
     knex.select('user_id', 'first_name', 'last_name', 'portrait_link').from('users').whereIn('user_id', groupMemberships).then(function (users) {
