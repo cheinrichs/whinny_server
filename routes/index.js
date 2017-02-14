@@ -1076,7 +1076,7 @@ router.post('/makeUserAdmin', function (req, res, next) {
 router.post('/deleteGroup', function (req, res, next) {
   knex('groups').where({group_id: req.body.group_id}).del().then(function () {
     knex('group_memberships').where('group_id', req.body.group_id).del().then(function () {
-      knex('group_messages').where('group_id', req.body.group_id).del().then(function () {
+      knex('group_messages').where('to_group', req.body.group_id).del().then(function () {
         knex('group_applications').where('group_id', req.body.group_id).del().then(function () {
           knex('group_memberships').where('group_id', req.body.group_id).del().then(function () {
             res.json({ groupDeleted: true });
