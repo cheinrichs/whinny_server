@@ -984,6 +984,41 @@ router.post('/declineGroupApplication', function (req, res, next) {
   })
 })
 
+router.post('/inviteToGroup', function (req, res, next) {
+  //used from group info
+  console.log(req.body);
+  // group_id: group_id,
+  // invitations: invitations,
+  // from_user_id: user_id
+  var invitedPhoneNumbers = [];
+
+  for (var i = 0; i < req.body.invitations.length; i++) {
+    invitedPhoneNumbers.push(req.body.invitations[i].phone);
+  }
+
+  //search through users and see if all the invitations have user accounts already
+  knex('users').whereIn('phone', invitedPhoneNumbers).pluck('user_id').then(function (invitedIds) {
+    //if they do, create an invitation for each using the group_id, from_user_id, and their invited user_id
+    var invitations = [];
+    for (var i = 0; i < invitedIds.length; i++) {
+      var invitation = {
+        group_id: req.body.group_id,
+        user_id: invitedIds[i],
+        status: 'pending'
+      }
+      invitations.push(invitation);
+    }
+    knex('group_invitations').insert(invitations).then(function () {
+      res.json({ usersInvited: true });
+
+      //if they don't, create a new user object for them, save that user id,
+      //now create an invitation for each using the group_id, from_user_id, and their invited user_id
+    })
+  })
+
+  res.json({ invited: true })
+})
+
 router.post('/applyToGroup', function (req, res, next) {
   var application = {
     user_id: req.body.user_id,

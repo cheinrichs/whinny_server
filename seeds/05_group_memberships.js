@@ -3,7 +3,7 @@ exports.seed = function(knex, Promise) {
     knex('group_memberships').del()
   ).then(function () {
     return Promise.join(
-      createGroupMembership('Cooper', 'Whinny Staff', false, false),
+      createGroupMembership('Cooper', 'Whinny Staff', true, false),
       createGroupMembership('Cooper', 'Gray Filly Farm', false, false),
       createGroupMembership('Cooper', 'Secret invite only group', true, true),
       createGroupMembership('Cooper', 'Somerset Farms', true, true),
