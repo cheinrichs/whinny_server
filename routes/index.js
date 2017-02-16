@@ -483,7 +483,7 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
               knex('groups').whereIn('group_id', groupsWithInvitationIds).then(function (invitationGroupObjects) {
 
                 for (var i = 0; i < invitationGroupObjects.length; i++) {
-                  result.groupObjects[invitationGroupObjects[i].group_id] = invitationGroupObjects;
+                  result.groupObjects[invitationGroupObjects[i].group_id] = invitationGroupObjects[i];
                 }
 
                 //Write in the log and return the result to the user
