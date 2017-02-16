@@ -459,20 +459,41 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
 router.get('/groupMessages/:user_id', function (req, res, next) {
   if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
+  //Search through group_memberships for all the groups the user is a member of = memberships
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (memberships) {
+    //Find all users who are members of all those groups = user_ids
     knex('group_memberships').whereIn('group_id', memberships).pluck('user_id').then(function (user_ids) {
+      //Get all the users who are in those groups user data
       knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
         result.userObjects = userObjects;
+        //grab all group messages
         knex('group_messages').whereIn('to_group', memberships).then(function (messages) {
           result.groupMessages = messages;
+          //For all groups the user is a member of, grab their group object, throw it into the result object organized by group_id
           knex('groups').whereIn('group_id', memberships).then(function (groupObjects) {
+
             result.groupObjects = {};
             for (var i = 0; i < groupObjects.length; i++) {
               result.groupObjects[groupObjects[i].group_id] = groupObjects[i];
             }
-            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
-              res.json(result);
+
+            //see if there are any group invitations, also include those groups
+            knex('group_invitations').where('user_id', req.params.user_id).pluck('group_id').then(function (groupsWithInvitationIds) {
+              //get the invited group objects
+              knex('groups').whereIn('group_id', groupsWithInvitationIds).then(function (invitationGroupObjects) {
+
+                for (var i = 0; i < invitationGroupObjects.length; i++) {
+                  result.groupObjects[invitationGroupObjects[i].group_id] = invitationGroupObjects;
+                }
+
+                //Write in the log and return the result to the user
+                knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
+                  res.json(result);
+                })
+              })
             })
+
+
           })
         })
       })
@@ -985,6 +1006,10 @@ router.post('/declineGroupApplication', function (req, res, next) {
 })
 
 router.post('/inviteToGroup', function (req, res, next) {
+
+  //*** Needs to check if they're already a member
+  //** TODO Needs to create users for non-users and send texts?
+
   //used from group info
   console.log(req.body);
   // group_id: group_id,
