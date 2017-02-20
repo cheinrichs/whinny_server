@@ -242,7 +242,7 @@ router.post('/joinWhinny', function (req, res, next) {
     EULA: true,
     EULA_date_agreed: knex.fn.now(),
     account_is_setup: false,
-    device_token: ''
+    device_token: req.body.device_token
   }).returning('*').then(function (users) {
     console.log(users);
     //Update the portrait link using the ID, that way the link will always be correct
