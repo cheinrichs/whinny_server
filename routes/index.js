@@ -4,15 +4,15 @@ var knex = require('../lib/knex.js');
 var request = require('request');
 
 var SparkPost = require('sparkpost');
-var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
+// var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 
 var twilio = require('twilio');
 
-var accountSid = process.env.TWILIO_ACCOUNT_SID;
-var authToken = process.env.TWILIO_AUTH_TOKEN;
+// var accountSid = process.env.TWILIO_ACCOUNT_SID;
+// var authToken = process.env.TWILIO_AUTH_TOKEN;
 
 var textClient = new twilio.RestClient(accountSid, authToken);
 
