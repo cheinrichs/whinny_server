@@ -197,7 +197,7 @@ router.get('/versionCheck/:version', function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Whinny Server' });
+  res.render('index', { title: 'Whinny Staging Server' });
 });
 
 //iOS and Android Client Routes
