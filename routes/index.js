@@ -14,7 +14,7 @@ var twilio = require('twilio');
 // var accountSid = process.env.TWILIO_ACCOUNT_SID;
 // var authToken = process.env.TWILIO_AUTH_TOKEN;
 
-var textClient = new twilio.RestClient(accountSid, authToken);
+// var textClient = new twilio.RestClient(accountSid, authToken);
 
 var CLIENT_CURRENT_VERSION = '0.0.1';
 
