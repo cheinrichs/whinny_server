@@ -1134,6 +1134,11 @@ router.post('/makeUserAdmin', function (req, res, next) {
   })
 })
 
+router.post('/removeUserAdmin', function (req, res, next) {
+  knex('group_memberships').where({group_id: req.body.group_id, user_id: req.body.user_id}).update({admin: false}).then(function () {
+    res.json({ RemovedUserAdmin: true });
+  })
+})
 router.post('/deleteGroup', function (req, res, next) {
   knex('groups').where({group_id: req.body.group_id}).del().then(function () {
     knex('group_memberships').where('group_id', req.body.group_id).del().then(function () {
