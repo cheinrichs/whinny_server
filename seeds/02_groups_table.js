@@ -129,7 +129,7 @@ exports.seed = function(knex, Promise) {
                           group_state: null,
                           group_discipline: 'All'
                         }).then(function () {
-                          knex('groups').insert({
+                          return knex('groups').insert({
                               group_name: 'Caribou Ranch',
                               group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/10_GroupProfilePic.jpg',
                               description: 'Longmont, Colorado',

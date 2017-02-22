@@ -867,7 +867,8 @@ router.post('/createNewGroup', function (req, res, next) {
           user_id: req.body.fromUser.user_id,
           group_id: group[0].group_id,
           admin: true,
-          notifications: true
+          notifications: true,
+          owner: true
         }
         console.log(membership);
         knex('group_memberships').insert(membership).then(function () {
@@ -1158,7 +1159,16 @@ router.get('/groupMembers/:group_id', function (req, res, next) {
             users[i].admin = false;
           }
         }
-        res.json(users);
+        knex('group_memberships').where({ group_id: req.params.group_id, owner: true }).pluck('user_id').then(function (owner) {
+          for (var i = 0; i < users.length; i++) {
+            if(owner.includes(users[i].user_id)){
+              users[i].owner = true;
+            } else {
+              users[i].owner = false;
+            }
+          }
+          res.json(users);
+        })
       })
     })
   })

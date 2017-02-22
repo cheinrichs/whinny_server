@@ -3,17 +3,23 @@ exports.seed = function(knex, Promise) {
     knex('group_memberships').del()
   ).then(function () {
     return Promise.join(
-      createGroupMembership('Cooper', 'Whinny Staff', true, false, true),
+      createGroupMembership('Cooper', 'Whinny Staff', true, true, true),
       createGroupMembership('Cooper', 'Gray Filly Farm', false, false, false),
       createGroupMembership('Cooper', 'Secret invite only group', true, true, true),
       createGroupMembership('Cooper', 'Somerset Farms', true, false, false),
 
-      createGroupMembership('Morgan', 'Whinny Staff', true, true, true),
-      createGroupMembership('Morgan', 'Paragon Equestrian Centre', true, false, true),
-      createGroupMembership('Morgan', 'Gray Filly Farm', true, false, true),
-      createGroupMembership('Morgan', 'Somerset Farms', true, false, false),
+      createGroupMembership('Morgan', 'Dressage Pacifico', true, true, false),
+      createGroupMembership('Morgan', 'Gray Filly Farm', true, true, true),
+      createGroupMembership('Morgan', 'Jessica Greer Dressage', true, true, false),
+      createGroupMembership('Morgan', 'Whinny Staff', false, false, true),
+      createGroupMembership('Morgan', 'Paragon Equestrian Centre', true, true, false),
+      createGroupMembership('Morgan', 'Rabbit Mountain Equestrian Center', true, true, false),
+      createGroupMembership('Morgan', 'Wild Rose Farm', true, true, false),
+      createGroupMembership('Morgan', 'Secret invite only group', true, true, false),
+      createGroupMembership('Morgan', 'Somerset Farms', true, true, false),
+      createGroupMembership('Morgan', 'Caribou Ranch', true, true, true),
 
-      createGroupMembership('George', 'Whinny Staff', false, true, true),
+      createGroupMembership('George', 'Whinny Staff', false, false, true),
       createGroupMembership('George', 'Gray Filly Farm', false, false, true),
       createGroupMembership('George', 'Caribou Ranch', true, true, true)
     )
@@ -22,7 +28,8 @@ exports.seed = function(knex, Promise) {
   function createGroupMembership(first_name, group_name, admin, owner, notifications){
     var result = {
       notifications: notifications,
-      admin: admin
+      admin: admin,
+      owner: owner
      };
     return knex('users').where('first_name', first_name).first().then(function (user_obj) {
       result.user_id = user_obj.user_id;
