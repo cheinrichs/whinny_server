@@ -3,22 +3,23 @@ exports.seed = function(knex, Promise) {
     knex('group_memberships').del()
   ).then(function () {
     return Promise.join(
-      createGroupMembership('Cooper', 'Whinny Staff', true, false),
-      createGroupMembership('Cooper', 'Gray Filly Farm', false, false),
-      createGroupMembership('Cooper', 'Secret invite only group', true, true),
-      createGroupMembership('Cooper', 'Somerset Farms', true, true),
+      createGroupMembership('Cooper', 'Whinny Staff', true, false, true),
+      createGroupMembership('Cooper', 'Gray Filly Farm', false, false, false),
+      createGroupMembership('Cooper', 'Secret invite only group', true, true, true),
+      createGroupMembership('Cooper', 'Somerset Farms', true, false, false),
 
-      createGroupMembership('Morgan', 'Whinny Staff', true, false),
-      createGroupMembership('Morgan', 'Paragon Equestrian Centre', true, false),
-      createGroupMembership('Morgan', 'Gray Filly Farm', true, false),
-      createGroupMembership('Morgan', 'Somerset Farms', true, false),
+      createGroupMembership('Morgan', 'Whinny Staff', true, true, true),
+      createGroupMembership('Morgan', 'Paragon Equestrian Centre', true, false, true),
+      createGroupMembership('Morgan', 'Gray Filly Farm', true, false, true),
+      createGroupMembership('Morgan', 'Somerset Farms', true, false, false),
 
-      createGroupMembership('George', 'Whinny Staff', false, true),
-      createGroupMembership('George', 'Gray Filly Farm', false, false)
+      createGroupMembership('George', 'Whinny Staff', false, true, true),
+      createGroupMembership('George', 'Gray Filly Farm', false, false, true),
+      createGroupMembership('George', 'Caribou Ranch', true, true, true)
     )
   });
 
-  function createGroupMembership(first_name, group_name, admin, notifications){
+  function createGroupMembership(first_name, group_name, admin, owner, notifications){
     var result = {
       notifications: notifications,
       admin: admin

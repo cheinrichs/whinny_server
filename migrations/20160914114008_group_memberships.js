@@ -19,6 +19,8 @@ exports.up = function(knex, Promise) {
 
     table.boolean('admin');
 
+    table.boolean('owner');
+
     table.boolean('notifications');
   });
 };

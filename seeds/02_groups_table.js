@@ -130,10 +130,10 @@ exports.seed = function(knex, Promise) {
                           group_discipline: 'All'
                         }).then(function () {
                           knex('groups').insert({
-                              group_name: 'Lime Chip Fans',
+                              group_name: 'Caribou Ranch',
                               group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/10_GroupProfilePic.jpg',
                               description: 'Longmont, Colorado',
-                              is_private: false,
+                              is_private: true,
                               is_hidden: false,
                               users_can_respond: true,
                               geographically_limited: false,
@@ -141,7 +141,7 @@ exports.seed = function(knex, Promise) {
                               group_longitude: '-105.101927',
                               group_zip: 80501,
                               group_state: 'CO',
-                              group_discipline: 'Seriously, who doesn\'t love these things!'
+                              group_discipline: 'Home on the range'
                             })
                         })
                       })
