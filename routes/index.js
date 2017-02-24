@@ -525,7 +525,7 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
       knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
         //check to see if the user has any unread messages
         result.messages = messages;
-        
+
         knex('broadcast_read_by').where({user_id: req.params.user_id, read: false}).then(function (unreadMessages) {
           result.unread = unreadMessages;
           res.json(result);
@@ -687,7 +687,13 @@ router.get('/sendBroadcastMessage/:to_broadcast/:from_user/:content', function (
 
 router.post('/markChatMessagesAsRead', function (req, res, next) {
   knex('messages').whereIn('message_id', req.body.newlyReadMessages).update({read: true}).then(function () {
-    res.json({marked: true});
+    res.json({ marked: true });
+  })
+})
+
+router.post('/markBroadcastMessagesAsRead', function (req, res, next) {
+  knex('broadcast_read_by').whereIn('broadcast_message_id', req.body.newlyReadMessages).update({read: true}).then(function () {
+    res.json({ marked: true })
   })
 })
 
