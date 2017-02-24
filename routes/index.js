@@ -515,35 +515,19 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
 
   //Find the broadcasts the user is a member of
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcasts) {
-    for (var i = 0; i < broadcasts.length; i++) {
-      result[broadcasts[i]] = {
-        messages: [],
-        unread: false
-      };
-    }
 
     //get the broadcast objects for those broadcasts
     knex('broadcasts').whereIn('broadcast_id', broadcasts).then(function (broadcastObjects) {
-      for (var i = 0; i < broadcastObjects.length; i++) {
-        result[broadcastObjects[i].broadcast_id].broadcast = broadcastObjects[i];
-      }
+      console.log(broadcastObjects);
+      result.broadcasts = broadcastObjects;
 
-      //check to see if the user has any unread messages
-      knex('broadcast_read_by').where({user_id: req.params.user_id, read: false}).pluck('broadcast_message_id').then(function (unreadMessages) {
-
-        //get all the messages objects that are associated with those broadcasts and mark them as read or unread
-        knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
-          for (var i = 0; i < messages.length; i++) {
-            if(unreadMessages.indexOf(messages[i].broadcast_message_id) >= 0){
-              //mark the individual message as unread
-              messages[i].unread = true;
-              //mark the broadcast as containing an unread message
-              result[messages[i].to_broadcast].unread = true;
-            } else {
-              messages[i].unread = false;
-            }
-            result[messages[i].to_broadcast].messages.push(messages[i]);
-          }
+      //get all the messages objects that are associated with those broadcasts and mark them as read or unread
+      knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
+        //check to see if the user has any unread messages
+        result.messages = messages;
+        
+        knex('broadcast_read_by').where({user_id: req.params.user_id, read: false}).then(function (unreadMessages) {
+          result.unread = unreadMessages;
           res.json(result);
         })
 
