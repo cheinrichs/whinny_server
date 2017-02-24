@@ -75,13 +75,21 @@ router.post('/createBroadcastMessage', function (req, res, next) {
         console.log(broadcast_device_tokens);
         console.log(req.body);
         //create the push
+        var message = 'New Message';
+        if(req.body.params.broadcastTitle && req.body.params.broadcastMessage){
+          message = req.body.params.broadcastTitle + ': ' + req.body.params.broadcastMessage;
+        } else if(req.body.params.title){
+          message = req.body.params.title;
+        } else if(req.body.params.broadcastMessage){
+          message = req.body.params.broadcastMessage;
+        }
         //make a new push message using that array
         var body = JSON.stringify({
           "tokens": broadcast_device_tokens,
           "profile": "whinny_push_notifications_dev",
           "notification": {
             "title": req.body.params.broadcastName,
-            "message": req.body.params.broadcastTitle + ': ' + req.body.params.broadcastMessage
+            "message": message
           }
         });
         request({
@@ -504,21 +512,45 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
 router.get('/broadcastMessages/:user_id', function (req, res, next) {
   if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
+
+  //Find the broadcasts the user is a member of
   knex('broadcast_memberships').where('user_id', req.params.user_id).pluck('broadcast_id').then(function (broadcasts) {
-    knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
+    for (var i = 0; i < broadcasts.length; i++) {
+      result[broadcasts[i]] = {
+        messages: [],
+        unread: false
+      };
+    }
 
-      result.broadcastMessages = messages;
+    //get the broadcast objects for those broadcasts
+    knex('broadcasts').whereIn('broadcast_id', broadcasts).then(function (broadcastObjects) {
+      for (var i = 0; i < broadcastObjects.length; i++) {
+        result[broadcastObjects[i].broadcast_id].broadcast = broadcastObjects[i];
+      }
 
-      knex('broadcast_memberships')
-      .join('broadcasts', 'broadcast_memberships.broadcast_id', "=", 'broadcasts.broadcast_id')
-      .where('user_id', req.params.user_id)
-      .then(function (broadcastObjects) {
-        result.broadcastObjects = broadcastObjects;
-        knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their broadcast messages', action_time: knex.fn.now() }).then(function () {
+      //check to see if the user has any unread messages
+      knex('broadcast_read_by').where({user_id: req.params.user_id, read: false}).pluck('broadcast_message_id').then(function (unreadMessages) {
+
+        //get all the messages objects that are associated with those broadcasts and mark them as read or unread
+        knex('broadcast_messages').whereIn('to_broadcast', broadcasts).then(function (messages) {
+          for (var i = 0; i < messages.length; i++) {
+            if(unreadMessages.indexOf(messages[i].broadcast_message_id) >= 0){
+              //mark the individual message as unread
+              messages[i].unread = true;
+              //mark the broadcast as containing an unread message
+              result[messages[i].to_broadcast].unread = true;
+            } else {
+              messages[i].unread = false;
+            }
+            result[messages[i].to_broadcast].messages.push(messages[i]);
+          }
           res.json(result);
         })
+
       })
+
     })
+
   })
 })
 
