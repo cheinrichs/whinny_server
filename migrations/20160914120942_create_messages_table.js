@@ -36,6 +36,7 @@ exports.up = function(knex, Promise) {
     table.string('content');
 
     table.boolean('read');
+    table.timestamp('time_read');
     table.boolean('sent_in_app');
     table.boolean('sent_as_mms');
 

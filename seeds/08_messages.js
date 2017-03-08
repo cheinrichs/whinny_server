@@ -19,6 +19,7 @@ exports.seed = function(knex, Promise) {
       message_type: message_type,
       content: content,
       read: false,
+      time_read: knex.fn.now(),
       sent_in_app: true,
       sent_as_mms: false,
       geographically_limited: false,
