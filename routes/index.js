@@ -108,8 +108,23 @@ router.post('/createBroadcastMessage', function (req, res, next) {
           console.log("ionic api response:");
           console.log(response);
 
-          knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + ' created a broadcast message.', action_time: knex.fn.now() }).then(function () {
-            res.json({success: "true"});
+
+          var unreadMessageMarkers = [];
+
+          for (var i = 0; i < user_ids.length; i++) {
+            unreadMessageMarkers.push({
+              user_id: user_ids[i],
+              broadcast_id: req.body.params.selectedBroadcast,
+              broadcast_message_id: req.body.params.currentNewMessageId,
+              read: false,
+              time_read: null
+            });
+          }
+
+          knex('broadcast_read_by').insert(unreadMessageMarkers).then(function () {
+            knex('user_action_log').insert({ user_id: req.body.params.currentUser.user_id, action: 'WEBSITE: Broadcaster ' + req.body.params.currentUser.user_id + ' created a broadcast message.', action_time: knex.fn.now() }).then(function () {
+              res.json({success: "true"});
+            })
           })
         })
       })
@@ -467,41 +482,46 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
 router.get('/groupMessages/:user_id', function (req, res, next) {
   if(!req.params.user_id || req.params.user_id === undefined || req.params.user_id === 'undefined') return res.json({noUserIdProvided: true });
   var result = {};
+
   //Search through group_memberships for all the groups the user is a member of = memberships
   knex('group_memberships').where('user_id', req.params.user_id).pluck('group_id').then(function (memberships) {
+
     //Find all users who are members of all those groups = user_ids
     knex('group_memberships').whereIn('group_id', memberships).pluck('user_id').then(function (user_ids) {
+
       //Get all the users who are in those groups user data
       knex('users').whereIn('user_id', user_ids).then(function (userObjects) {
         result.userObjects = userObjects;
+
         //grab all group messages
         knex('group_messages').whereIn('to_group', memberships).then(function (messages) {
           result.groupMessages = messages;
-          //For all groups the user is a member of, grab their group object, throw it into the result object organized by group_id
-          knex('groups').whereIn('group_id', memberships).then(function (groupObjects) {
 
-            result.groupObjects = {};
-            for (var i = 0; i < groupObjects.length; i++) {
-              result.groupObjects[groupObjects[i].group_id] = groupObjects[i];
-            }
+          knex('group_message_read_by').where({ to_user_id: req.params.user_id, read: false}).then(function (unreadMessages) {
+            result.unread = unreadMessages;
 
-            //see if there are any group invitations, also include those groups
-            knex('group_invitations').where('user_id', req.params.user_id).pluck('group_id').then(function (groupsWithInvitationIds) {
-              //get the invited group objects
-              knex('groups').whereIn('group_id', groupsWithInvitationIds).then(function (invitationGroupObjects) {
+            //For all groups the user is a member of, grab their group object, throw it into the result object organized by group_id
+            knex('groups').whereIn('group_id', memberships).then(function (groupObjects) {
 
-                for (var i = 0; i < invitationGroupObjects.length; i++) {
-                  result.groupObjects[invitationGroupObjects[i].group_id] = invitationGroupObjects[i];
-                }
+              result.groupObjects = groupObjects;
+              // for (var i = 0; i < groupObjects.length; i++) {
+              //   result.groupObjects[groupObjects[i].group_id] = groupObjects[i];
+              // }
 
-                //Write in the log and return the result to the user
-                knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
-                  res.json(result);
+              //see if there are any group invitations, also include those groups
+              knex('group_invitations').where('user_id', req.params.user_id).pluck('group_id').then(function (groupsWithInvitationIds) {
+                //get the invited group objects
+                knex('groups').whereIn('group_id', groupsWithInvitationIds).then(function (invitationGroupObjects) {
+
+                  result.invitedGroupObjects = invitationGroupObjects;
+
+                  //Write in the log and return the result to the user
+                  knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
+                    res.json(result);
+                  })
                 })
               })
             })
-
-
           })
         })
       })
@@ -530,11 +550,8 @@ router.get('/broadcastMessages/:user_id', function (req, res, next) {
           result.unread = unreadMessages;
           res.json(result);
         })
-
       })
-
     })
-
   })
 })
 
@@ -692,8 +709,10 @@ router.post('/markChatMessagesAsRead', function (req, res, next) {
 })
 
 router.post('/markBroadcastMessagesAsRead', function (req, res, next) {
-  knex('broadcast_read_by').whereIn('broadcast_message_id', req.body.newlyReadMessages).update({read: true}).then(function () {
-    res.json({ marked: true })
+  knex('broadcast_read_by').whereIn('broadcast_message_id', req.body.newlyReadMessages).update({read: true, time_read: knex.fn.now()}).then(function () {
+    knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Read messages ' + req.body.newlyReadMessages, action_time: knex.fn.now() }).then(function () {
+      res.json({ marked: true })
+    })
   })
 })
 
@@ -1161,6 +1180,7 @@ router.post('/removeUserAdmin', function (req, res, next) {
     res.json({ RemovedUserAdmin: true });
   })
 })
+
 router.post('/deleteGroup', function (req, res, next) {
   knex('groups').where({group_id: req.body.group_id}).del().then(function () {
     knex('group_memberships').where('group_id', req.body.group_id).del().then(function () {
