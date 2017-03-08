@@ -5,14 +5,10 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
 
-      // createGroupMessage('Cooper', 'Whinny Staff', ''),
-      // createGroupMessage('Cooper', 'Gray Filly Farm', ''),
-      //
-      createGroupMessage('Morgan', 'Paragon Equestrian Centre', 'Testing - Morgan'),
-      createGroupMessage('Morgan', 'Gray Filly Farm', 'Testing - Morgan'),
-      createGroupMessage('Morgan', 'Whinny Staff', 'Testing - Morgan')
-      //
-      // createGroupMessage('George', 'Whinny Staff', 'Testing - George')
+      createGroupMessage('Morgan', 'Paragon Equestrian Centre', 'Testing - Paragon Equestrian Centre'),
+      createGroupMessage('Morgan', 'Gray Filly Farm', 'Testing - GFF'),
+      createGroupMessage('Morgan', 'Whinny Staff', 'Testing - Whinny Staff')
+      
     )
   });
 
