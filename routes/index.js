@@ -709,7 +709,7 @@ router.post('/markChatMessagesAsRead', function (req, res, next) {
 })
 
 router.post('/markGroupMessagesAsRead', function (req, res, next) {
-  knex('group_message_read_by').whereI('group_message_id', req.body.newlyReadMessages).update({read: true, time_read: knex.fn.now()}).then(function () {
+  knex('group_message_read_by').whereIn('group_message_id', req.body.newlyReadMessages).update({read: true, time_read: knex.fn.now()}).then(function () {
     knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Read group messages ' + req.body.newlyReadMessages, action_time: knex.fn.now()}).then(function () {
       res.json({ marked: true})
     })
