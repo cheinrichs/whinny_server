@@ -616,7 +616,7 @@ router.post('/sendGroupMessage', function (req, res, next) {
     to_group: req.body.to_group,
     from_user: req.body.from_user,
     group_message_content: req.body.content
-  }).then(function () {
+  }).returning('group_message_id').then(function (new_message_id) {
     //search through users that are part of the to_group
     //pluck their device ids
     knex('group_memberships').where('group_id', req.body.to_group).pluck('user_id').then(function (user_ids) {
@@ -627,43 +627,64 @@ router.post('/sendGroupMessage', function (req, res, next) {
       }
       user_ids.splice(index, 1);
       console.log(user_ids);
-      knex('users').whereIn('user_id', user_ids).where('group_notifications', true).then(function (users_with_notifications) {
-        var group_device_tokens = [];
-        for (var i = 0; i < users_with_notifications.length; i++) {
-          group_device_tokens.push(users_with_notifications[i].device_token);
+
+      var unreadMessageMarkers = [];
+
+      for (var i = 0; i < user_ids.length; i++) {
+        if(user_ids[i] === req.body.from_user){
+
+        } else {
+          unreadMessageMarkers.push({
+            group_id: req.body.to_group,
+            group_message_id: new_message_id[0],
+            to_user_id: user_ids[i],
+            read: false,
+            time_read: null
+          });
         }
-        console.log(group_device_tokens);
+      }
 
-        //make a new push message using that array
-        var body = JSON.stringify({
-          "tokens": group_device_tokens,
-          "profile": "whinny_push_notifications_dev",
-          "notification": {
-            "title": req.body.groupName,
-            "message": req.body.senderName + ': ' + req.body.content
-          }
-        });
-        request({
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
-          },
-          uri: 'https://api.ionic.io/push/notifications',
-          body: body,
-          method: 'POST'
-        }, function (err, response, body) {
-          if(err){
-            console.log(err);
-            return res.json({ error: err })
-          }
+      //insert a record that keeps track of which users have read the message
+      knex('group_message_read_by').insert(unreadMessageMarkers).then(function () {
 
-          knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a group message to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
-            return res.json({confirmed: true})
+        //find the group users with push notifications turned on and send a push notification
+        knex('users').whereIn('user_id', user_ids).where('group_notifications', true).then(function (users_with_notifications) {
+          var group_device_tokens = [];
+          for (var i = 0; i < users_with_notifications.length; i++) {
+            group_device_tokens.push(users_with_notifications[i].device_token);
+          }
+          console.log(group_device_tokens);
+
+          //make a new push message using that array of device tokens
+          var body = JSON.stringify({
+            "tokens": group_device_tokens,
+            "profile": "whinny_push_notifications_dev",
+            "notification": {
+              "title": req.body.groupName,
+              "message": req.body.senderName + ': ' + req.body.content
+            }
+          });
+          request({
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+            },
+            uri: 'https://api.ionic.io/push/notifications',
+            body: body,
+            method: 'POST'
+          }, function (err, response, body) {
+            if(err){
+              console.log(err);
+              return res.json({ error: err })
+            }
+
+            knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a group message to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
+              return res.json({confirmed: true})
+            })
           })
         })
       })
     })
-
   })
 })
 
