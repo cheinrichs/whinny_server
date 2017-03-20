@@ -913,6 +913,7 @@ router.post('/createNewGroup', function (req, res, next) {
     knex('groups').insert({
       group_name: req.body.groupName,
       group_photo: 'Placeholder',
+      group_photo_small: 'Placeholder',
       description: req.body.description,
       is_private: req.body.is_private,
       is_hidden: req.body.hidden,
@@ -929,7 +930,8 @@ router.post('/createNewGroup', function (req, res, next) {
       console.log("group:");
       console.log(group[0]);
       knex('groups').where('group_id', group[0].group_id).update({
-          group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group[0].group_id + '_GroupProfilePic.jpg'
+          group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group[0].group_id + '_GroupProfilePic.jpg',
+          group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/' + group[0].group_id + '_GroupProfilePic.jpg',
       }).then(function () {
         console.log(group);
         //Create a group membership for the creator
