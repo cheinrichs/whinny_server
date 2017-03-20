@@ -8,6 +8,7 @@ exports.up = function(knex, Promise) {
 
     table.string('broadcast_name');
     table.string('broadcast_photo');
+    table.string('broadcast_photo_small');
 
     table.string('broadcast_description');
 
