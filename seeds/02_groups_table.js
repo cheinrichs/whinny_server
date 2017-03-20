@@ -6,7 +6,7 @@ exports.seed = function(knex, Promise) {
       return knex('groups').insert({
           group_name: 'Dressage Pacifico',
           group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/1_GroupProfilePic.jpg',
-          group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/1_GroupProfilePic.jpg',
+          group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/1_GroupProfilePic.jpg',
           description: 'Longmont, Colorado',
           is_private: true,
           is_hidden: false,
@@ -21,7 +21,7 @@ exports.seed = function(knex, Promise) {
           return knex('groups').insert({
             group_name: 'Gray Filly Farm',
             group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/2_GroupProfilePic.jpg',
-            group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/2_GroupProfilePic.jpg',
+            group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/2_GroupProfilePic.jpg',
             description: 'Longmont, Colorado',
             is_private: true,
             is_hidden: false,
@@ -36,7 +36,7 @@ exports.seed = function(knex, Promise) {
             return knex('groups').insert({
               group_name: 'Jessica Greer Dressage',
               group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/3_GroupProfilePic.jpg',
-              group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/3_GroupProfilePic.jpg',
+              group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/3_GroupProfilePic.jpg',
               description: 'Berthoud, Colorado',
               is_private: true,
               is_hidden: false,
@@ -51,7 +51,7 @@ exports.seed = function(knex, Promise) {
               return knex('groups').insert({
                 group_name: 'Whinny Staff',
                 group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/4_GroupProfilePic.jpg',
-                group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/4_GroupProfilePic.jpg',
+                group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/4_GroupProfilePic.jpg',
                 description: 'Private group for Whinny Staff',
                 is_private: true,
                 is_hidden: true,
@@ -66,7 +66,7 @@ exports.seed = function(knex, Promise) {
                 return knex('groups').insert({
                   group_name: 'Paragon Equestrian Centre',
                   group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/5_GroupProfilePic.jpg',
-                  group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/5_GroupProfilePic.jpg',
+                  group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/5_GroupProfilePic.jpg',
                   description: 'Berthoud, Colorado',
                   is_private: true,
                   is_hidden: false,
@@ -81,7 +81,7 @@ exports.seed = function(knex, Promise) {
                   return knex('groups').insert({
                     group_name: 'Rabbit Mountain Equestrian Center',
                     group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/6_GroupProfilePic.jpg',
-                    group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/6_GroupProfilePic.jpg',
+                    group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/6_GroupProfilePic.jpg',
                     description: 'Longmont, Colorado',
                     is_private: true,
                     is_hidden: false,
@@ -96,7 +96,7 @@ exports.seed = function(knex, Promise) {
                     return knex('groups').insert({
                       group_name: 'Wild Rose Farm',
                       group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/7_GroupProfilePic.jpg',
-                      group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/7_GroupProfilePic.jpg',
+                      group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/7_GroupProfilePic.jpg',
                       description: 'Longmont, Colorado',
                       is_private: true,
                       is_hidden: false,
@@ -111,7 +111,7 @@ exports.seed = function(knex, Promise) {
                       return knex('groups').insert({
                         group_name: 'Secret invite only group',
                         group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/8_GroupProfilePic.jpg',
-                        group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/8_GroupProfilePic.jpg',
+                        group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/8_GroupProfilePic.jpg',
                         description: 'Theyre watching. Were watching back.',
                         is_private: true,
                         is_hidden: true,
@@ -126,7 +126,7 @@ exports.seed = function(knex, Promise) {
                         return knex('groups').insert({
                           group_name: 'Somerset Farms',
                           group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/9_GroupProfilePic.jpg',
-                          group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/9_GroupProfilePic.jpg',
+                          group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/9_GroupProfilePic.jpg',
                           description: 'Longmont, Colorado',
                           is_private: true,
                           is_hidden: false,
@@ -141,7 +141,7 @@ exports.seed = function(knex, Promise) {
                           return knex('groups').insert({
                               group_name: 'Caribou Ranch',
                               group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/10_GroupProfilePic.jpg',
-                              group_photo_small: 'http://cdn.filter.to/75x75/https://s3.amazonaws.com/whinnyphotos/group_profile_photos/10_GroupProfilePic.jpg',
+                              group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/10_GroupProfilePic.jpg',
                               description: 'Longmont, Colorado',
                               is_private: true,
                               is_hidden: false,
