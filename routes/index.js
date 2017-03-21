@@ -1149,6 +1149,8 @@ router.post('/joinGroup', function (req, res, next) {
     return;
   }
 
+  console.log(req.body.user_id, req.body.group_id);
+
   knex('group_memberships').insert({
     user_id: req.body.user_id,
     group_id: req.body.group_id,
