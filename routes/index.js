@@ -90,7 +90,12 @@ router.post('/createBroadcastMessage', function (req, res, next) {
           "notification": {
             "title": req.body.params.broadcastName,
             "message": message,
-            "sound": 'default'
+            "ios": {
+              "sound": "default"
+            },
+            "android": {
+              "sound": "default"
+            }
           }
         });
         request({
@@ -433,7 +438,7 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
       //that is not the given id
       if(messages[i].to_user == req.params.user_id){
 
-
+        //create convo object
         if(!result[messages[i].from_user]){
           result[messages[i].from_user] = {
             unread: false,
@@ -462,8 +467,6 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
 
         result[messages[i].to_user].messages.push(messages[i]);
 
-        //This marks messages a user sent as unread, which is backwards
-        // if(messages[i].read === false) result[messages[i].to_user].unread = true;
       }
     }
 
@@ -579,7 +582,13 @@ router.post('/sendChatMessage', function (req, res, next) {
             "profile": "whinny_push_notifications_dev",
             "notification": {
               "title": req.body.senderName,
-              "message": req.body.content
+              "message": req.body.content,
+              "ios": {
+                "sound": "default"
+              },
+              "android": {
+                "sound": "default"
+              }
             }
           });
           request({
@@ -662,7 +671,13 @@ router.post('/sendGroupMessage', function (req, res, next) {
             "profile": "whinny_push_notifications_dev",
             "notification": {
               "title": req.body.groupName,
-              "message": req.body.senderName + ': ' + req.body.content
+              "message": req.body.senderName + ': ' + req.body.content,
+              "ios": {
+                "sound": "default"
+              },
+              "android": {
+                "sound": "default"
+              }
             }
           });
           request({
@@ -678,6 +693,7 @@ router.post('/sendGroupMessage', function (req, res, next) {
               console.log(err);
               return res.json({ error: err })
             }
+            console.log(response);
 
             knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a group message to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
               return res.json({confirmed: true})
