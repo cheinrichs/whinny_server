@@ -4,7 +4,7 @@ var knex = require('../lib/knex.js');
 var request = require('request');
 
 var SparkPost = require('sparkpost');
-// var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
+var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');

@@ -29,6 +29,16 @@ var S3_BroadcastMessagePhotos = new S3FS('whinnyphotos/broadcast_message_photos'
   secretAccessKey: AWS_SECRET_ACCESS_KEY
 })
 
+var S3_ChatMessagePhotos = new S3FS('whinnyphotos/chat_images', {
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
+})
+
+var s3_GroupMessagePhotos = new S3FS('whinnyphotos/group_chat_images', {
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY
+})
+
 var multiparty = require('connect-multiparty');
 var multipartyMiddleware = multiparty();
 
@@ -53,13 +63,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(multipartyMiddleware);
 
-//photos
+
 app.post('/chatMessageUpload', function (req, res, next) {
-  res.json({ todo: true });
+  return S3_ChatMessagePhotos.writeFile(file.originalFilename, stream).then(function () {
+    fs.unlink(file.path, function (err) {
+      if(err) console.err(err);
+      res.json({ chatMessageUpload: "Success" });
+    })
+  })
 })
-//photos
+
 app.post('/groupMessageUpload', function (req, res, next) {
-  res.json({ todo: true });
+  return s3_GroupMessagePhotos.writeFile(file.originalFilename, stream).then(function () {
+    fs.unlink(file.path, function (err) {
+      if(err) console.err(err);
+      res.json({ groupMessageUpload: "Success" });
+    })
+  })
 })
 
 app.post('/personalProfilePhotoUpload', function (req, res, next) {
@@ -68,7 +88,7 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
-      res.json({ personalProfilePhotoUpload: 'success' });
+      res.json({ personalProfilePhotoUpload: "Success" });
     })
   })
 })
