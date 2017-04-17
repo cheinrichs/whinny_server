@@ -49,6 +49,10 @@ exports.up = function(knex, Promise) {
 
     table.decimal('latitude', 20, 10);
     table.decimal('longitude', 20, 10);
+
+    table.boolean('image');
+    table.string('image_src');
+
   });
 };
 

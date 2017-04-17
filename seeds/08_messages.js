@@ -4,17 +4,19 @@ exports.seed = function(knex, Promise) {
     knex('messages').del()
   ).then(function () {
     return Promise.join(
-      createMessage('Morgan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Morgan from Cooper', 'chat'),
+      createMessage('Morgan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Morgan from Cooper', 'chat', false, null),
 
-      createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat'),
+      createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat', false, null),
 
-      createMessage('Cooper', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat'),
-      createMessage('Morgan', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat')
+      createMessage('Cooper', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat', false, null),
+      createMessage('Morgan', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat', false, null),
 
+      createMessage('Morgan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Morgan from Cooper', 'chat', true, 'https://s-media-cache-ak0.pinimg.com/736x/1c/8f/99/1c8f994a826b1482c75dc89bdbcd1acd.jpg'),
+      createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat', true, 'http://kids.nationalgeographic.com/content/dam/kids/photos/animals/Mammals/H-P/lion-male-roar.jpg.adapt.945.1.jpg')
     )
   });
 
-  function createMessage(to_first_name, from_first_name, group_name, broadcast_name, content, message_type){
+  function createMessage(to_first_name, from_first_name, group_name, broadcast_name, content, message_type, image, image_src){
     var result = {
       message_type: message_type,
       content: content,
@@ -26,7 +28,9 @@ exports.seed = function(knex, Promise) {
       state: null,
       zip: null,
       latitude: null,
-      longitude: null
+      longitude: null,
+      image: image,
+      image_src: image_src
     };
     return knex('users').where('first_name', from_first_name).first().then(function (user_obj) {
       if(message_type === 'chat' || message_type === 'group'){

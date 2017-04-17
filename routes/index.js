@@ -573,7 +573,9 @@ router.post('/sendChatMessage', function (req, res, next) {
       state: null,
       zip: null,
       latitude: null,
-      longitude: null
+      longitude: null,
+      image: req.body.image,
+      image_src: req.body.image_src      
     }).then(function () {
       if(toUser.message_notifications === true){
         if(toUser.device_token !== '' && toUser.device_token.length > 0){
