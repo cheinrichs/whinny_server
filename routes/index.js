@@ -574,8 +574,8 @@ router.post('/sendChatMessage', function (req, res, next) {
       zip: null,
       latitude: null,
       longitude: null,
-      image: req.body.image,
-      image_src: req.body.image_src
+      image: false,
+      image_src: null
     }).then(function () {
       if(toUser.message_notifications === true){
         if(toUser.device_token !== '' && toUser.device_token.length > 0){
@@ -628,7 +628,7 @@ router.post('/sendChatImage', function (req, res, next) {
     knex('messages').insert({
       to_user: req.body.to_user,
       from_user: req.body.from_user,
-      message_type: 'chat',
+      message_type: 'image',
       content: '',
       read: false,
       sent_in_app: true,
