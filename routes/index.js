@@ -575,7 +575,7 @@ router.post('/sendChatMessage', function (req, res, next) {
       latitude: null,
       longitude: null,
       image: req.body.image,
-      image_src: req.body.image_src      
+      image_src: req.body.image_src
     }).then(function () {
       if(toUser.message_notifications === true){
         if(toUser.device_token !== '' && toUser.device_token.length > 0){
@@ -616,6 +616,70 @@ router.post('/sendChatMessage', function (req, res, next) {
         }
       } else {
         knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user + ' but their push notifications were off', action_time: knex.fn.now() }).then(function () {
+          res.json({created: true, notificationsWereOff: true});
+        })
+      }
+    })
+  })
+})
+
+router.post('/sendChatImage', function (req, res, next) {
+  knex('users').where('user_id', req.body.to_user).first().then(function (toUser) {
+    knex('messages').insert({
+      to_user: req.body.to_user,
+      from_user: req.body.from_user,
+      message_type: 'chat',
+      content: '',
+      read: false,
+      sent_in_app: true,
+      sent_as_mms: false,
+      geographically_limited: false,
+      state: null,
+      zip: null,
+      latitude: null,
+      longitude: null,
+      image: true,
+      image_src: req.body.image_src
+    }).then(function () {
+      if(toUser.message_notifications === true){
+        if(toUser.device_token !== '' && toUser.device_token.length > 0){
+          var body = JSON.stringify({
+            "tokens": [toUser.device_token],
+            "profile": "whinny_push_notifications_dev",
+            "notification": {
+              "title": req.body.senderName,
+              "message": "Sent a photo - ",
+              "ios": {
+                "sound": "default"
+              },
+              "android": {
+                "sound": "default"
+              }
+            }
+          });
+          request({
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+            },
+            uri: 'https://api.ionic.io/push/notifications',
+            body: body,
+            method: 'POST'
+          }, function (err, response, body) {
+            if(err) console.log(err);
+            console.log(response);
+            console.log(body);
+            knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat image to user ' + req.body.to_user + ' with a push notification', action_time: knex.fn.now() }).then(function () {
+              res.json({created: true, push: true});
+            })
+          })
+        } else {
+          knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat image to user ' + req.body.to_user + ' but they didnt have a device id set up' , action_time: knex.fn.now() }).then(function () {
+            res.json({created: true, noDeviceId: false});
+          })
+        }
+      } else {
+        knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat image to user ' + req.body.to_user + ' but their push notifications were off', action_time: knex.fn.now() }).then(function () {
           res.json({created: true, notificationsWereOff: true});
         })
       }
