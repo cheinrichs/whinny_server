@@ -20,6 +20,9 @@ exports.up = function(knex, Promise) {
          .onDelete('cascade');
 
     table.string('group_message_content');
+
+    table.boolean('image');
+    table.string('image_src');
   });
 };
 

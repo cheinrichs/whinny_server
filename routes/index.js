@@ -691,7 +691,9 @@ router.post('/sendGroupMessage', function (req, res, next) {
   knex('group_messages').insert({
     to_group: req.body.to_group,
     from_user: req.body.from_user,
-    group_message_content: req.body.content
+    group_message_content: req.body.content,
+    image: false,
+    image_src: null
   }).returning('group_message_id').then(function (new_message_id) {
     //search through users that are part of the to_group
     //pluck their device ids
@@ -762,6 +764,92 @@ router.post('/sendGroupMessage', function (req, res, next) {
             console.log(response);
 
             knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a group message to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
+              return res.json({confirmed: true})
+            })
+          })
+        })
+      })
+    })
+  })
+})
+
+router.post('/sendGroupImage', function (req, res, next) {
+  knex('group_messages').insert({
+    to_group: req.body.to_group,
+    from_user: req.body.from_user,
+    group_message_content: '',
+    image: true,
+    image_src: req.body.image_src
+  }).returning('group_message_id').then(function (new_message_id) {
+    //search through users that are part of the to_group
+    //pluck their device ids
+    knex('group_memberships').where('group_id', req.body.to_group).pluck('user_id').then(function (user_ids) {
+      //find the sender's user id and remove it from the ids
+      var index = 0;
+      for (var i = 0; i < user_ids.length; i++) {
+        if(user_ids[i] === req.body.from_user) index = i;
+      }
+      user_ids.splice(index, 1);
+      console.log(user_ids);
+
+      var unreadMessageMarkers = [];
+
+      for (var i = 0; i < user_ids.length; i++) {
+        if(user_ids[i] === req.body.from_user){
+
+        } else {
+          unreadMessageMarkers.push({
+            group_id: req.body.to_group,
+            group_message_id: new_message_id[0],
+            to_user_id: user_ids[i],
+            read: false,
+            time_read: null
+          });
+        }
+      }
+
+      //insert a record that keeps track of which users have read the message
+      knex('group_message_read_by').insert(unreadMessageMarkers).then(function () {
+
+        //find the group users with push notifications turned on and send a push notification
+        knex('users').whereIn('user_id', user_ids).where('group_notifications', true).then(function (users_with_notifications) {
+          var group_device_tokens = [];
+          for (var i = 0; i < users_with_notifications.length; i++) {
+            group_device_tokens.push(users_with_notifications[i].device_token);
+          }
+          console.log(group_device_tokens);
+
+          //make a new push message using that array of device tokens
+          var body = JSON.stringify({
+            "tokens": group_device_tokens,
+            "profile": "whinny_push_notifications_dev",
+            "notification": {
+              "title": req.body.groupName,
+              "message": req.body.senderName + ': sent an image -',
+              "ios": {
+                "sound": "default"
+              },
+              "android": {
+                "sound": "default"
+              }
+            }
+          });
+          request({
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2N2Q2OThmZS0xMzk5LTQwZjktOGM5ZS1jM2Q5MTU4ZmM4ODkifQ.m3pm5yI86MI6JvTBCU2hD_jNhShSVZsWTp79IMx4QJo'
+            },
+            uri: 'https://api.ionic.io/push/notifications',
+            body: body,
+            method: 'POST'
+          }, function (err, response, body) {
+            if(err){
+              console.log(err);
+              return res.json({ error: err })
+            }
+            console.log(response);
+
+            knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent an image to group ' + req.body.to_group, action_time: knex.fn.now() }).then(function () {
               return res.json({confirmed: true})
             })
           })
