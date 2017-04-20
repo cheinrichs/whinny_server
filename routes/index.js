@@ -370,7 +370,28 @@ router.get('/log_in/:phone', function (req, res, next) {
 })
 
 router.get('/confirmCode/:user_phone/:confirmation_code', function (req, res, next) {
-  knex('users').where('phone', req.params.user_phone).first().then(function (user) {
+  knex('users').select('account_is_setup',
+  'broadcast_notifications',
+  'device_token',
+  'email',
+  'first_name',
+  'group_notifications',
+  'last_login',
+  'last_name',
+  'message_notifications',
+  'password',
+  'phone',
+  'portrait_link',
+  'tutorial_1',
+  'tutorial_2',
+  'tutorial_3',
+  'tutorial_4',
+  'tutorial_5',
+  'user_id',
+  'user_latitude',
+  'user_longitude',
+  'user_type',
+  'verified').where('phone', req.params.user_phone).first().then(function (user) {
     if(user){
       if(user.confirmation_code === req.params.confirmation_code.toLowerCase()){
         knex('users').where('phone', req.params.user_phone).update({ verified: true }).then(function () {
