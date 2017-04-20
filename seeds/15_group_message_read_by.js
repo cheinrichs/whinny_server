@@ -13,9 +13,9 @@ exports.seed = function(knex, Promise) {
         createGroupReadByRecord('5', '1', 'Testing - Paragon Equestrian Centre', false),
         createGroupReadyByRecordImage('4', '1', 'https://thewondrous.com/wp-content/uploads/2015/05/horse-funny.jpg', false),
 
-        createGroupReadByRecord('2', '2', 'Testing - GFF', true),
-        createGroupReadByRecord('4', '2', 'Testing - Whinny Staff', true),
-        createGroupReadByRecord('5', '2', 'Testing - Paragon Equestrian Centre', true),
+        createGroupReadByRecord('2', '2', 'Testing - GFF', false),
+        createGroupReadByRecord('4', '2', 'Testing - Whinny Staff', false),
+        createGroupReadByRecord('5', '2', 'Testing - Paragon Equestrian Centre', false),
         createGroupReadyByRecordImage('4', '2', 'https://thewondrous.com/wp-content/uploads/2015/05/horse-funny.jpg', false),
 
         createGroupReadByRecord('2', '3', 'Testing - GFF', false),
