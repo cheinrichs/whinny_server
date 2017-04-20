@@ -1325,7 +1325,8 @@ router.post('/joinGroup', function (req, res, next) {
     user_id: req.body.user_id,
     group_id: req.body.group_id,
     admin: false,
-    notifications: true
+    notifications: true,
+    owner: false
   }).then(function () {
     knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Joined group ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
       res.json({ succes: true });

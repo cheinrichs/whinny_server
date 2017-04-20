@@ -4,6 +4,7 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
       createGroupMembership('Cooper', 'Whinny Staff', true, true, true),
+      createGroupMembership('Cooper', 'Paragon Equestrian Centre', false, false, false),
       createGroupMembership('Cooper', 'Gray Filly Farm', false, false, false),
       createGroupMembership('Cooper', 'Secret invite only group', true, true, true),
       createGroupMembership('Cooper', 'Somerset Farms', true, false, false),
@@ -22,7 +23,8 @@ exports.seed = function(knex, Promise) {
 
       createGroupMembership('George', 'Whinny Staff', false, false, true),
       createGroupMembership('George', 'Gray Filly Farm', false, false, true),
-      createGroupMembership('George', 'Caribou Ranch', true, true, true)
+      createGroupMembership('George', 'Caribou Ranch', true, true, true),
+      createGroupMembership('George', 'Paragon Equestrian Centre', false, false, false)
     )
   });
 
