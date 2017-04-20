@@ -9,7 +9,7 @@ exports.seed = function(knex, Promise) {
       createGroupMessage('Morgan', 'Gray Filly Farm', 'Testing - GFF', false, null),
       createGroupMessage('Morgan', 'Whinny Staff', 'Testing - Whinny Staff', false, null),
 
-      createGroupMessage('Morgan', 'Whinny Staff', '', true, 'https://thewondrous.com/wp-content/uploads/2015/05/horse-funny.jpg')
+      createGroupMessage('Morgan', 'Whinny Staff', '', true, 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_1492731397657.jpg')
 
     )
   });

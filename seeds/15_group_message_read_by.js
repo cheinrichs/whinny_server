@@ -11,17 +11,17 @@ exports.seed = function(knex, Promise) {
         createGroupReadByRecord('2', '1', 'Testing - GFF', false),
         createGroupReadByRecord('4', '1', 'Testing - Whinny Staff', false),
         createGroupReadByRecord('5', '1', 'Testing - Paragon Equestrian Centre', false),
-        createGroupReadyByRecordImage('4', '1', 'https://thewondrous.com/wp-content/uploads/2015/05/horse-funny.jpg', false),
+        createGroupReadyByRecordImage('4', '1', 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_1492731397657.jpg', false),
 
         createGroupReadByRecord('2', '2', 'Testing - GFF', false),
         createGroupReadByRecord('4', '2', 'Testing - Whinny Staff', false),
         createGroupReadByRecord('5', '2', 'Testing - Paragon Equestrian Centre', false),
-        createGroupReadyByRecordImage('4', '2', 'https://thewondrous.com/wp-content/uploads/2015/05/horse-funny.jpg', false),
+        createGroupReadyByRecordImage('4', '2', 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_1492731397657.jpg', false),
 
         createGroupReadByRecord('2', '3', 'Testing - GFF', false),
         createGroupReadByRecord('4', '3', 'Testing - Whinny Staff', false),
         createGroupReadByRecord('5', '3', 'Testing - Paragon Equestrian Centre', false),
-        createGroupReadyByRecordImage('4', '2', 'https://thewondrous.com/wp-content/uploads/2015/05/horse-funny.jpg', false),
+        createGroupReadyByRecordImage('4', '2', 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_1492731397657.jpg', false),
 
 
 
