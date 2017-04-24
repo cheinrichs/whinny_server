@@ -1000,10 +1000,9 @@ router.post('/createNewChat', function (req, res, next) {
         email: null,
         phone: req.body.to_phone,
         first_name: req.body.first_name,
-        last_name: req.boyd.last_name,
+        last_name: req.body.last_name,
         password: null,
-        //TODO: standard portrait link
-        portrait_link: 'https://s-media-cache-ak0.pinimg.com/564x/a5/38/e3/a538e3c4163496bfec2a6782b8290a33.jpg',
+        portrait_link: 'https://s3.amazonaws.com/whinnyphotos/whinny_placeholder_portrait.png',
         message_notifications: true,
         group_notifications: true,
         broadcast_notifications: true,
