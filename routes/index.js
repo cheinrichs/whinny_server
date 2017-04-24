@@ -956,6 +956,11 @@ router.post('/createNewChat', function (req, res, next) {
   console.log(req.body);
   if(req.body.to_phone.length > 10){
     req.body.to_phone = req.body.to_phone.replace( new RegExp(/(\+|\*|\-|\.|\,|\(|\))/g,""),'');
+    if(req.body.to_phone[0] === '1'){
+      req.body.to_phone = req.body.to_phone.substring(1);
+      console.log(req.body.to_phone.substring(1););
+      console.log(req.body.to_phone);
+    }
   }
 
   if(req.body.to_phone.length < 10){
