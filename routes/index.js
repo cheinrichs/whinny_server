@@ -999,8 +999,8 @@ router.post('/createNewChat', function (req, res, next) {
       knex('users').insert({
         email: null,
         phone: req.body.to_phone,
-        first_name: null,
-        last_name: null,
+        first_name: req.body.first_name,
+        last_name: req.boyd.last_name,
         password: null,
         //TODO: standard portrait link
         portrait_link: 'https://s-media-cache-ak0.pinimg.com/564x/a5/38/e3/a538e3c4163496bfec2a6782b8290a33.jpg',
