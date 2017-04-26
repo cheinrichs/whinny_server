@@ -1515,13 +1515,18 @@ router.post('/printGroupContent', function (req, res, next) {
 
 
         //"email": users[req.body.user_id].email
-        var fileName = 'tempLogs/' + req.body.groupName + '_MessageLog_'+ Date.now();
+        var fileName = req.body.groupName + '_MessageLog_'+ Date.now();
+        var filePath = 'tempLogs/' + fileName;
 
-        fs.writeFile(fileName, htmlBody, function(err) {
+        fs.writeFile(filePath, htmlBody, function(err) {
           if(err) {
               return console.log(err);
           }
           console.log("The file was saved!");
+
+          var bitmap = fs.readFileSync(fileName);
+          // convert binary data to base64 encoded string
+          var fileInBase64 = new Buffer(fileName).toString('base64');
 
 
           sp.transmissions.send({
@@ -1540,7 +1545,13 @@ router.post('/printGroupContent', function (req, res, next) {
               },
               subject: 'Whinny: ' + req.body.groupName,
               html: htmlBody,
-              attachment: fileName
+              attachments: [
+                {
+                  "type": "text/plain",
+                  "name": fileName,
+                  "data": fileInBase64
+                }
+              ]
             }
           }, function (err, apiResponse) {
             console.log(err);
