@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var knex = require('../lib/knex.js');
 var request = require('request');
-
 var moment = require('moment')
 
 var SparkPost = require('sparkpost');
@@ -20,6 +19,7 @@ var textClient = new twilio.RestClient(accountSid, authToken);
 
 var CLIENT_CURRENT_VERSION = '0.0.1';
 
+var fs = require('fs');
 
 // ******** website routes ************* //
 router.post('/login_website', function (req, res, next) {
@@ -1512,37 +1512,57 @@ router.post('/printGroupContent', function (req, res, next) {
         console.log(htmlBody);
         console.log(req.body.user_id);
         console.log(users[req.body.user_id].email);
-        //"email": users[req.body.user_id].email
 
-        sp.transmissions.send({
-          recipients: [
-            {
-              "address": {
-                "email": 'cooper@whinny.com',
-                "name": 'Whinny'
+
+        //"email": users[req.body.user_id].email
+        var fileName = 'tempLogs/' + req.body.groupName + '_MessageLog_'+ Date.now();
+
+        fs.writeFile(fileName, htmlBody, function(err) {
+          if(err) {
+              return console.log(err);
+          }
+          console.log("The file was saved!");
+
+
+          sp.transmissions.send({
+            recipients: [
+              {
+                "address": {
+                  "email": 'cooper@whinny.com',
+                  "name": 'Whinny'
+                }
               }
+            ],
+            content: {
+              from: {
+                "name": "Whinny Server",
+                "email": "postmaster@whinny.com"
+              },
+              subject: 'Whinny: ' + req.body.groupName,
+              html: htmlBody,
+              attachment: fileName
             }
-          ],
-          content: {
-            from: {
-              "name": "Whinny Server",
-              "email": "postmaster@whinny.com"
-            },
-            subject: 'Whinny: ' + req.body.groupName,
-            html: htmlBody
-          }
-        }, function (err, apiResponse) {
-          console.log(err);
-          console.log(apiResponse);
-          if(err){
-            knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Error: Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
-              res.json(err);
-            })
-          } else {
-            knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
-              res.json(apiResponse.body);
-            })
-          }
+          }, function (err, apiResponse) {
+            console.log(err);
+            console.log(apiResponse);
+            if(err){
+              knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Error: Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
+                fs.unlink(fileName, (err) => {
+                  if (err) throw err;
+                  console.log('successfully deleted' + fileName);
+                });
+                res.json(err);
+              })
+            } else {
+              knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
+                fs.unlink(fileName, (err) => {
+                  if (err) throw err;
+                  console.log('successfully deleted' + fileName);
+                });
+                res.json(apiResponse.body);
+              })
+            }
+          });
         });
       })
     })
