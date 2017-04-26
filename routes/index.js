@@ -3,6 +3,8 @@ var router = express.Router();
 var knex = require('../lib/knex.js');
 var request = require('request');
 
+var moment = require('moment')
+
 var SparkPost = require('sparkpost');
 var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 
@@ -1459,11 +1461,11 @@ router.get('/groupMembers/:group_id', function (req, res, next) {
   })
 })
 
-router.get('/printGroupContent/:user_id/:group_id/:groupName', function (req, res, next) {
-  //group_id
-  //user_id
-  //group Name
-  knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (group_members) {
+router.post('/printGroupContent', function (req, res, next) {
+  if(!req.body.user_id || !req.body.group_id || !req.body.groupName || !req.body.user_email){
+    res.json({ insufficientData: true });
+  }
+  knex('group_memberships').where('group_id', req.body.group_id).pluck('user_id').then(function (group_members) {
 
     knex('users').whereIn('user_id', group_members).then(function (user_objects) {
 
@@ -1472,11 +1474,11 @@ router.get('/printGroupContent/:user_id/:group_id/:groupName', function (req, re
         users[user_objects[i].user_id] = user_objects[i];
       }
 
-      knex('group_messages').where('to_group', req.params.group_id).then(function (messages) {
+      knex('group_messages').where('to_group', req.body.group_id).then(function (messages) {
 
         var htmlBody = '<html><head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css"></head><body><table class="striped">';
 
-        htmlBody += '<thead><tr><th>Whinny Group Message Report: ' + req.params.groupName + '</th></tr></thead>'
+        htmlBody += '<thead><tr><th>Whinny Group Message Report: ' + req.body.groupName + '</th></tr></thead>'
 
         for (var i = 0; i < messages.length; i++) {
           htmlBody += '<tr>';
@@ -1499,15 +1501,17 @@ router.get('/printGroupContent/:user_id/:group_id/:groupName', function (req, re
             }
 
             htmlBody += '<td>';
-            htmlBody += messages[i].group_message_created;
+            htmlBody += moment(messages[i].group_message_created).format('h:mm:ss a, MMMM Do YYYY');
             htmlBody += '</td>';
 
           htmlBody += '</tr>';
         }
 
-        htmlBody += '</table></html></body>';
+        htmlBody += '</table></body></html>';
 
         console.log(htmlBody);
+        console.log(req.body.user_id);
+        console.log(users[req.body.user_id].email);
 
 
         sp.transmissions.send({
@@ -1524,16 +1528,16 @@ router.get('/printGroupContent/:user_id/:group_id/:groupName', function (req, re
               "name": "Whinny Server",
               "email": "postmaster@whinny.com"
             },
-            subject: 'Whinny: ' + req.params.groupName,
+            subject: 'Whinny: ' + req.body.groupName,
             html: htmlBody
           }
         }, function (err, apiResponse) {
           if(err){
-            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Error: Printout Group Content for: ' + req.params.group_id, action_time: knex.fn.now() }).then(function () {
+            knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Error: Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
               res.json(err);
             })
           } else {
-            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Printout Group Content for: ' + req.params.group_id, action_time: knex.fn.now() }).then(function () {
+            knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
               res.json(apiResponse.body);
             })
           }
