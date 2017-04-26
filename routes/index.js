@@ -1524,7 +1524,7 @@ router.post('/printGroupContent', function (req, res, next) {
           }
           console.log("The file was saved!");
 
-          var bitmap = fs.readFileSync(fileName);
+          var bitmap = fs.readFileSync(filePath);
           // convert binary data to base64 encoded string
           var fileInBase64 = new Buffer(fileName).toString('base64');
 
@@ -1549,7 +1549,7 @@ router.post('/printGroupContent', function (req, res, next) {
                 {
                   "type": "text/plain",
                   "name": fileName,
-                  "data": fileInBase64
+                  "data": fileName
                 }
               ]
             }
@@ -1558,7 +1558,7 @@ router.post('/printGroupContent', function (req, res, next) {
             console.log(apiResponse);
             if(err){
               knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Error: Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
-                fs.unlink(fileName, (err) => {
+                fs.unlink(filePath, (err) => {
                   if (err) throw err;
                   console.log('successfully deleted' + fileName);
                   res.json(err);
@@ -1566,7 +1566,7 @@ router.post('/printGroupContent', function (req, res, next) {
               })
             } else {
               knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
-                fs.unlink(fileName, (err) => {
+                fs.unlink(filePath, (err) => {
                   if (err) throw err;
                   console.log('successfully deleted' + fileName);
                   res.json(apiResponse.body);
