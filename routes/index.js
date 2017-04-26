@@ -1513,13 +1513,13 @@ router.post('/printGroupContent', function (req, res, next) {
         console.log(req.body.user_id);
         console.log(users[req.body.user_id].email);
 
-
         sp.transmissions.send({
           recipients: [
             {
               "address": {
+                //"email": users[req.body.user_id].email
                 "email": 'cooper@whinny.com',
-                "name": 'Whinny Website'
+                "name": 'Whinny'
               }
             }
           ],
