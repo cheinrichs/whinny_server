@@ -1512,12 +1512,12 @@ router.post('/printGroupContent', function (req, res, next) {
         console.log(htmlBody);
         console.log(req.body.user_id);
         console.log(users[req.body.user_id].email);
+        //"email": users[req.body.user_id].email
 
         sp.transmissions.send({
           recipients: [
             {
               "address": {
-                //"email": users[req.body.user_id].email
                 "email": 'cooper@whinny.com',
                 "name": 'Whinny'
               }
@@ -1532,6 +1532,8 @@ router.post('/printGroupContent', function (req, res, next) {
             html: htmlBody
           }
         }, function (err, apiResponse) {
+          console.log(err);
+          console.log(apiResponse);
           if(err){
             knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Error: Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
               res.json(err);
