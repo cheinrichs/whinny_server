@@ -170,13 +170,11 @@ router.get('/website/nextBroadcastMessageId', function (req, res, next) {
 })
 
 router.post('/website/contactUs', function (req, res, next) {
-  console.log(req);
-
   sp.transmissions.send({
     recipients: [
       {
         "address": {
-          "email": 'morgan@whinny.com',
+          "email": 'cooper@whinny.com',
           "name": 'Whinny Website'
         }
       }
@@ -1459,6 +1457,91 @@ router.get('/groupMembers/:group_id', function (req, res, next) {
       })
     })
   })
+})
+
+router.get('/printGroupContent/:user_id/:group_id/:groupName', function (req, res, next) {
+  //group_id
+  //user_id
+  //group Name
+  knex('group_memberships').where('group_id', req.params.group_id).pluck('user_id').then(function (group_members) {
+
+    knex('users').whereIn('user_id', group_members).then(function (user_objects) {
+
+      var users = {};
+      for (var i = 0; i < user_objects.length; i++) {
+        users[user_objects[i].user_id] = user_objects[i];
+      }
+
+      knex('group_messages').where('to_group', req.params.group_id).then(function (messages) {
+
+        var htmlBody = '<html><head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css"></head><body><table class="striped">';
+
+        htmlBody += '<thead><tr><th>Whinny Group Message Report: ' + req.params.groupName + '</th></tr></thead>'
+
+        for (var i = 0; i < messages.length; i++) {
+          htmlBody += '<tr>';
+
+            htmlBody += '<td>';
+            htmlBody += users[messages[i].from_user].first_name + ' ' + users[messages[i].from_user].last_name;
+            htmlBody += '</td>';
+
+            if(messages[i].image){
+
+              htmlBody += '<td>';
+              htmlBody += '<img src="' + messages[i].image_src + '" style="height:100px; width: 100px;">';
+              htmlBody += '</td>';
+
+            } else {
+              htmlBody += '<td>';
+              htmlBody += messages[i].group_message_content;
+              htmlBody += '</td>';
+
+            }
+
+            htmlBody += '<td>';
+            htmlBody += messages[i].group_message_created;
+            htmlBody += '</td>';
+
+          htmlBody += '</tr>';
+        }
+
+        htmlBody += '</table></html></body>';
+
+        console.log(htmlBody);
+
+
+        sp.transmissions.send({
+          recipients: [
+            {
+              "address": {
+                "email": 'cooper@whinny.com',
+                "name": 'Whinny Website'
+              }
+            }
+          ],
+          content: {
+            from: {
+              "name": "Whinny Server",
+              "email": "postmaster@whinny.com"
+            },
+            subject: 'Whinny: ' + req.params.groupName,
+            html: htmlBody
+          }
+        }, function (err, apiResponse) {
+          if(err){
+            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Error: Printout Group Content for: ' + req.params.group_id, action_time: knex.fn.now() }).then(function () {
+              res.json(err);
+            })
+          } else {
+            knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Printout Group Content for: ' + req.params.group_id, action_time: knex.fn.now() }).then(function () {
+              res.json(apiResponse.body);
+            })
+          }
+        });
+      })
+    })
+  })
+
 })
 
 router.get('/broadcastSearch/:user_id', function (req, res, next) {
