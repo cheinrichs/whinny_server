@@ -1515,7 +1515,7 @@ router.post('/printGroupContent', function (req, res, next) {
 
 
         //"email": users[req.body.user_id].email
-        var fileName = req.body.groupName + '_MessageLog_'+ Date.now();
+        var fileName = req.body.groupName + '_MessageLog_'+ Date.now() + '.html';
         var filePath = 'tempLogs/' + fileName;
 
         fs.writeFile(filePath, htmlBody, function(err) {
@@ -1549,7 +1549,7 @@ router.post('/printGroupContent', function (req, res, next) {
                 {
                   "type": "text/plain",
                   "name": fileName,
-                  "data": fileName
+                  "data": fileInBase64
                 }
               ]
             }
