@@ -1526,7 +1526,7 @@ router.post('/printGroupContent', function (req, res, next) {
 
           var bitmap = fs.readFileSync(filePath);
           // convert binary data to base64 encoded string
-          var fileInBase64 = new Buffer(filePath).toString('base64');
+          var fileInBase64 = new Buffer(bitmap).toString('base64');
 
 
           sp.transmissions.send({
