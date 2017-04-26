@@ -1550,16 +1550,16 @@ router.post('/printGroupContent', function (req, res, next) {
                 fs.unlink(fileName, (err) => {
                   if (err) throw err;
                   console.log('successfully deleted' + fileName);
+                  res.json(err);
                 });
-                res.json(err);
               })
             } else {
               knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Printout Group Content for: ' + req.body.group_id, action_time: knex.fn.now() }).then(function () {
                 fs.unlink(fileName, (err) => {
                   if (err) throw err;
                   console.log('successfully deleted' + fileName);
+                  res.json(apiResponse.body);
                 });
-                res.json(apiResponse.body);
               })
             }
           });
