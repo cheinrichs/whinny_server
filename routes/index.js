@@ -497,10 +497,10 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
     var finalResult = [];
     for (key in result) finalResult.push(result[key]);
 
-    knex('users').whereIn('user_id', Object.keys(result)).then(function (userObjects) {
+    // knex('users').whereIn('user_id', Object.keys(result)).then(function (userObjects) {
       for (var i = 0; i < userObjects.length; i++) result[userObjects[i].user_id].convoUser = userObjects[i];
       res.json(finalResult)
-    })
+    // })
 
   })
 
@@ -543,9 +543,9 @@ router.get('/groupMessages/:user_id', function (req, res, next) {
                   result.invitedGroupObjects = invitationGroupObjects;
 
                   //Write in the log and return the result to the user
-                  knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
+                  // knex('user_action_log').insert({ user_id: req.params.user_id, action: 'Checked their group messages', action_time: knex.fn.now() }).then(function () {
                     res.json(result);
-                  })
+                  // })
                 })
               })
             })
