@@ -1476,7 +1476,7 @@ router.post('/printGroupContent', function (req, res, next) {
 
       knex('group_messages').where('to_group', req.body.group_id).then(function (messages) {
 
-        var htmlBody = '<html><head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css"></head><body><table class="striped">';
+        var htmlBody = '<html><head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css"></head><body><div style="width: 800px; padding: 50px;"><table class="striped">';
 
         htmlBody += '<thead><tr><th>Whinny Group Message Report: ' + req.body.groupName + '</th></tr></thead>'
 
@@ -1507,7 +1507,7 @@ router.post('/printGroupContent', function (req, res, next) {
           htmlBody += '</tr>';
         }
 
-        htmlBody += '</table></body></html>';
+        htmlBody += '</table></div></body></html>';
 
         console.log(htmlBody);
         console.log(req.body.user_id);
@@ -1544,7 +1544,7 @@ router.post('/printGroupContent', function (req, res, next) {
                 "email": "postmaster@whinny.com"
               },
               subject: 'Whinny: ' + req.body.groupName,
-              html: htmlBody,
+              html: "Your log is attached. For best results, download this file, open it in a browser, and print it from there. <br><br> <3 Whinny Server Bot",
               attachments: [
                 {
                   "type": "text/plain",
