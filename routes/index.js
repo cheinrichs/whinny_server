@@ -1533,7 +1533,7 @@ router.post('/printGroupContent', function (req, res, next) {
             recipients: [
               {
                 "address": {
-                  "email": 'cooper@whinny.com',
+                  "email": users[req.body.user_id].email,
                   "name": 'Whinny'
                 }
               }
