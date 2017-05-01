@@ -497,10 +497,10 @@ router.get('/chatMessages/:user_id', function (req, res, next) {
     var finalResult = [];
     for (key in result) finalResult.push(result[key]);
 
-    // knex('users').whereIn('user_id', Object.keys(result)).then(function (userObjects) {
+    knex('users').whereIn('user_id', Object.keys(result)).then(function (userObjects) {
       for (var i = 0; i < userObjects.length; i++) result[userObjects[i].user_id].convoUser = userObjects[i];
       res.json(finalResult)
-    // })
+    })
 
   })
 
