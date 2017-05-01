@@ -87,11 +87,17 @@ app.post('/groupMessageUpload', function (req, res, next) {
 })
 
 app.post('/personalProfilePhotoUpload', function (req, res, next) {
+  console.log("personal Profile Photo Upload");
+  console.log(req.files.file);
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
     fs.unlink(file.path, function (err) {
-      if(err) console.err(err);
+      if(err){
+        console.err(err);
+      } else {
+        console.log("success?");
+      }
       res.json({ personalProfilePhotoUpload: "Success" });
     })
   })
