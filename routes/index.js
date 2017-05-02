@@ -362,6 +362,8 @@ router.post('/updateEmailAndPassword', function (req, res, next) {
   var newEmailConfirmationCode = generateEmailConfirmationCode();
   console.log(newEmailConfirmationCode);
 
+  var confirmationLink = "https://whinny-staging.herokuapp.com/confirmEmail/" + req.body.user_id + "/" + newEmailConfirmationCode;
+
   knex('users').where('user_id', req.body.user_id).update({email: req.body.email, password: userPassword, email_confirmation_code: newEmailConfirmationCode}).then(function () {
     sp.transmissions.send({
       recipients: [
@@ -378,7 +380,7 @@ router.post('/updateEmailAndPassword', function (req, res, next) {
           "email": "postmaster@whinny.com"
         },
         subject: 'Whinny: Confirm your email' ,
-        html: "Click this link to confirm your email address: <a href='http://www.whinny.com'>Link</a>",
+        html: "Click this link to confirm your email address: <a href=" + confirmationLink + ">" + confirmationLink + "</a>",
 
       }
     }, function (err, apiResponse) {

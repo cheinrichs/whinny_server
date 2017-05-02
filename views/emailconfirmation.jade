@@ -1,6 +1,9 @@
 extends layout
 
-block content
-  h1= title
-  p Thank you! Your email has been confirmed.
-  a(href="http://www.whinny.com") Click here to return to Whinny.com
+block content  
+  if success
+    p Thank you! Your email has been confirmed.
+    a(href="http://www.whinny.com") Click here to return to Whinny.com
+  else
+    p Hmm something went wrong.
+    a(href="http://www.twitter.com/whinny") Click here to reach us on twitter and let us help you.
