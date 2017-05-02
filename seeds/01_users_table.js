@@ -4,11 +4,11 @@ exports.seed = function(knex, Promise) {
   return knex('users').del()
     .then(function () {
       return knex('users').insert({
-          email: 'cooper.heinrichs@gmail.com',
+          email: '',
           phone: '3035892321',
           first_name: 'Cooper',
           last_name: 'Heinrichs',
-          password: 'password',
+          password: '',
           portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/1_PersonalProfilePic.jpg',
           message_notifications: true,
           group_notifications: true,
