@@ -2,24 +2,24 @@ var express = require('express');
 var router = express.Router();
 var knex = require('../lib/knex.js');
 var request = require('request');
-var moment = require('moment')
-
+var moment = require('moment');
 var SparkPost = require('sparkpost');
-var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
-
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-
 var twilio = require('twilio');
+var fs = require('fs');
+
+const SALT_ROUNDS = 10;
+
+var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 
 var accountSid = process.env.TWILIO_ACCOUNT_SID;
 var authToken = process.env.TWILIO_AUTH_TOKEN;
-
 var textClient = new twilio.RestClient(accountSid, authToken);
+
 
 var CLIENT_CURRENT_VERSION = '0.0.1';
 
-var fs = require('fs');
 
 // ******** website routes ************* //
 router.post('/login_website', function (req, res, next) {
@@ -237,7 +237,21 @@ router.post('/joinWhinny', function (req, res, next) {
   if(req.body.first_name.length === 0 || req.body.last_name.length === 0) res.json({error: 'invalid user name first or last'})
 
   var userEmail = req.body.email || "";
-  var userPassword = req.body.password || "";
+  var userPassword;
+
+  if(req.body.password){
+    bcrypt.hash(req.body.password, SALT_ROUNDS, function(err, hash) {
+      console.log(hash);
+      userPassword = hash;
+    });
+  } else {
+    userPassword = "";
+  }
+
+  var accountSetUp = false;
+  if(req.body.email && req.body.password){
+    accountSetUp = true;
+  }
 
   var confirmationCode = generateConfirmationCode();
 
@@ -270,7 +284,7 @@ router.post('/joinWhinny', function (req, res, next) {
     tutorial_5: true,
     EULA: true,
     EULA_date_agreed: knex.fn.now(),
-    account_is_setup: false,
+    account_is_setup: accountSetUp,
     device_token: req.body.device_token
   }).returning('*').then(function (users) {
     console.log(users);
@@ -332,6 +346,69 @@ router.post('/logIn', function (req, res, next) {
       })
     }
   });
+})
+
+router.post('/updateEmailAndPassword', function (req, res, next) {
+  if(!req.body.user_id || !req.body.email || !req.body.password){
+    res.json({ insufficientData: true });
+  }
+
+  var userPassword;
+  bcrypt.hash(req.body.password, SALT_ROUNDS, function(err, hash) {
+    console.log(hash);
+    userPassword = hash;
+  });
+
+  var newEmailConfirmationCode = generateEmailConfirmationCode();
+  console.log(newEmailConfirmationCode);
+
+  knex('users').where('user_id', req.body.user_id).update({email: req.body.email, password: userPassword, email_confirmation_code: newEmailConfirmationCode}).then(function () {
+    sp.transmissions.send({
+      recipients: [
+        {
+          "address": {
+            "email": req.body.email,
+            "name": 'Whinny'
+          }
+        }
+      ],
+      content: {
+        from: {
+          "name": "Whinny Server",
+          "email": "postmaster@whinny.com"
+        },
+        subject: 'Whinny: Confirm your email' ,
+        html: "Click this link to confirm your email address: <a href='http://www.whinny.com'>Link</a>",
+
+      }
+    }, function (err, apiResponse) {
+      console.log(err);
+      console.log(apiResponse);
+      if(err){
+        res.json(err);
+      } else {
+        res.json({ confirmationEmail: "sent"})
+      }
+    });
+  })
+})
+
+router.get('/confirmEmail/:user_id/:confirmation_code', function (req, res, next) {
+  if(!req.params.user_id || !req.params.confirmation_code) res.json({ insufficientData: true });
+
+  knex('users').where('user_id', req.params.user_id).select('email_confirmation_code').then(function (confirmCode) {
+    console.log(confirmCode);
+    if(confirmCode === req.params.confirmation_code){
+      knex('users').where('user_id', req.params.user_id).update({ account_is_setup: true }).then(function () {
+        var html = fs.readFileSync('../view/emailConfirmation.html', 'utf8')
+        res.render('emailconfirmation', { success: true });
+      })
+    } else {
+      console.log("invalid code");
+      res.render('emailconfirmation', { success: false });
+    }
+  })
+
 })
 
 //TODO deprecated?
@@ -1509,11 +1586,6 @@ router.post('/printGroupContent', function (req, res, next) {
 
         htmlBody += '</table></div></body></html>';
 
-        console.log(htmlBody);
-        console.log(req.body.user_id);
-        console.log(users[req.body.user_id].email);
-
-
         //"email": users[req.body.user_id].email
         var fileName = req.body.groupName + '_MessageLog_'+ Date.now() + '.html';
         var filePath = 'tempLogs/' + fileName;
@@ -1758,6 +1830,16 @@ function generateConfirmationCode(){
   var charset = '0123456789abcdefghijklmnopqrstuvwxyz';
   var confirmationCode = "";
   for( var i=0; i < 4; i++ ){
+    confirmationCode += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+
+  return confirmationCode;
+}
+
+function generateEmailConfirmationCode() {
+  var charset = '0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()';
+  var confirmationCode = "";
+  for( var i=0; i < 6; i++ ){
     confirmationCode += charset.charAt(Math.floor(Math.random() * charset.length));
   }
 

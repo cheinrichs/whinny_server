@@ -31,6 +31,7 @@ exports.up = function(knex, Promise) {
     table.string('discipline');
 
     table.string('confirmation_code');
+    table.string('email_confirmation_code');
 
     table.string('user_type');
 
