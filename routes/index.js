@@ -350,12 +350,14 @@ router.post('/logIn', function (req, res, next) {
 
 router.post('/updateEmailAndPassword', function (req, res, next) {
   if(!req.body.user_id || !req.body.email || !req.body.password){
-    res.json({ insufficientData: true });
+    return res.json({ insufficientData: true });
   }
+
+  console.log(req.body.email);
 
   var userPassword;
   bcrypt.hash(req.body.password, SALT_ROUNDS, function(err, hash) {
-    console.log(hash);
+    console.log("hash", hash);
     userPassword = hash;
   });
 
@@ -399,10 +401,9 @@ router.get('/confirmEmail/:user_id/:confirmation_code', function (req, res, next
   if(!req.params.user_id || !req.params.confirmation_code) res.json({ insufficientData: true });
 
   knex('users').where('user_id', req.params.user_id).select('email_confirmation_code').then(function (confirmCode) {
-    console.log(confirmCode);
-    if(confirmCode === req.params.confirmation_code){
+    console.log(confirmCode[0].email_confirmation_code);
+    if(confirmCode[0].email_confirmation_code === req.params.confirmation_code){
       knex('users').where('user_id', req.params.user_id).update({ account_is_setup: true }).then(function () {
-        var html = fs.readFileSync('../view/emailConfirmation.html', 'utf8')
         res.render('emailconfirmation', { success: true });
       })
     } else {

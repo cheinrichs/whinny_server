@@ -33,7 +33,7 @@ exports.seed = function(knex, Promise) {
           tutorial_5: true,
           EULA: true,
           EULA_date_agreed: knex.fn.now(),
-          account_is_setup: true,
+          account_is_setup: false,
           device_token: ''
         }).then(function () {
           return knex('users').insert({
@@ -66,7 +66,7 @@ exports.seed = function(knex, Promise) {
             tutorial_5: true,
             EULA: true,
             EULA_date_agreed: knex.fn.now(),
-            account_is_setup: true,
+            account_is_setup: false,
             device_token: ''
           }).then(function () {
             return knex('users').insert({
@@ -99,7 +99,7 @@ exports.seed = function(knex, Promise) {
               tutorial_5: true,
               EULA: true,
               EULA_date_agreed: knex.fn.now(),
-              account_is_setup: true,
+              account_is_setup: false,
               device_token: ''
             }).then(function () {
               return knex('users').insert({
@@ -132,7 +132,7 @@ exports.seed = function(knex, Promise) {
                 tutorial_5: true,
                 EULA: true,
                 EULA_date_agreed: knex.fn.now(),
-                account_is_setup: true,
+                account_is_setup: false,
                 device_token: ''
               })
             })
