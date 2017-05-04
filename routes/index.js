@@ -1787,9 +1787,31 @@ router.post('/updateDeviceToken', function (req, res, next) {
   if(!req.body.device_token) return res.json({ error: "Missing device token" });
   knex('users').where('user_id', req.body.user_id).update({
     device_token: req.body.device_token
-  }).then(function () {
+  }).returning(
+    'account_is_setup',
+    'broadcast_notifications',
+    'confirmation_code',
+    'device_token',
+    'email',
+    'first_name',
+    'group_notifications',
+    'last_login',
+    'last_name',
+    'message_notifications',
+    'phone',
+    'portrait_link',
+    'tutorial_1',
+    'tutorial_2',
+    'tutorial_3',
+    'tutorial_4',
+    'tutorial_5',
+    'user_id',
+    'user_type',
+    'verified'
+  ).then(function (user) {
+    console.log(user);
     knex('user_action_log').insert({ user_id: req.body.user_id, action: 'Updated Device Token', action_time: knex.fn.now() }).then(function () {
-      res.json({ success: true})
+      res.json({ user: user})
     })
   })
 })
