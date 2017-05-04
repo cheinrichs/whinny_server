@@ -389,8 +389,10 @@ router.post('/updateEmailAndPassword', function (req, res, next) {
       console.log(err);
       console.log(apiResponse);
       if(err){
+        console.log("error in sp transmission");
         res.json(err);
       } else {
+        console.log("confirmation sent");
         res.json({ confirmationEmail: "sent"})
       }
     });
