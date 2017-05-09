@@ -23,6 +23,7 @@ var CLIENT_CURRENT_VERSION = '0.0.1';
 
 // ******** website routes ************* //
 router.post('/login_website', function (req, res, next) {
+  console.log(req.body);
   if(!req.body.params.email) return res.json({error:'Please enter an email'});
   if(!req.body.params.password) return res.json({error:'Please enter a password'});
 
@@ -30,23 +31,33 @@ router.post('/login_website', function (req, res, next) {
   //check the users pasword against the given password
   knex('users').where('email', req.body.params.email).first().then(function (user) {
     if(!user){
+      console.log("no user with that email");
       knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: Failed a login attempt with no such user:' + req.body.params.email, action_time: knex.fn.now() }).then(function () {
-        res.json({ error: "Incorrect Username or Password"})
-      })
-    }
-    if(user.password === req.body.params.password){
-      var data = {};
-      var token = jwt.sign(user.user_id, process.env.JWT_SECRET)
-      data.token = token;
-      data.user = user;
-      knex('user_action_log').insert({ user_id: user.user_id, action: 'WEBSITE: Successfully logged in to the website.', action_time: knex.fn.now() }).then(function () {
-        res.json(data);
+        return res.json({ error: "Incorrect Username or Password"})
       })
     } else {
-      knex('user_action_log').insert({ user_id: user.user_id, action: 'WEBSITE: Failed a login attempt.', action_time: knex.fn.now() }).then(function () {
-        res.json({ error: "Incorrect Username or Password"})
-      })
+      console.log(user);
+      //bcrypt compareSync
+      console.log(user.password);
+      console.log(req.body.params.password);
+      var result = bcrypt.compareSync(req.body.params.password, user.password);
+      console.log(result);
+      if(result === true){
+        var data = {};
+        var token = jwt.sign(user.user_id, process.env.JWT_SECRET)
+        data.token = token;
+        delete user.password;
+        data.user = user;
+        knex('user_action_log').insert({ user_id: user.user_id, action: 'WEBSITE: Successfully logged in to the website.', action_time: knex.fn.now() }).then(function () {
+          res.json(data);
+        })
+      } else {
+        knex('user_action_log').insert({ user_id: user.user_id, action: 'WEBSITE: Failed a login attempt.', action_time: knex.fn.now() }).then(function () {
+          res.json({ error: "Incorrect Username or Password"})
+        })
+      }
     }
+
   })
   //TODO encrypt passwords
   // if(bcrypt.compareSync(req.body.params.password, access)){
