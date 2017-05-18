@@ -95,10 +95,11 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
     fs.unlink(file.path, function (err) {
       if(err){
         console.err(err);
+        res.json({ personalProfilePhotoUpload: "Failed" })
       } else {
         console.log("success?");
+        res.json({ personalProfilePhotoUpload: "Success" });
       }
-      res.json({ personalProfilePhotoUpload: "Success" });
     })
   })
 })

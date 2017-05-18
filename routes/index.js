@@ -29,7 +29,7 @@ router.post('/login_website', function (req, res, next) {
 
   //get the user by email address
   //check the users pasword against the given password
-  knex('users').where('email', req.body.params.email).first().then(function (user) {
+  knex('users').where('email', req.body.params.email.toLower()).first().then(function (user) {
     if(!user){
       console.log("no user with that email");
       knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: Failed a login attempt with no such user:' + req.body.params.email, action_time: knex.fn.now() }).then(function () {
@@ -363,10 +363,7 @@ router.post('/updateEmailAndPassword', function (req, res, next) {
     return res.json({ insufficientData: true });
   }
 
-  console.log(req.body.email);
-
   var newEmailConfirmationCode = generateEmailConfirmationCode();
-  console.log(newEmailConfirmationCode);
 
   var confirmationLink = "https://whinny-server.herokuapp.com/confirmEmail/" + req.body.user_id + "/" + newEmailConfirmationCode;
 
@@ -374,7 +371,7 @@ router.post('/updateEmailAndPassword', function (req, res, next) {
   bcrypt.hash(req.body.password, SALT_ROUNDS, function(err, hash) {
     console.log("hash", hash);
     userPassword = hash;
-    knex('users').where('user_id', req.body.user_id).update({email: req.body.email, password: userPassword, email_confirmation_code: newEmailConfirmationCode}).then(function () {
+    knex('users').where('user_id', req.body.user_id).update({email: req.body.email.toLower(), password: userPassword, email_confirmation_code: newEmailConfirmationCode}).then(function () {
       sp.transmissions.send({
         recipients: [
           {
@@ -1906,7 +1903,7 @@ function sendMms(to_phone, content, from_first_name, from_last_name) {
   textClient.sms.messages.create({
     to: to_phone,
     from: '+17204087635',
-    body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + '\nTo learn about beta testing with us go to http://www.whinny.com/',
+    body: content + '\nYou received this message from ' + from_first_name + ' ' + from_last_name + ', who is using the Whinny App.\n -------------\nTo learn about beta testing with us go to http://www.whinny.com/',
   }, function (error, message) {
     if(!error){
       console.log("Success! The SID for this SMS message is: ", message.sid);
