@@ -27,9 +27,12 @@ router.post('/login_website', function (req, res, next) {
   if(!req.body.params.email) return res.json({error:'Please enter an email'});
   if(!req.body.params.password) return res.json({error:'Please enter a password'});
 
+  var userEmail = req.body.params.email.toLower();
+  console.log(userEmail);
+
   //get the user by email address
   //check the users pasword against the given password
-  knex('users').where('email', req.body.params.email.toLower()).first().then(function (user) {
+  knex('users').where('email', userEmail).first().then(function (user) {
     if(!user){
       console.log("no user with that email");
       knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: Failed a login attempt with no such user:' + req.body.params.email, action_time: knex.fn.now() }).then(function () {
