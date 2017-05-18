@@ -23,19 +23,19 @@ var CLIENT_CURRENT_VERSION = '0.0.1';
 
 // ******** website routes ************* //
 router.post('/login_website', function (req, res, next) {
-  console.log(req.body);
-  if(!req.body.email) return res.json({error:'Please enter an email'});
-  if(!req.body.password) return res.json({error:'Please enter a password'});
+
+  if(!req.body.params.email) return res.json({error:'Please enter an email'});
+  if(!req.body.params.password) return res.json({error:'Please enter a password'});
 
   //get the user by email address
   //check the users pasword against the given password
-  knex('users').where('email', req.body.email.toLowerCase()).first().then(function (user) {
+  knex('users').where('email', req.body.params.email.toLowerCase()).first().then(function (user) {
     if(!user){
-      knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: Failed a login attempt with no such user:' + req.body.email, action_time: knex.fn.now() }).then(function () {
+      knex('user_action_log').insert({ user_id: '0', action: 'WEBSITE: Failed a login attempt with no such user:' + req.body.params.email, action_time: knex.fn.now() }).then(function () {
         return res.json({ error: "Incorrect Username or Password"})
       })
     } else {
-      var result = bcrypt.compareSync(req.body.password, user.password);
+      var result = bcrypt.compareSync(req.body.params.password, user.password);
       if(result === true){
         var data = {};
         var token = jwt.sign(user.user_id, process.env.JWT_SECRET)
