@@ -351,6 +351,13 @@ router.post('/logIn', function (req, res, next) {
   });
 })
 
+router.get('/emailAndPasswordIsValid/:user_id', function (req, res, next) {
+  knex('users').where('user_id', req.params.user_id).select('account_is_setup').first().then(function (setup) {
+    console.log(setup);
+    res.json(setup)
+  })
+})
+
 router.post('/updateEmailAndPassword', function (req, res, next) {
   if(!req.body.user_id || !req.body.email || !req.body.password){
     return res.json({ insufficientData: true });
@@ -1868,7 +1875,7 @@ function generateConfirmationCode(){
 }
 
 function generateEmailConfirmationCode() {
-  var charset = '0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()';
+  var charset = '0123456789abcdefghijklmnopqrstuvwxyz!@#$^&*()';
   var confirmationCode = "";
   for( var i=0; i < 6; i++ ){
     confirmationCode += charset.charAt(Math.floor(Math.random() * charset.length));
