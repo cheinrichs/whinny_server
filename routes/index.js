@@ -59,14 +59,6 @@ router.post('/login_website', function (req, res, next) {
     }
 
   })
-  //TODO encrypt passwords
-  // if(bcrypt.compareSync(req.body.params.password, access)){
-  //   var userId = {userId: "1"};
-  //   var token = jwt.sign(userId, process.env.JWT_SECRET)
-  //   res.json({token: token});
-  // } else {
-  //   res.status(400).send({errors: ['You have entered an invalid email or password']});
-  // }
 });
 
 router.post('/createBroadcastMessage', function (req, res, next) {
@@ -369,7 +361,7 @@ router.post('/updateEmailAndPassword', function (req, res, next) {
   var newEmailConfirmationCode = generateEmailConfirmationCode();
   console.log(newEmailConfirmationCode);
 
-  var confirmationLink = "https://whinny-staging.herokuapp.com/confirmEmail/" + req.body.user_id + "/" + newEmailConfirmationCode;
+  var confirmationLink = "https://whinny-server.herokuapp.com/confirmEmail/" + req.body.user_id + "/" + newEmailConfirmationCode;
 
   var userPassword;
   bcrypt.hash(req.body.password, SALT_ROUNDS, function(err, hash) {
@@ -701,7 +693,7 @@ router.post('/sendChatMessage', function (req, res, next) {
             "profile": "whinny_push_notifications_dev",
             "notification": {
               "title": req.body.senderName,
-              "message": req.body.content,
+              "message": "Sent you a message!",
               "ios": {
                 "sound": "default"
               },
@@ -765,7 +757,7 @@ router.post('/sendChatImage', function (req, res, next) {
             "profile": "whinny_push_notifications_dev",
             "notification": {
               "title": req.body.senderName,
-              "message": "Sent a photo - ",
+              "message": "Sent you a photo!",
               "ios": {
                 "sound": "default"
               },
@@ -856,7 +848,7 @@ router.post('/sendGroupMessage', function (req, res, next) {
             "profile": "whinny_push_notifications_dev",
             "notification": {
               "title": req.body.groupName,
-              "message": req.body.senderName + ': ' + req.body.content,
+              "message": req.body.senderName + ' sent a message to ' + req.body.groupName,
               "ios": {
                 "sound": "default"
               },
