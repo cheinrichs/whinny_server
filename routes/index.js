@@ -1865,7 +1865,7 @@ function generateConfirmationCode(){
 }
 
 function generateEmailConfirmationCode() {
-  var charset = '0123456789abcdefghijklmnopqrstuvwxyz!@#$^&*()';
+  var charset = '0123456789abcdefghijklmnopqrstuvwxyz';
   var confirmationCode = "";
   for( var i=0; i < 6; i++ ){
     confirmationCode += charset.charAt(Math.floor(Math.random() * charset.length));
