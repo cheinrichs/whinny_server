@@ -95,22 +95,28 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
   var file = req.files.file;
   var user_id = file.originalFilename.substring(0, file.originalFilename.indexOf('_'));
 
-  knex('users').where('user_id', user_id).first().update({ portrait_link: file.originalFilename }).then(function (user) {
-    console.log('user: ', user);
-
-    var stream = fs.createReadStream(file.path);
-    return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
-      fs.unlink(file.path, function (err) {
-        if(err){
-          console.err(err);
-          res.json({ personalProfilePhotoUpload: "Failed" })
-        } else {
-          console.log("success?");
-          res.json({ personalProfilePhotoUpload: "Success" });
-        }
-      })
-    })
+  return S3_PersonalProfilePhotos(file.originalFilename).then(function () {
+    console.log("file deleted?");
+    return;
   })
+
+
+  // knex('users').where('user_id', user_id).first().update({ portrait_link: file.originalFilename }).then(function (user) {
+  //   console.log('user: ', user);
+  //
+  //   var stream = fs.createReadStream(file.path);
+  //   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
+  //     fs.unlink(file.path, function (err) {
+  //       if(err){
+  //         console.err(err);
+  //         res.json({ personalProfilePhotoUpload: "Failed" })
+  //       } else {
+  //         console.log("success?");
+  //         res.json({ personalProfilePhotoUpload: "Success" });
+  //       }
+  //     })
+  //   })
+  // })
 })
 
 app.post('/groupProfilePhotoUpload', function (req, res, next) {
