@@ -709,8 +709,6 @@ router.post('/sendChatMessage', function (req, res, next) {
             method: 'POST'
           }, function (err, response, body) {
             if(err) console.log(err);
-            console.log(response);
-            console.log(body);
             knex('user_action_log').insert({ user_id: req.body.from_user, action: 'Sent a chat message to user ' + req.body.to_user + ' with a push notification', action_time: knex.fn.now() }).then(function () {
               res.json({created: true, push: true});
             })
