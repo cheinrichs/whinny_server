@@ -92,10 +92,12 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
   console.log("personal Profile Photo Upload");
   console.log(req.files.file);
 
-  knex('users').where('user_id', req.body.user_id).first().update({ portrait_link: file.originalFilename }).then(function (user) {
+  var file = req.files.file;
+  var user_id = file.originalFilename.substring(0, file.originalFilename.indexOf('_'));
+
+  knex('users').where('user_id', user_id).first().update({ portrait_link: file.originalFilename }).then(function (user) {
     console.log('user: ', user);
 
-    var file = req.files.file;
     var stream = fs.createReadStream(file.path);
     return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
       fs.unlink(file.path, function (err) {
