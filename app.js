@@ -95,7 +95,7 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
   var file = req.files.file;
   var user_id = file.originalFilename.substring(0, file.originalFilename.indexOf('_'));
 
-  return S3_PersonalProfilePhotos(file.originalFilename).then(function () {
+  S3_PersonalProfilePhotos.unlink(file.originalFilename).then(function () {
     console.log("file deleted?");
     return;
   })
