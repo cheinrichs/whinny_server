@@ -97,26 +97,20 @@ app.post('/personalProfilePhotoUpload', function (req, res, next) {
 
   S3_PersonalProfilePhotos.unlink(file.originalFilename).then(function () {
     console.log("file deleted?");
-    return;
+    var stream = fs.createReadStream(file.path);
+    return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
+      // fs.unlink(file.path, function (err) {
+      //   if(err){
+      //     console.err(err);
+      //     res.json({ personalProfilePhotoUpload: "Failed" })
+      //   } else {
+      //     console.log("success?");
+      //     res.json({ personalProfilePhotoUpload: "Success" });
+      //   }
+      // })
+      return;
+    })
   })
-
-
-  // knex('users').where('user_id', user_id).first().update({ portrait_link: file.originalFilename }).then(function (user) {
-  //   console.log('user: ', user);
-  //
-  //   var stream = fs.createReadStream(file.path);
-  //   return S3_PersonalProfilePhotos.writeFile(file.originalFilename, stream).then(function () {
-  //     fs.unlink(file.path, function (err) {
-  //       if(err){
-  //         console.err(err);
-  //         res.json({ personalProfilePhotoUpload: "Failed" })
-  //       } else {
-  //         console.log("success?");
-  //         res.json({ personalProfilePhotoUpload: "Success" });
-  //       }
-  //     })
-  //   })
-  // })
 })
 
 app.post('/groupProfilePhotoUpload', function (req, res, next) {
