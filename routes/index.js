@@ -7,6 +7,7 @@ var SparkPost = require('sparkpost');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var twilio = require('twilio');
+var Twitter = require('twitter');
 var fs = require('fs');
 
 const SALT_ROUNDS = 10;
@@ -16,6 +17,14 @@ var sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 var accountSid = process.env.TWILIO_ACCOUNT_SID;
 var authToken = process.env.TWILIO_AUTH_TOKEN;
 var textClient = new twilio.RestClient(accountSid, authToken);
+
+var twitterClient = new Twitter({
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+  bearer_token: process.env.TWITTER_BEARER_TOKEN
+});
 
 
 var CLIENT_CURRENT_VERSION = '0.0.1';
@@ -1835,6 +1844,18 @@ router.post('/logOut', function (req, res, next) {
   knex('users').where('user_id', req.body.user_id).update({ verified: false, device_token: '' }).then(function () {
     res.json({ loggedOut: 'Successful' });
   })
+})
+
+router.get('/getEdccTwitterMessages', function (req, res, next) {
+  var params = {screen_name: 'EquineDiseaseCC', count: 5};
+  twitterClient.get('statuses/user_timeline', params, function(error, tweets, response) {
+    if (!error) {
+      console.log(tweets);
+      res.json({twitterMessages: tweets });
+    } else {
+      res.json({error})
+    }
+  });
 })
 
 Array.prototype.unique = function() {

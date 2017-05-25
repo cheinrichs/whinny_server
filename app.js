@@ -68,7 +68,6 @@ app.post('/chatMessageUpload', function (req, res, next) {
   var file = req.files.file;
   var stream = fs.createReadStream(file.path);
   return S3_ChatMessagePhotos.writeFile(file.originalFilename, stream).then(function () {
-    console.log(file.path);
     fs.unlink(file.path, function (err) {
       if(err) console.err(err);
       res.json({ chatMessageUpload: "Success" });
