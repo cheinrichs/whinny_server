@@ -1875,7 +1875,7 @@ ontime({
   //}
   //parse for locations where we have subscribed warnings,
   //send texts to all subscribed users
-  sendBarnAlert('3035892321', '2:30pm, 3pm or 12pm. Test message from barn alert');
+  sendBarnAlert('3035892321', '2:30pm, 3pm or 12pm. Test message from barn alert. https://t.co/50EBYeawMH');
   ot.done();
   return;
 })
