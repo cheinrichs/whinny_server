@@ -9,7 +9,6 @@ var jwt = require('jsonwebtoken');
 var twilio = require('twilio');
 var Twitter = require('twitter');
 var fs = require('fs');
-var ontime = require('ontime');
 
 const SALT_ROUNDS = 10;
 
