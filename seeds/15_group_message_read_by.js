@@ -24,8 +24,6 @@ exports.seed = function(knex, Promise) {
         createGroupReadyByRecordImage('4', '2', 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_2134134132412.jpg', false),
 
 
-
-
       ]);
     });
 
