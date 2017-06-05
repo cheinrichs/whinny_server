@@ -1865,7 +1865,16 @@ router.get('/getEdccTwitterMessages', function (req, res, next) {
 ontime({
   cycle: ['2:30:00', '3:00:00', '12:00:00']
 }, function(ot){
-  //do work
+  //look through edcc tweets, check against tweets in the database
+  //add them to the database
+  //keep new tweets and add them to an object organized by state?
+  //var new barnAlerts = {
+    // CO: [
+      'Measles'
+    //]
+  //}
+  //parse for locations where we have subscribed warnings,
+  //send texts to all subscribed users
   sendBarnAlert('3035892321', '2:30pm, 3pm or 12pm. Test message from barn alert');
   ot.done();
   return;
