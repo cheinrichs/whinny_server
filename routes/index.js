@@ -9,6 +9,7 @@ var jwt = require('jsonwebtoken');
 var twilio = require('twilio');
 var Twitter = require('twitter');
 var fs = require('fs');
+var ontime = require('ontime');
 
 const SALT_ROUNDS = 10;
 
@@ -1846,6 +1847,9 @@ router.post('/logOut', function (req, res, next) {
   })
 })
 
+
+// ******** Barn Alert ************* //
+
 router.get('/getEdccTwitterMessages', function (req, res, next) {
   var params = {screen_name: 'EquineDiseaseCC', count: 5};
   twitterClient.get('statuses/user_timeline', params, function(error, tweets, response) {
@@ -1857,6 +1861,32 @@ router.get('/getEdccTwitterMessages', function (req, res, next) {
     }
   });
 })
+
+ontime({
+  cycle: ['2:30:00', '3:00:00', '12:00:00']
+}, function(ot){
+  //do work
+  sendBarnAlert('3035892321', '2:30pm, 3pm or 12pm. Test message from barn alert');
+  ot.done();
+  return;
+})
+
+function sendBarnAlert(to_phone, content) {
+  textClient.sms.messages.create({
+    to: to_phone,
+    from: '+17204087635',
+    body: content
+  }, function (error, message) {
+    if(!error){
+      console.log("Success! The SID for this SMS message is: ", message.sid);
+    } else {
+      console.log("There was an error with twilio mms message");
+    }
+  })
+}
+
+
+// ******** Whinny Helper Functions ************* //
 
 Array.prototype.unique = function() {
     var o = {};
@@ -1910,6 +1940,7 @@ function confirmationCodeText(to_phone, confirmationCode) {
     }
   })
 }
+
 
 function sendMms(to_phone, content, from_first_name, from_last_name) {
   textClient.sms.messages.create({
