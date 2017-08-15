@@ -5,7 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var knex = require('./lib/knex.js');
-var knex = require('./db/config')
 var cors = require('cors');
 var fs = require('fs');
 
@@ -52,31 +51,6 @@ var users = require('./routes/users');
 var app = express();
 
 app.use(cors());
-
-// Set user object on request
-// app.use(function(req, res, next){
-// 
-//   var token = req.headers.authentication;
-//   if(token){
-//     try {
-//       var decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     } catch(e) {
-//       console.log(e);
-//       return res.status(401).send({errors: ["Invalid token"]})
-//     }
-//     console.log(decoded);
-//     knex('users').where({id: decoded.userId}).first().then(function(user){
-//       delete user.password;
-//       req.user = user;
-//       next();
-//     }).catch(function(err){
-//       console.log(err);
-//       next();
-//     })
-//   }else{
-//     next();
-//   }
-// });
 
 
 app.set('views', path.join(__dirname, 'views'));
