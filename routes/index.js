@@ -30,7 +30,7 @@ var twitterClient = new Twitter({
 var CLIENT_CURRENT_VERSION = '0.0.1';
 
 
-// ******** website routes ************* //
+// ******** Website Routes ************* //
 router.post('/login_website', function (req, res, next) {
 
   if(!req.body.params.email) return res.json({error:'Please enter an email'});
@@ -143,7 +143,6 @@ router.post('/createBroadcastMessage', function (req, res, next) {
         })
       })
     })
-
   })
 });
 
@@ -235,7 +234,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Whinny Staging Server' });
 });
 
-//iOS and Android Client Routes
+// ******** iOS and Android Client Routes ************* //
 router.post('/joinWhinny', function (req, res, next) {
   console.log(req.body);
 

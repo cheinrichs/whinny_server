@@ -5,10 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var knex = require('./lib/knex.js');
+var knex = require('./db/config')
 var cors = require('cors');
 var fs = require('fs');
 
 var S3FS = require('s3fs');
+
+var jwt = require('jsonwebtoken');
+
 
 var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
@@ -49,7 +53,32 @@ var app = express();
 
 app.use(cors());
 
-// view engine setup
+// Set user object on request
+app.use(function(req, res, next){
+
+  var token = req.headers.authentication;
+  if(token){
+    try {
+      var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch(e) {
+      console.log(e);
+      return res.status(401).send({errors: ["Invalid token"]})
+    }
+    console.log(decoded);
+    knex('users').where({id: decoded.userId}).first().then(function(user){
+      delete user.password;
+      req.user = user;
+      next();
+    }).catch(function(err){
+      console.log(err);
+      next();
+    })
+  }else{
+    next();
+  }
+});
+
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -159,10 +188,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -173,8 +199,6 @@ if (app.get('env') === 'development') {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
