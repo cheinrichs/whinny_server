@@ -39,8 +39,8 @@ exports.seed = function(knex, Promise) {
           return knex('users').insert({
             email: 'morgan@whinny.com',
             phone: '3035892486',
-            first_name: 'Morgan',
-            last_name: 'Heinrichs',
+            first_name: 'Megan',
+            last_name: 'Rife',
             password: 'password',
             portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/2_PersonalProfilePic.jpg',
             message_notifications: true,
@@ -72,8 +72,8 @@ exports.seed = function(knex, Promise) {
             return knex('users').insert({
               email: 'george@whinny.com',
               phone: '7203464283',
-              first_name: 'George',
-              last_name: 'Heinrichs',
+              first_name: 'Pete',
+              last_name: 'Denon',
               password: 'password',
               portrait_link: 'https://s3.amazonaws.com/whinnyphotos/profile_photos/3_PersonalProfilePic.jpg',
               message_notifications: true,

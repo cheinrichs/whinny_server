@@ -49,7 +49,7 @@ exports.up = function(knex, Promise) {
     table.boolean('account_is_setup');
 
     table.string('device_token');
-  }
+  })
 }
 
 exports.down = function(knex, Promise) {

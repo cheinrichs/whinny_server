@@ -8,18 +8,18 @@ exports.seed = function(knex, Promise) {
       createBroadcastMembership('Cooper', 'Disease Communication Center', true, true),
       createBroadcastMembership('Cooper', 'Equestrian News', true, true),
 
-      createBroadcastMembership('Morgan', 'Beautiful Barns', true, true),
-      createBroadcastMembership('Morgan', 'Equestrian News', true, true),
-      createBroadcastMembership('Morgan', 'Horse Humor', true, true),
-      createBroadcastMembership('Morgan', 'EqBusiness', true, true),
-      createBroadcastMembership('Morgan', 'Whinny Tips', true, true),
-      createBroadcastMembership('Morgan', 'EqFashion', true, true),
-      createBroadcastMembership('Morgan', 'Disease Communication Center', true, true),
-      createBroadcastMembership('Morgan', 'Equine Veterinary Info', true, true),
+      createBroadcastMembership('Megan', 'Beautiful Barns', true, true),
+      createBroadcastMembership('Megan', 'Equestrian News', true, true),
+      createBroadcastMembership('Megan', 'Horse Humor', true, true),
+      createBroadcastMembership('Megan', 'EqBusiness', true, true),
+      createBroadcastMembership('Megan', 'Whinny Tips', true, true),
+      createBroadcastMembership('Megan', 'EqFashion', true, true),
+      createBroadcastMembership('Megan', 'Disease Communication Center', true, true),
+      createBroadcastMembership('Megan', 'Equine Veterinary Info', true, true),
 
-      createBroadcastMembership('George', 'Whinny Tips', true, true),
-      createBroadcastMembership('George', 'Disease Communication Center', true, true),
-      createBroadcastMembership('George', 'Equestrian News', false, false)
+      createBroadcastMembership('Pete', 'Whinny Tips', true, true),
+      createBroadcastMembership('Pete', 'Disease Communication Center', true, true),
+      createBroadcastMembership('Pete', 'Equestrian News', false, false)
     )
   });
 

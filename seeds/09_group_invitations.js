@@ -4,8 +4,8 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
       createGroupInvitation('Nora', 'Gray Filly Farm'),
-      createGroupInvitation('Morgan', 'Rabbit Mountain Equestrian Center'),
-      createGroupInvitation('George', 'Paragon Equestrian Centre'),
+      createGroupInvitation('Megan', 'Rabbit Mountain Equestrian Center'),
+      createGroupInvitation('Pete', 'Paragon Equestrian Centre'),
       createGroupInvitation('Cooper', 'Rabbit Mountain Equestrian Center')
     )
   });

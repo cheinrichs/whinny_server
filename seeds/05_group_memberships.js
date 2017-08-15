@@ -10,21 +10,21 @@ exports.seed = function(knex, Promise) {
       createGroupMembership('Cooper', 'Somerset Farms', true, false, false),
       createGroupMembership('Cooper', 'Caribou Ranch', false, false, true),
 
-      createGroupMembership('Morgan', 'Dressage Pacifico', true, true, false),
-      createGroupMembership('Morgan', 'Gray Filly Farm', true, true, true),
-      createGroupMembership('Morgan', 'Jessica Greer Dressage', true, true, false),
-      createGroupMembership('Morgan', 'Whinny Staff', false, false, true),
-      createGroupMembership('Morgan', 'Paragon Equestrian Centre', true, true, false),
-      createGroupMembership('Morgan', 'Rabbit Mountain Equestrian Center', true, true, false),
-      createGroupMembership('Morgan', 'Wild Rose Farm', true, true, false),
-      createGroupMembership('Morgan', 'Secret invite only group', true, true, false),
-      createGroupMembership('Morgan', 'Somerset Farms', true, true, false),
-      createGroupMembership('Morgan', 'Caribou Ranch', true, true, true),
+      createGroupMembership('Megan', 'Dressage Pacifico', true, true, false),
+      createGroupMembership('Megan', 'Gray Filly Farm', true, true, true),
+      createGroupMembership('Megan', 'Jessica Greer Dressage', true, true, false),
+      createGroupMembership('Megan', 'Whinny Staff', false, false, true),
+      createGroupMembership('Megan', 'Paragon Equestrian Centre', true, true, false),
+      createGroupMembership('Megan', 'Rabbit Mountain Equestrian Center', true, true, false),
+      createGroupMembership('Megan', 'Wild Rose Farm', true, true, false),
+      createGroupMembership('Megan', 'Secret invite only group', true, true, false),
+      createGroupMembership('Megan', 'Somerset Farms', true, true, false),
+      createGroupMembership('Megan', 'Caribou Ranch', true, true, true),
 
-      createGroupMembership('George', 'Whinny Staff', false, false, true),
-      createGroupMembership('George', 'Gray Filly Farm', false, false, true),
-      createGroupMembership('George', 'Caribou Ranch', true, true, true),
-      createGroupMembership('George', 'Paragon Equestrian Centre', false, false, false)
+      createGroupMembership('Pete', 'Whinny Staff', false, false, true),
+      createGroupMembership('Pete', 'Gray Filly Farm', false, false, true),
+      createGroupMembership('Pete', 'Caribou Ranch', true, true, true),
+      createGroupMembership('Pete', 'Paragon Equestrian Centre', false, false, false)
     )
   });
 

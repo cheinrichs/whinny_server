@@ -6,10 +6,10 @@ exports.seed = function(knex, Promise) {
     return Promise.join(
       createUserInterest('Cooper', 2),
       createUserInterest('Cooper', 4),
-      createUserInterest('Morgan', 3),
-      createUserInterest('Morgan', 12),
-      createUserInterest('Morgan', 7),
-      createUserInterest('George', 3)
+      createUserInterest('Megan', 3),
+      createUserInterest('Megan', 12),
+      createUserInterest('Megan', 7),
+      createUserInterest('Pete', 3)
     )
   });
 

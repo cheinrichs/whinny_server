@@ -5,11 +5,11 @@ exports.seed = function(knex, Promise) {
   ).then(function () {
     return Promise.join(
 
-      createGroupMessage('Morgan', 'Paragon Equestrian Centre', 'Testing - Paragon Equestrian Centre', false, null),
-      createGroupMessage('Morgan', 'Gray Filly Farm', 'Testing - GFF', false, null),
-      createGroupMessage('Morgan', 'Whinny Staff', 'Testing - Whinny Staff', false, null),
+      createGroupMessage('Megan', 'Paragon Equestrian Centre', 'Testing - Paragon Equestrian Centre', false, null),
+      createGroupMessage('Megan', 'Gray Filly Farm', 'Testing - GFF', false, null),
+      createGroupMessage('Megan', 'Whinny Staff', 'Testing - Whinny Staff', false, null),
 
-      createGroupMessage('Morgan', 'Whinny Staff', '', true, 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_2134134132412.jpg')
+      createGroupMessage('Megan', 'Whinny Staff', '', true, 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_2134134132412.jpg')
 
     )
   });

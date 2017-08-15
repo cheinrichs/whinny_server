@@ -4,15 +4,15 @@ exports.seed = function(knex, Promise) {
     knex('messages').del()
   ).then(function () {
     return Promise.join(
-      createMessage('Morgan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Morgan from Cooper', 'chat', false, null),
+      createMessage('Megan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Megan from Cooper', 'chat', false, null),
 
-      createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat', false, null),
+      createMessage('Cooper', 'Megan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Megan', 'chat', false, null),
 
-      createMessage('Cooper', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is George', 'chat', false, null),
-      createMessage('Morgan', 'George', '', 'EDCC Contagious Disease Alerts', 'Hello, Morgan this is George', 'chat', false, null),
+      createMessage('Cooper', 'Pete', '', 'EDCC Contagious Disease Alerts', 'Hello, Cooper this is Pete', 'chat', false, null),
+      createMessage('Megan', 'Pete', '', 'EDCC Contagious Disease Alerts', 'Hello, Megan this is Pete', 'chat', false, null),
 
-      createMessage('Morgan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Morgan from Cooper', 'chat', true, 'https://s-media-cache-ak0.pinimg.com/736x/1c/8f/99/1c8f994a826b1482c75dc89bdbcd1acd.jpg'),
-      createMessage('Cooper', 'Morgan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Morgan', 'chat', true, 'http://kids.nationalgeographic.com/content/dam/kids/photos/animals/Mammals/H-P/lion-male-roar.jpg.adapt.945.1.jpg')
+      createMessage('Megan', 'Cooper', '', 'EDCC Contagious Disease Alerts', 'message to Megan from Cooper', 'chat', true, 'https://s-media-cache-ak0.pinimg.com/736x/1c/8f/99/1c8f994a826b1482c75dc89bdbcd1acd.jpg'),
+      createMessage('Cooper', 'Megan', '', 'EDCC Contagious Disease Alerts', 'message to Cooper from Megan', 'chat', true, 'http://kids.nationalgeographic.com/content/dam/kids/photos/animals/Mammals/H-P/lion-male-roar.jpg.adapt.945.1.jpg')
     )
   });
 
