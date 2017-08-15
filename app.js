@@ -54,29 +54,29 @@ var app = express();
 app.use(cors());
 
 // Set user object on request
-app.use(function(req, res, next){
-
-  var token = req.headers.authentication;
-  if(token){
-    try {
-      var decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch(e) {
-      console.log(e);
-      return res.status(401).send({errors: ["Invalid token"]})
-    }
-    console.log(decoded);
-    knex('users').where({id: decoded.userId}).first().then(function(user){
-      delete user.password;
-      req.user = user;
-      next();
-    }).catch(function(err){
-      console.log(err);
-      next();
-    })
-  }else{
-    next();
-  }
-});
+// app.use(function(req, res, next){
+// 
+//   var token = req.headers.authentication;
+//   if(token){
+//     try {
+//       var decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     } catch(e) {
+//       console.log(e);
+//       return res.status(401).send({errors: ["Invalid token"]})
+//     }
+//     console.log(decoded);
+//     knex('users').where({id: decoded.userId}).first().then(function(user){
+//       delete user.password;
+//       req.user = user;
+//       next();
+//     }).catch(function(err){
+//       console.log(err);
+//       next();
+//     })
+//   }else{
+//     next();
+//   }
+// });
 
 
 app.set('views', path.join(__dirname, 'views'));
