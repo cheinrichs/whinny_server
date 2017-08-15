@@ -4,7 +4,7 @@ exports.seed = function(knex, Promise) {
   return knex('groups').del()
     .then(function () {
       return knex('groups').insert({
-          group_name: 'Dressage Pacifico',
+          group_name: 'Harley Medical Log',
           group_photo: 'https://s3.amazonaws.com/whinnyphotos/group_profile_photos/1_GroupProfilePic.jpg',
           group_photo_small: 'http://cdn.filter.to/75x75/http://s3.amazonaws.com/whinnyphotos/group_profile_photos/1_GroupProfilePic.jpg',
           description: 'Longmont, Colorado',

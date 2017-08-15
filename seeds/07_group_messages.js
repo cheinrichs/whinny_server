@@ -9,7 +9,18 @@ exports.seed = function(knex, Promise) {
       createGroupMessage('Megan', 'Gray Filly Farm', 'Testing - GFF', false, null),
       createGroupMessage('Megan', 'Whinny Staff', 'Testing - Whinny Staff', false, null),
 
-      createGroupMessage('Megan', 'Whinny Staff', '', true, 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_2134134132412.jpg')
+      createGroupMessage('Megan', 'Whinny Staff', '', true, 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_2134134132412.jpg'),
+
+
+      createGroupMessage('Megan', 'Harley Medical Log', 'Fed Harley', false, null),
+      createGroupMessage('Megan', 'Harley Medical Log', 'Harley looking a little lame', false, null),
+      createGroupMessage('Megan', 'Harley Medical Log', 'Dressage Training', false, null),
+      createGroupMessage('Pete', 'Harley Medical Log', 'fed Harley', false, null),
+      createGroupMessage('Megan', 'Harley Medical Log', 'Gave Harley 2 extra carrots :D', false, null),
+      createGroupMessage('Megan', 'Harley Medical Log', 'Fed Harley', false, null),
+      createGroupMessage('Pete', 'Harley Medical Log', 'Pasture', false, null),
+      createGroupMessage('Megan', 'Harley Medical Log', 'Fed Harley', false, null),
+      createGroupMessage('Pete', 'Harley Medical Log', 'Pasture', false, null)
 
     )
   });
@@ -28,4 +39,5 @@ exports.seed = function(knex, Promise) {
       return knex('group_messages').insert(result);
     });
   }
+
 };
