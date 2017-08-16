@@ -23,7 +23,7 @@ exports.seed = function(knex, Promise) {
 
       createGroupMembership('Pete', 'Whinny Staff', false, false, true),
       createGroupMembership('Pete', 'Gray Filly Farm', false, false, true),
-      createGroupMembership('Pete', 'Caribou Ranch', true, true, true),
+      createGroupMembership('Pete', 'Harley Medical Log', true, true, true),
       createGroupMembership('Pete', 'Paragon Equestrian Centre', false, false, false)
     )
   });
