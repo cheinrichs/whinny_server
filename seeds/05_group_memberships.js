@@ -7,10 +7,8 @@ exports.seed = function(knex, Promise) {
       createGroupMembership('Cooper', 'Paragon Equestrian Centre', false, false, false),
       createGroupMembership('Cooper', 'Gray Filly Farm', false, false, false),
       createGroupMembership('Cooper', 'Harley Medical Log', true, true, true),
-      createGroupMembership('Cooper', 'Somerset Farms', true, false, false),
-      createGroupMembership('Cooper', 'Caribou Ranch', false, false, true),
 
-      createGroupMembership('Megan', 'Harley Medical Log', true, true, false),
+      createGroupMembership('Megan', 'Harley Medical Log', false, false, false),
       createGroupMembership('Megan', 'Gray Filly Farm', true, true, true),
       createGroupMembership('Megan', 'Jessica Greer Dressage', true, true, false),
       createGroupMembership('Megan', 'Whinny Staff', false, false, true),
@@ -23,7 +21,7 @@ exports.seed = function(knex, Promise) {
 
       createGroupMembership('Pete', 'Whinny Staff', false, false, true),
       createGroupMembership('Pete', 'Gray Filly Farm', false, false, true),
-      createGroupMembership('Pete', 'Harley Medical Log', true, true, true),
+      createGroupMembership('Pete', 'Harley Medical Log', false, false, true),
       createGroupMembership('Pete', 'Paragon Equestrian Centre', false, false, false)
     )
   });
