@@ -11,7 +11,6 @@ exports.seed = function(knex, Promise) {
 
       createGroupMessage('Megan', 'Whinny Staff', '', true, 'https://s3.amazonaws.com/whinnyphotos/chat_images/1_chatMessage_2134134132412.jpg'),
 
-
       createGroupMessage('Megan', 'Harley Medical Log', 'Fed Harley', false, null),
       createGroupMessage('Megan', 'Harley Medical Log', 'Harley looking a little lame', false, null),
       createGroupMessage('Megan', 'Harley Medical Log', 'Dressage Training', false, null),

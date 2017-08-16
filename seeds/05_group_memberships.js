@@ -6,7 +6,7 @@ exports.seed = function(knex, Promise) {
       createGroupMembership('Cooper', 'Whinny Staff', true, true, true),
       createGroupMembership('Cooper', 'Paragon Equestrian Centre', false, false, false),
       createGroupMembership('Cooper', 'Gray Filly Farm', false, false, false),
-      createGroupMembership('Cooper', 'Secret invite only group', true, true, true),
+      createGroupMembership('Cooper', 'Harley Medical Log', true, true, true),
       createGroupMembership('Cooper', 'Somerset Farms', true, false, false),
       createGroupMembership('Cooper', 'Caribou Ranch', false, false, true),
 
